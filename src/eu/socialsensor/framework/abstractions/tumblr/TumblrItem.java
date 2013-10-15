@@ -41,7 +41,7 @@ public class TumblrItem extends Item{
 		
 		super(Source.Type.Tumblr.toString(), Operation.NEW_UPDATE);
 		
-		if(post == null)
+		if(post == null || post.getId() == null)
 			return;
 		
 		id = Source.Type.Tumblr + "::" + post.getId();
@@ -198,7 +198,7 @@ public class TumblrItem extends Item{
 		
 		super(Source.Type.Tumblr.toString(), Operation.NEW_UPDATE);
 		
-		if(post == null)
+		if(post == null || post.getId() == null)
 			return;
 		
 		id = Source.Type.Tumblr + "::" + post.getId();

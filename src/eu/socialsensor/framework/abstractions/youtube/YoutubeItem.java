@@ -45,7 +45,7 @@ public class YoutubeItem extends Item {
 	public YoutubeItem(VideoEntry videoEntry) {
 		super(Source.Type.Youtube.toString(), Operation.NEW_UPDATE);
 		
-		if (videoEntry == null) 
+		if (videoEntry == null || videoEntry.getId() == null) 
 			return;
 		
 		String videoID = videoEntry.getId().substring(videoEntry.getId().indexOf("video:")+("video:").length());
@@ -111,7 +111,7 @@ public class YoutubeItem extends Item {
 			}
 		}
 		
-		if(thumbnail != null && !thumbnail.getUrl().contains("sddefault")) {
+		if(thumbnail != null && !thumbnail.getUrl().contains("sddefault") && videoID != null) {
 			MediaItem mediaItem = new MediaItem(url);
 			
 			String mediaId = Source.Type.Youtube + "::"+videoID; 
@@ -233,7 +233,7 @@ public class YoutubeItem extends Item {
 			}
 		}
 		
-		if(thumbnail != null && !thumbnail.getUrl().contains("sddefault")) {
+		if(thumbnail != null && !thumbnail.getUrl().contains("sddefault") && videoID != null) {
 			MediaItem mediaItem = new MediaItem(url);
 			
 			String mediaId = Source.Type.Youtube + "::"+videoID; 

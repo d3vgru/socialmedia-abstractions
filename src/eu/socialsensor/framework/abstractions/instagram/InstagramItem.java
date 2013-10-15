@@ -37,7 +37,7 @@ public class InstagramItem extends Item {
 	public InstagramItem(MediaFeedData image) throws MalformedURLException {
 		super(Source.Type.Instagram.toString(), Operation.NEW_UPDATE);
 		
-		if(image == null)
+		if(image == null || image.getId() == null)
 			return;
 		
 		//----photo id
@@ -133,7 +133,7 @@ public class InstagramItem extends Item {
 	public InstagramItem(MediaFeedData image,Feed itemFeed) throws MalformedURLException {
 		super(Source.Type.Instagram.toString(), Operation.NEW_UPDATE);
 		
-		if(image == null)
+		if(image == null || image.getId() == null)
 			return;
 		
 		//----photo id

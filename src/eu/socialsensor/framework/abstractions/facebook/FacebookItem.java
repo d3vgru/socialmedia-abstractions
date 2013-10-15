@@ -40,7 +40,7 @@ public class FacebookItem extends Item {
 		
 		super(Source.Type.Facebook.toString(), Operation.NEW_UPDATE);
 		
-		if (post == null) return;
+		if (post == null || post.getId() == null) return;
 		
 		id = Source.Type.Facebook+"::"+post.getId();
 		
@@ -243,7 +243,7 @@ public class FacebookItem extends Item {
 		
 		super(Source.Type.Facebook.toString(), Operation.NEW_UPDATE);
 		
-		if (post == null) return;
+		if (post == null || post.getId() == null) return;
 		
 		id = Source.Type.Facebook+"::"+post.getId();
 		

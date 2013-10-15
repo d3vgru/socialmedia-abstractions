@@ -36,7 +36,7 @@ public class FlickrItem extends Item {
 	
 	public FlickrItem(Photo photo) {
 		super(Source.Type.Flickr.toString(), Operation.NEW_UPDATE);
-		if (photo == null) return;
+		if (photo == null || photo.getId() == null) return;
 		
 		id = Source.Type.Flickr + "::" + photo.getId();
 		
@@ -134,7 +134,7 @@ public class FlickrItem extends Item {
 	
 	public FlickrItem(Photo photo,Feed itemFeed) {
 		super(Source.Type.Flickr.toString(), Operation.NEW_UPDATE);
-		if (photo == null) return;
+		if (photo == null || photo.getId() == null) return;
 		
 		id = Source.Type.Flickr + "::" + photo.getId();
 		
