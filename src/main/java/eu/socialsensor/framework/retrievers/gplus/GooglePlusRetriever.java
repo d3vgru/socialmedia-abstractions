@@ -289,7 +289,7 @@ public class GooglePlusRetriever implements Retriever{
 //		logger.info("#GooglePlus : KeywordsFeed "+feed.getId()+" is done retrieving for this session");
 //		logger.info("#GooglePlus : Handler fetched " + items.size() + " posts from " + tags + 
 //				" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
-		feed.setTotalNumberOfItems((long)items.size());
+		feed.setTotalNumberOfItems(items.size());
 		return items;
 		
 	}

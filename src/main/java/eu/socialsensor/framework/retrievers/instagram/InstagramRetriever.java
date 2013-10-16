@@ -280,7 +280,7 @@ public class InstagramRetriever implements Retriever {
 //		logger.info("#Instagram : Done retrieving for this session");
 //		logger.info("#Instagram : Handler fetched " + items.size() + " posts from " + tags + 
 //				" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
-		feed.setTotalNumberOfItems((long)items.size());
+		feed.setTotalNumberOfItems(items.size());
 		return items;
 	}
 	@Override
