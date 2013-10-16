@@ -1,0 +1,63 @@
+package eu.socialsensor.framework.streams.flickr;
+
+import org.apache.log4j.Logger;
+
+import eu.socialsensor.framework.common.domain.Source;
+import eu.socialsensor.framework.monitors.FeedsMonitor;
+import eu.socialsensor.framework.retrievers.flickr.FlickrRetriever;
+import eu.socialsensor.framework.streams.Stream;
+import eu.socialsensor.framework.streams.StreamConfiguration;
+import eu.socialsensor.framework.streams.StreamException;
+
+
+
+/**
+ * The stream that handles the configuration of the flickr wrapper
+ * @author ailiakop
+ * @email  ailiakop@iti.gr
+ */
+public class FlickrStream extends Stream {
+
+	private Logger logger = Logger.getLogger(FlickrStream.class);
+	
+	public static final Source.Type SOURCE = Source.Type.Flickr;
+	
+	private String key;
+	private String secret;
+		
+	private FeedsMonitor monitor;
+	private StreamConfiguration config;
+	
+	@Override
+	public void close() throws StreamException {
+		monitor.stopMonitor();
+		logger.info("#Flickr : Close stream");
+	}
+
+	@Override
+	public void open(StreamConfiguration config) throws StreamException {
+		logger.info("#Flickr : Open stream");
+		
+		if (config == null) {
+			logger.error("#Flickr : Config file is null.");
+			return;
+		}
+		
+		this.config = config;
+		
+		key = config.getParameter(KEY);
+		secret = config.getParameter(SECRET);
+		
+		String maxResults = config.getParameter(MAX_RESULTS);
+		String maxRequests = config.getParameter(MAX_REQUESTS);
+		
+		if (key == null || secret==null) {
+			logger.error("#Flickr : Stream requires authentication.");
+			throw new StreamException("Stream requires authentication.");
+		}
+		
+		this.retriever = new FlickrRetriever(key, secret,Integer.parseInt(maxResults),Integer.parseInt(maxRequests));
+		
+	}
+
+}
