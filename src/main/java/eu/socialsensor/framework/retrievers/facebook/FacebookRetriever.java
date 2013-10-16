@@ -179,7 +179,7 @@ public class FacebookRetriever implements Retriever {
 //		logger.info("#Facebook : Done retrieving for this session");
 //		logger.info("#Facebook : Handler fetched " + items.size() + " posts from " + tags + 
 //			" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
-		feed.setTotalNumberOfItems((long)items.size());
+		feed.setTotalNumberOfItems(items.size());
 		return items;
 	}
 	

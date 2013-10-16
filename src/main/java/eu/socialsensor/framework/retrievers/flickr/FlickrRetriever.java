@@ -271,7 +271,7 @@ public class FlickrRetriever implements Retriever {
 //		logger.info("#Flickr : Done retrieving for this session");
 //		logger.info("#Flickr : Handler fetched " + items.size() + " photos from " + text + 
 //				" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
-		feed.setTotalNumberOfItems((long)items.size());
+		feed.setTotalNumberOfItems(items.size());
 		return items;
 	}
 	@Override

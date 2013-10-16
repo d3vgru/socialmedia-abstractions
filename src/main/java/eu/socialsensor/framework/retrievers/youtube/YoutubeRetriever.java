@@ -223,7 +223,7 @@ public class YoutubeRetriever implements Retriever {
 //		logger.info("#YouTube : Done retrieving for this session");
 //		logger.info("#YouTube : Handler fetched " + items.size() + " videos from " + tags + 
 //				" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
-		feed.setTotalNumberOfItems((long)items.size());
+		feed.setTotalNumberOfItems(items.size());
 		return items;
 	}
 	

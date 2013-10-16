@@ -263,7 +263,7 @@ public class TumblrRetriever implements Retriever{
 //		logger.info("#Tumblr : Done retrieving for this session");
 //		logger.info("#Tumblr : Handler fetched " + items.size() + " posts from " + tags + 
 //				" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
-		feed.setTotalNumberOfItems((long)items.size());
+		feed.setTotalNumberOfItems(items.size());
 		return items;
 		
 	}
