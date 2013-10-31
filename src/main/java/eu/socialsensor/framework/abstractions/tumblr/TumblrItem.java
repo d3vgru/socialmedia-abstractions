@@ -48,7 +48,7 @@ public class TumblrItem extends Item{
 		
 		source = "Tumblr";
 		
-		publicationTime = post.getTimestamp();
+		publicationTime = post.getTimestamp()*1000;
 		
 		tags = new String[post.getTags().size()];
 		int i=0;
@@ -205,7 +205,7 @@ public class TumblrItem extends Item{
 		
 		source = "Tumblr";
 		
-		publicationTime = post.getTimestamp();
+		publicationTime = post.getTimestamp()*1000;
 		
 		tags = new String[post.getTags().size()];
 		int i=0;
