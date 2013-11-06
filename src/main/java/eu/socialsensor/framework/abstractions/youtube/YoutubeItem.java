@@ -233,7 +233,7 @@ public class YoutubeItem extends Item {
 			}
 		}
 		
-		if(thumbnail != null && !thumbnail.getUrl().contains("sddefault") && videoID != null) {
+		if(thumbnail != null) {
 			MediaItem mediaItem = new MediaItem(url);
 			
 			String mediaId = Source.Type.Youtube + "::"+videoID; 
