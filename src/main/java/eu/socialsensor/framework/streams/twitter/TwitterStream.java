@@ -227,9 +227,9 @@ public class TwitterStream extends Stream {
 				logger.info("Start tracking from twitter stream");
 				twitterStream.shutdown();
 				twitterStream.filter(fq);
-				while(true){
-					System.out.println("totalItems : "+totalItems);
-				}
+				//while(true){
+				//	System.out.println("totalItems : "+totalItems);
+				//}
 			}
 			else {
 				logger.info("Start sampling from twitter stream");

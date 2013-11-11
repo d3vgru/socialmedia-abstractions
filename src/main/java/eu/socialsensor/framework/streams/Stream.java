@@ -122,16 +122,17 @@ public abstract class Stream implements Runnable {
 	 * Store a set of items in the selected databases
 	 * @param items
 	 */
-	public void store(List<Item>items){
-		for(Item item : items)
+	public void store(List<Item>items) {
+		for(Item item : items) {
 			handler.update(item);
+		}
 	}
 	
 	/**
 	 * Store an item in the selected databases
 	 * @param item
 	 */
-	public void store(Item item){
+	public void store(Item item) {
 		if(handler == null){
 			System.out.println("NULL Handler!");
 			return;
@@ -159,7 +160,6 @@ public abstract class Stream implements Runnable {
 		
 		return feedsQueue.offer(feed);
 	}
-	
 	
 	@Override
 	public void run() {
