@@ -263,6 +263,7 @@ public class FacebookItem extends Item {
 		feed = itemFeed;
 		feedType = itemFeed.getFeedtype().toString();
 		
+		text = post.getMessage();
 		
 		Set<URL> ulinks = new HashSet<URL>();
 		Set<URL> mlinks = new HashSet<URL>();
