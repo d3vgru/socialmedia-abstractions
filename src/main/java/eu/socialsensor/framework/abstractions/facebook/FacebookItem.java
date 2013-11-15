@@ -53,9 +53,11 @@ public class FacebookItem extends Item {
 		if (user != null) {
 			streamUser = new FacebookStreamUser(user);
 			uid = streamUser.getId();
-			author = streamUser.getUserId();
-			//author = user.getName();
+			
+			author = user.getName();
 		}
+		
+		text = post.getMessage();
 		
 		Date pubDate = post.getCreatedTime();
 		publicationTime = pubDate.getTime();
@@ -256,8 +258,8 @@ public class FacebookItem extends Item {
 		if (user != null) {
 			streamUser = new FacebookStreamUser(user);
 			uid = streamUser.getId();
-			author = streamUser.getUserId();
-			//author = user.getName();
+			
+			author = user.getName();
 		}
 			
 		feed = itemFeed;

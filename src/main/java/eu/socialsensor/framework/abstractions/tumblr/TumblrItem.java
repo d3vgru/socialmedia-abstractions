@@ -59,7 +59,7 @@ public class TumblrItem extends Item{
 		}
 		
 		streamUser = new TumblrStreamUser(post.getBlogName());
-		
+		author = post.getBlogName();
 		mediaLinks = new ArrayList<MediaItemLight>();
 		mediaIds = new ArrayList<String>();
 		mediaItems = new HashMap<URL,MediaItem>();
@@ -216,7 +216,7 @@ public class TumblrItem extends Item{
 		}
 		
 		streamUser = new TumblrStreamUser(post.getBlogName());
-		
+		author = post.getBlogName();
 		feed = itemFeed;
 		feedType = itemFeed.getFeedtype().toString();
 		

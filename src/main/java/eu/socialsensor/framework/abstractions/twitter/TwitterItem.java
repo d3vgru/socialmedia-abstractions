@@ -46,7 +46,7 @@ public class TwitterItem extends Item {
 		if (status == null) return;
 		
 		id = Source.Type.Twitter+"::"+status.getId();
-		source = status.getSource();
+		source = "Twitter";
 		
 		Status retweetStatus = status.getRetweetedStatus();
 		if(retweetStatus != null) {
@@ -73,7 +73,7 @@ public class TwitterItem extends Item {
 		if (user != null) {
 			streamUser = new TwitterStreamUser(user);
 			uid = streamUser.getId();
-			author = streamUser.getUserId();
+			author = user.getScreenName();
 		}
 		
 		UserMentionEntity[] userMentions = status.getUserMentionEntities();

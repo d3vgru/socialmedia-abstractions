@@ -53,7 +53,7 @@ public class GooglePlusItem extends Item {
 		if(actor != null) {
 			streamUser = new GooglePlusStreamUser(actor);
 			uid = streamUser.getId();
-			author = streamUser.getId();
+			author = actor.getDisplayName();
 		}
 		
 		DateTime datePosted = activity.getPublished();
@@ -241,7 +241,7 @@ public class GooglePlusItem extends Item {
 		if(actor != null) {
 			streamUser = new GooglePlusStreamUser(actor);
 			uid = streamUser.getId();
-			author = streamUser.getId();
+			author = actor.getDisplayName();
 		}
 		
 		feed = itemFeed;

@@ -46,7 +46,7 @@ public class FlickrItem extends Item {
 		if(user != null) {
 			streamUser = new FlickrStreamUser(user);
 			uid = streamUser.getId();
-			author = streamUser.getId();
+			author = user.getUsername();
 		}
 		
 		Date datePosted = photo.getDatePosted();
@@ -144,7 +144,7 @@ public class FlickrItem extends Item {
 		if(user != null) {
 			streamUser = new FlickrStreamUser(user);
 			uid = streamUser.getId();
-			author = streamUser.getId();
+			author = user.getUsername();
 		}
 		
 		feed = itemFeed;

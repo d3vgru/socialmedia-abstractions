@@ -71,7 +71,7 @@ public class YoutubeItem extends Item {
 			videoURL = mediaPlayer.getUrl();
 		
 		id = Source.Type.Youtube+"::"+mediaGroup.getVideoId();
-		source = "";
+		source = "Youtube";
 		
 		List<String> cList = new ArrayList<String>();
 		for(Category category : videoEntry.getCategories()) {
@@ -85,11 +85,15 @@ public class YoutubeItem extends Item {
 		List<Person> authors = videoEntry.getAuthors();
 		if(authors.size()>0) {
 			streamUser = new YoutubeStreamUser(authors.get(0));
+			author = authors.get(0).getName();
 		}
 		else{
-			streamUser = new YoutubeStreamUser(mediaGroup.getUploader());
+			if(mediaGroup.getUploader()!=null){
+				streamUser = new YoutubeStreamUser(mediaGroup.getUploader());
+				author = mediaGroup.getUploader();
+			}
 		}
-		author = streamUser.getUserId();
+		
 		uid = streamUser.getId();
 		
 		
@@ -192,7 +196,7 @@ public class YoutubeItem extends Item {
 			videoURL = mediaPlayer.getUrl();
 		
 		id = Source.Type.Youtube+"::"+mediaGroup.getVideoId();
-		source = "";
+		source = "Youtube";
 		
 		List<String> cList = new ArrayList<String>();
 		for(Category category : videoEntry.getCategories()) {
@@ -206,11 +210,14 @@ public class YoutubeItem extends Item {
 		List<Person> authors = videoEntry.getAuthors();
 		if(authors.size()>0) {
 			streamUser = new YoutubeStreamUser(authors.get(0));
+			author = authors.get(0).getName();
 		}
 		else{
-			streamUser = new YoutubeStreamUser(mediaGroup.getUploader());
+			if(mediaGroup.getUploader()!=null){
+				streamUser = new YoutubeStreamUser(mediaGroup.getUploader());
+				author = mediaGroup.getUploader();
+			}
 		}
-		author = streamUser.getUserId();
 		uid = streamUser.getId();
 		
 		feed = itemFeed;
