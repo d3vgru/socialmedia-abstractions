@@ -51,6 +51,8 @@ public class TwitterItem extends Item {
 		Status retweetStatus = status.getRetweetedStatus();
 		if(retweetStatus != null) {
 			reference = Source.Type.Twitter+"::"+retweetStatus.getId();
+			super.referencedUser = retweetStatus.getUser().getScreenName();
+			super.referencedUserId = Long.toString(retweetStatus.getUser().getId());
 		}
 		
 		Date pubDate = status.getCreatedAt();
