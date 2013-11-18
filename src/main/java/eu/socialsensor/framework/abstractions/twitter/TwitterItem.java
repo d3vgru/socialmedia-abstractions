@@ -84,6 +84,8 @@ public class TwitterItem extends Item {
 		}
 		super.mentions = mentions.toArray(new String[mentions.size()]);
 		
+		super.inReply = status.getInReplyToScreenName();
+		
 		URLEntity[] urlEntities = status.getURLEntities();
 		Set<URL> urls = new HashSet<URL>();
 		webPages = new ArrayList<WebPage>();
