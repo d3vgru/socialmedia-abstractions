@@ -38,7 +38,7 @@ public class FacebookItem extends Item {
 	
 	public FacebookItem(Post post) {
 		
-		super(Source.Type.Facebook.toString(), Operation.NEW_UPDATE);
+		super(Source.Type.Facebook.toString(), Operation.NEW);
 		
 		if (post == null || post.getId() == null) return;
 		
@@ -241,9 +241,9 @@ public class FacebookItem extends Item {
 		
 	}
     
-	public FacebookItem(Post post,Feed itemFeed) {
+	public FacebookItem(Post post, Feed itemFeed) {
 		
-		super(Source.Type.Facebook.toString(), Operation.NEW_UPDATE);
+		super(Source.Type.Facebook.toString(), Operation.NEW);
 		
 		if (post == null || post.getId() == null) return;
 		
@@ -452,7 +452,7 @@ public class FacebookItem extends Item {
 	}
 	
 	public FacebookItem(Comment comment) {
-		super(Source.Type.Facebook.toString(), Operation.NEW_UPDATE);
+		super(Source.Type.Facebook.toString(), Operation.NEW);
 		if (comment == null) return;
 		
 		id = Source.Type.Facebook+"::"+comment.getId();

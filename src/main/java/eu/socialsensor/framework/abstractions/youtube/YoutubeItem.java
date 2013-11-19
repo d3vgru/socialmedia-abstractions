@@ -43,7 +43,7 @@ public class YoutubeItem extends Item {
 	}
 	
 	public YoutubeItem(VideoEntry videoEntry) {
-		super(Source.Type.Youtube.toString(), Operation.NEW_UPDATE);
+		super(Source.Type.Youtube.toString(), Operation.NEW);
 		
 		if (videoEntry == null || videoEntry.getId() == null) 
 			return;
@@ -168,7 +168,7 @@ public class YoutubeItem extends Item {
 	
 	
 	public YoutubeItem(VideoEntry videoEntry, Feed itemFeed) {
-		super(Source.Type.Youtube.toString(), Operation.NEW_UPDATE);
+		super(Source.Type.Youtube.toString(), Operation.NEW);
 		
 		if (videoEntry == null) 
 			return;

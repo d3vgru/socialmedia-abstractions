@@ -39,7 +39,7 @@ public class TumblrItem extends Item{
 
 	public TumblrItem(Post post) throws MalformedURLException{
 		
-		super(Source.Type.Tumblr.toString(), Operation.NEW_UPDATE);
+		super(Source.Type.Tumblr.toString(), Operation.NEW);
 		
 		if(post == null || post.getId() == null)
 			return;
@@ -196,7 +196,7 @@ public class TumblrItem extends Item{
 	
 	public TumblrItem(Post post,Feed itemFeed) throws MalformedURLException{
 		
-		super(Source.Type.Tumblr.toString(), Operation.NEW_UPDATE);
+		super(Source.Type.Tumblr.toString(), Operation.NEW);
 		
 		if(post == null || post.getId() == null)
 			return;

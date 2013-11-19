@@ -40,7 +40,7 @@ public class GooglePlusItem extends Item {
 	
 	public GooglePlusItem(Activity activity) {
 		
-		super(Source.Type.GooglePlus.toString(), Operation.NEW_UPDATE);
+		super(Source.Type.GooglePlus.toString(), Operation.NEW);
 		
 		if(activity == null || activity.getId() == null) return;
 		
@@ -229,7 +229,7 @@ public class GooglePlusItem extends Item {
 	
 	public GooglePlusItem(Activity activity, Feed itemFeed) {
 		
-		super(Source.Type.GooglePlus.toString(), Operation.NEW_UPDATE);
+		super(Source.Type.GooglePlus.toString(), Operation.NEW);
 		if(activity == null || activity.getId() == null) return;
 		
 		id = Source.Type.GooglePlus + "::" + activity.getId();
