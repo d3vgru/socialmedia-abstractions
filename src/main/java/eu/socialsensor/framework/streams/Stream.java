@@ -9,6 +9,7 @@ import java.util.concurrent.BlockingQueue;
 import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.dysco.Dysco;
+import eu.socialsensor.framework.common.domain.feeds.KeywordsFeed;
 import eu.socialsensor.framework.monitors.FeedsMonitor;
 import eu.socialsensor.framework.retrievers.Retriever;
 
@@ -111,7 +112,7 @@ public abstract class Stream implements Runnable {
 				store(items);
 			}	
 			
-			System.out.println("Retrieved items for "+this.getClass().getName()+ "are : "+items.size());
+			System.out.println("Retrieved items for "+this.getClass().getName()+ " are : "+items.size());
 		}
 		
 		return items.size();
@@ -122,9 +123,9 @@ public abstract class Stream implements Runnable {
 	 * Store a set of items in the selected databases
 	 * @param items
 	 */
-	public void store(List<Item>items) {
+	public synchronized void store(List<Item>items) {
 		for(Item item : items) {
-			handler.update(item);
+			store(item);
 		}
 	}
 	
@@ -132,7 +133,7 @@ public abstract class Stream implements Runnable {
 	 * Store an item in the selected databases
 	 * @param item
 	 */
-	public void store(Item item) {
+	public synchronized void store(Item item) {
 		if(handler == null){
 			System.out.println("NULL Handler!");
 			return;

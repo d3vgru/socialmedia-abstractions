@@ -186,7 +186,7 @@ public class TwitterStream extends Stream {
 						
 				}
 				else if(feed.getFeedtype().equals(FeedType.SOURCE)){
-					users.add(((SourceFeed) feed).getSource().getName());
+					users.add(((SourceFeed) feed).getSource().getId());
 				}
 				else if(feed.getFeedtype().equals(FeedType.LOCATION)){
 					double[] location = new double[2];
@@ -227,9 +227,7 @@ public class TwitterStream extends Stream {
 				logger.info("Start tracking from twitter stream");
 				twitterStream.shutdown();
 				twitterStream.filter(fq);
-				//while(true){
-				//	System.out.println("totalItems : "+totalItems);
-				//}
+			
 			}
 			else {
 				logger.info("Start sampling from twitter stream");
