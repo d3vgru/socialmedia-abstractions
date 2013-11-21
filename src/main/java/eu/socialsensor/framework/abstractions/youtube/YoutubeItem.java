@@ -2,14 +2,11 @@ package eu.socialsensor.framework.abstractions.youtube;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 
 import com.google.gdata.data.Person;
-import com.google.gdata.data.extensions.Rating;
 import com.google.gdata.data.media.mediarss.MediaDescription;
 import com.google.gdata.data.media.mediarss.MediaPlayer;
 import com.google.gdata.data.media.mediarss.MediaThumbnail;
@@ -21,7 +18,6 @@ import com.google.gdata.data.youtube.YtStatistics;
 import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.MediaItem;
-import eu.socialsensor.framework.common.domain.MediaItemLight;
 import eu.socialsensor.framework.common.domain.Source;
 
 /**
@@ -68,26 +64,22 @@ public class YoutubeItem extends Item {
 		}
 		uid = streamUser.getId();
 		//Popularity
-		popularity = new HashMap<String, Integer>();
 		YtStatistics statistics = videoEntry.getStatistics();
 		if(statistics!=null){
-			Long views = statistics.getViewCount();
-			if(views!=null)
-				popularity.put("views", views.intValue());
-			Long favorites = statistics.getFavoriteCount();
-			if(favorites!=null)
-				popularity.put("favorites", favorites.intValue());
+			likes = (int) statistics.getFavoriteCount();
+			
 		}
-		Rating rating = videoEntry.getRating();
-		if(rating != null) {
-			Integer ratings = rating.getNumRaters();
-			popularity.put("ratings", ratings);
-			Float avg = rating.getAverage();
-			popularity.put("avgRating", avg.intValue());
-		}
+		
+//		Rating rating = videoEntry.getRating();
+//		if(rating != null) {
+//			Integer ratings = rating.getNumRaters();
+//			popularity.put("ratings", ratings);
+//			Float avg = rating.getAverage();
+//			popularity.put("avgRating", avg.intValue());
+//		}
+//		
 		//Getting the video
 		List<MediaThumbnail> thumbnails = mediaGroup.getThumbnails();
-		mediaLinks = new ArrayList<MediaItemLight>();
 		MediaPlayer mediaPlayer = mediaGroup.getPlayer();
 		
 		String videoID = videoEntry.getId().substring(videoEntry.getId().indexOf("video:")+("video:").length());
@@ -131,9 +123,7 @@ public class YoutubeItem extends Item {
 			mediaItem.setSize(thumbnail.getWidth(), thumbnail.getHeight());
 			mediaItem.setPageUrl(pageUrl);
 			mediaItem.setThumbnail(thumbUrl);	
-			mediaItems.put(url, mediaItem);	
-			MediaItemLight mediaLink = new MediaItemLight(videoURL, thumbUrl);
-			mediaLinks.add(mediaLink);
+			mediaItems.add(mediaItem);
 			mediaIds.add(mediaId);
 		}
 

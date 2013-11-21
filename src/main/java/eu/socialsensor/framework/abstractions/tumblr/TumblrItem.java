@@ -4,7 +4,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
-import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -20,7 +19,6 @@ import com.tumblr.jumblr.types.VideoPost;
 import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.MediaItem;
-import eu.socialsensor.framework.common.domain.MediaItemLight;
 import eu.socialsensor.framework.common.domain.Source;
 import eu.socialsensor.framework.common.domain.WebPage;
 
@@ -61,10 +59,6 @@ public class TumblrItem extends Item{
 		uid = streamUser.getId();
 		
 		//Media Items - WebPages in a post
-		
-		mediaLinks = new ArrayList<MediaItemLight>();
-		mediaIds = new ArrayList<String>();
-		mediaItems = new HashMap<URL,MediaItem>();
 		String pageURL = post.getPostUrl();
 		
 		int number = 0;
@@ -98,11 +92,8 @@ public class TumblrItem extends Item{
 						mediaItem.setRef(id);
 
 						mediaIds.add(mediaId);
-						mediaItems.put(url, mediaItem);	
-						
-						MediaItemLight mediaLink = new MediaItemLight(photoUrl, thumbnail);	
-						mediaLinks.add(mediaLink);		
-						
+						mediaItems.add(mediaItem);
+					
 					}
 				}
 			}catch (MalformedURLException e1) {
@@ -179,9 +170,7 @@ public class TumblrItem extends Item{
 			mediaItem.setPageUrl(pageURL);
 			mediaItem.setRef(mediaId);
 			mediaItem.setThumbnail(videoThumbnail);
-			mediaItems.put(url, mediaItem);	
-			MediaItemLight mediaLink = new MediaItemLight(videoUrl, null);				
-			mediaLinks.add(mediaLink);			
+			mediaItems.add(mediaItem);
 			mediaIds.add(mediaId);	
 		
 		}

@@ -430,10 +430,7 @@ public class TwitterStream extends Stream {
 				for(Status status : statuses) {
 					if(status != null){
 						TwitterItem item = new TwitterItem(status);
-						item.setDyscoId(dyscoId);
-						for(MediaItem mediaItem : item.getMediaItems().values()){
-							mediaItem.setDyscoId(dyscoId);
-						}
+					
 						items++;
 						handler.update(item);
 					}

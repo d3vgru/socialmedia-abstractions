@@ -102,12 +102,8 @@ public class InstagramMediaRetriever  implements MediaRetriever {
 					mediaItem.setLocation(location);
 				}
 				
-				// Image popularity
-				Map<String, Integer> popularity = new HashMap<String, Integer>();	
-				popularity.put("comments", mediaData.getComments().getCount());
-				popularity.put("likes", mediaData.getLikes().getCount());
-				
-				mediaItem.setPopularity(popularity);
+				mediaItem.setLikes(mediaData.getLikes().getCount());
+				mediaItem.setComments(mediaData.getComments().getCount());
 				
 				return mediaItem;
 			}

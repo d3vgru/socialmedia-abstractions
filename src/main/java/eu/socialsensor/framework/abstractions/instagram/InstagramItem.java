@@ -1,8 +1,6 @@
 package eu.socialsensor.framework.abstractions.instagram;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -15,7 +13,6 @@ import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.Location;
 import eu.socialsensor.framework.common.domain.MediaItem;
-import eu.socialsensor.framework.common.domain.MediaItemLight;
 import eu.socialsensor.framework.common.domain.Source;
 
 
@@ -72,9 +69,7 @@ public class InstagramItem extends Item {
 			location = new Location(latitude, longitude);
 		}
 		//Popularity
-		popularity = new HashMap<String, Integer>();
-		popularity.put("comments", image.getComments().getCount());
-		popularity.put("likes", image.getLikes().getCount());
+		likes = image.getLikes().getCount();
 	
 		//Getting the photo
 		Images imageContent = image.getImages();
@@ -104,11 +99,9 @@ public class InstagramItem extends Item {
 				mediaItem.setThumbnail(thumbnail);
 				mediaItem.setType("image");
 				mediaItem.setRef(id);
-				mediaItems.put(mediaUrl, mediaItem);
+				mediaItems.add(mediaItem);
 				mediaIds.add(mediaId);
-				MediaItemLight mediaLink = new MediaItemLight(url, thumbnail);
-				mediaLinks = new ArrayList<MediaItemLight>();
-				mediaLinks.add(mediaLink);
+			
 			}
 			
 		}

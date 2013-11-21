@@ -3,7 +3,6 @@ package eu.socialsensor.framework.abstractions.gplus;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import com.google.api.services.plus.model.Activity;
 import com.google.api.services.plus.model.Activity.Actor;
@@ -17,7 +16,6 @@ import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.Location;
 import eu.socialsensor.framework.common.domain.MediaItem;
-import eu.socialsensor.framework.common.domain.MediaItemLight;
 import eu.socialsensor.framework.common.domain.Source;
 import eu.socialsensor.framework.common.domain.WebPage;
 
@@ -66,17 +64,16 @@ public class GooglePlusItem extends Item {
 			location = new Location(latitude, longitude,activity.getPlaceName());
 		}
 		//Popularity
-		popularity = new HashMap<String, Integer>();
 		if(activity.getObject().getPlusoners() != null)
-			popularity.put("Plusoners", activity.getObject().getPlusoners().getTotalItems().intValue());
-		
+			likes = activity.getObject().getPlusoners().getTotalItems().intValue();
+			
 		if(activity.getObject().getResharers() != null)
-			popularity.put("Resharers", activity.getObject().getResharers().getTotalItems().intValue());
+			shares = activity.getObject().getResharers().getTotalItems().intValue();
+			
 		
 		//Media Items - WebPages in a post
 	
 		webPages = new ArrayList<WebPage>();
-		mediaLinks = new ArrayList<MediaItemLight>();
 		String pageURL = activity.getUrl();
 		
 		for(Attachments attachment : activity.getObject().getAttachments()){
@@ -109,9 +106,7 @@ public class GooglePlusItem extends Item {
 			    		mediaItem.setRef(id);
 			    		mediaItem.setThumbnail(thumbUrl);
 			    		
-			    		mediaItems.put(mediaUrl, mediaItem);	
-			    		MediaItemLight mediaLink = new MediaItemLight(mediaUrl.toString(), null);				
-			    		mediaLinks.add(mediaLink);			
+			    		mediaItems.add(mediaItem);			
 			    		mediaIds.add(mediaId);		
 				    	
 					}
@@ -144,9 +139,7 @@ public class GooglePlusItem extends Item {
 		        		mediaItem.setPageUrl(pageURL);
 		        		mediaItem.setSize(width,height);
 		        		mediaItem.setRef(id);
-		        		mediaItems.put(mediaUrl, mediaItem);	
-		        		MediaItemLight mediaLink = new MediaItemLight(image.getUrl(), thumnailUrl);				
-		        		mediaLinks.add(mediaLink);			
+		        		mediaItems.add(mediaItem);
 		        		mediaIds.add(mediaId);		
 		        		
 		    		}
@@ -184,9 +177,7 @@ public class GooglePlusItem extends Item {
 			        		}
 			        		
 			        		mediaItem.setRef(id);
-			        		mediaItems.put(mediaUrl, mediaItem);	
-			        		MediaItemLight mediaLink = new MediaItemLight(image.getUrl(), null);				
-			        		mediaLinks.add(mediaLink);			
+			        		mediaItems.add(mediaItem);		
 			        		mediaIds.add(mediaId);		
 				        		
 		    			}

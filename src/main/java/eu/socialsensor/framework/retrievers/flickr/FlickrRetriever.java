@@ -250,8 +250,6 @@ public class FlickrRetriever implements Retriever {
 				Photo photo = PhotoUtils.createPhoto(photoElement);
 			
 				FlickrItem flickrUpdate = new FlickrItem(photo,feed);
-				flickrUpdate.setDyscoId(feed.getDyscoId());
-				
 				items.add(flickrUpdate);
 				
 				if(items.size()>results_threshold || numberOfRequests >= request_threshold){

@@ -29,13 +29,9 @@ public class DailyMotionMediaItem extends MediaItem {
 		this.setType("video");
 		this.setStreamId("Dailymotion");
 		
-		// Set popularity
-		Map<String, Integer> popularity = new HashMap<String, Integer>();
-		popularity.put("views", video.views_total);
-		popularity.put("rating", video.rating);
-		popularity.put("ratings", video.ratings_total);
-		popularity.put("comments", video.comments_total);
-		this.setPopularity(popularity);
+		comments = video.comments_total;
+		views = video.views_total;
+		ratings = video.ratings_total;
 		
 		double[] geoloc = video.geoloc;
 		if(geoloc != null && geoloc.length>0) {

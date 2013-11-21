@@ -198,8 +198,6 @@ public class YoutubeRetriever implements Retriever {
 					
 					if(publicationDate.after(lastItemDate) && (video != null && video.getId() != null)){
 						YoutubeItem videoItem = new YoutubeItem(video,feed);
-						videoItem.setDyscoId(feed.getDyscoId());
-						
 						items.add(videoItem);
 					}
 					

@@ -3,7 +3,6 @@ package eu.socialsensor.framework.abstractions.facebook;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import com.restfb.types.CategorizedFacebookType;
 import com.restfb.types.Comment;
@@ -14,7 +13,6 @@ import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.Location;
 import eu.socialsensor.framework.common.domain.MediaItem;
-import eu.socialsensor.framework.common.domain.MediaItemLight;
 import eu.socialsensor.framework.common.domain.Source;
 import eu.socialsensor.framework.common.domain.WebPage;
 
@@ -70,20 +68,10 @@ public class FacebookItem extends Item {
 			}
 		}
 		//Popularity of the post
-		popularity = new HashMap<String, Integer>();
-		
-		Long likes = post.getLikesCount();
-		if(likes != null)
-			popularity.put("likes", likes.intValue());
-		
-		Long shares = post.getSharesCount();
-		if(shares != null)
-			popularity.put("shares", shares.intValue());	
-		if(post.getComments()!=null){
-			Long numberOfComments = post.getComments().getCount();
-			if(numberOfComments != null)
-				popularity.put("comments", numberOfComments.intValue());
-		}
+		if(post.getLikesCount() != null)
+			likes = post.getLikesCount().intValue();
+		if(post.getSharesCount() != null)
+			shares = post.getSharesCount().intValue();
 		
 		//Media Items - WebPages in a post
 		
@@ -117,10 +105,7 @@ public class FacebookItem extends Item {
 							String thumbnail = post.getPicture();
 							mediaItem.setThumbnail(thumbnail);
 							
-							mediaLinks = new ArrayList<MediaItemLight>();
-							mediaLinks.add(new MediaItemLight(picture, thumbnail));
-							
-							mediaItems.put(p_url, mediaItem);	
+							mediaItems.add(mediaItem);
 							mediaIds.add(mediaId);
 						}
 					}
@@ -162,10 +147,7 @@ public class FacebookItem extends Item {
 						String thumbnail = post.getPicture();
 						mediaItem.setThumbnail(thumbnail);
 						
-						mediaLinks = new ArrayList<MediaItemLight>();
-						mediaLinks.add(new MediaItemLight(picture, thumbnail));
-						
-						mediaItems.put(p_url, mediaItem);	
+						mediaItems.add(mediaItem);	
 						mediaIds.add(mediaId);
 					}
 				}
@@ -197,12 +179,7 @@ public class FacebookItem extends Item {
 					String pageUrl = post.getLink();
 					mediaItem.setPageUrl(pageUrl);
 					
-					String thumbnail = post.getPicture();
-					
-					mediaLinks = new ArrayList<MediaItemLight>();
-					mediaLinks.add(new MediaItemLight(thumbnail, thumbnail));
-					
-					mediaItems.put(videoUrl, mediaItem);	
+					mediaItems.add(mediaItem);
 					mediaIds.add(mediaId);
 				} catch (MalformedURLException e) {
 					
@@ -251,11 +228,8 @@ public class FacebookItem extends Item {
 		}
 		
 		//Popularity of the post
-		popularity = new HashMap<String, Integer>();
-		
-		Long likes = comment.getLikeCount();
-		if(likes != null)
-			popularity.put("likes", likes.intValue());
+		if(comment.getLikeCount() != null)
+			likes = comment.getLikeCount().intValue();
 	
 	}
 }

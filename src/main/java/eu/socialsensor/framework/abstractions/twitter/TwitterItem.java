@@ -4,7 +4,6 @@ import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.Location;
 import eu.socialsensor.framework.common.domain.MediaItem;
-import eu.socialsensor.framework.common.domain.MediaItemLight;
 import eu.socialsensor.framework.common.domain.Source;
 import eu.socialsensor.framework.common.domain.WebPage;
 
@@ -12,7 +11,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -151,7 +149,6 @@ public class TwitterItem extends Item {
 			links = urls.toArray(new URL[urls.size()]);
 			
 			//MediaItems inside the tweet
-			mediaLinks = new ArrayList<MediaItemLight>();
 			MediaEntity[] mediaEntities = status.getMediaEntities();
 			if (mediaEntities != null) {
 				for (MediaEntity mediaEntity : mediaEntities) {
@@ -178,8 +175,6 @@ public class TwitterItem extends Item {
 					mediaItem.setType("image");
 					mediaItem.setRef(id);
 					String thumbnail = mediaUrl+":thumb";
-					mediaLinks.add(new MediaItemLight(mediaUrl, thumbnail));
-				
 					mediaItem.setThumbnail(thumbnail);
 					mediaItem.setPageUrl(pageUrl);
 				
@@ -189,16 +184,15 @@ public class TwitterItem extends Item {
 						mediaItem.setSize(size.getWidth(), size.getHeight());
 					}
 				
-					mediaItems.put(temp_url, mediaItem);
+					mediaItems.add(mediaItem);
 					mediaIds.add(mediaId);
 				}
 			}
 		
 			//Popularity
 			Long retweet = status.getRetweetCount();
-			if (retweet > 0) {
-				popularity = new HashMap<String, Integer>();
-				popularity.put(RETWEET, retweet.intValue());
+			if (retweet != null) {
+				shares = retweet.intValue();
 			}
 		}
 	}

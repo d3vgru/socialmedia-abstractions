@@ -221,8 +221,7 @@ public class InstagramRetriever implements Retriever {
 						
 						return items;
 					}
-					instagramItem.setDyscoId(feed.getDyscoId());
-					
+
 					items.add(instagramItem);
 					
 				}
@@ -253,8 +252,6 @@ public class InstagramRetriever implements Retriever {
 								
 								if(mfeed != null && mfeed.getId() != null){
 									InstagramItem instagramItem = new InstagramItem(mfeed,feed);
-									instagramItem.setDyscoId(feed.getDyscoId());
-									
 									items.add(instagramItem);
 								}
 	
@@ -377,37 +374,6 @@ public class InstagramRetriever implements Retriever {
 		
     	return items;
     }
-	
-	public void printItemData(InstagramItem item){
-		
-		System.out.println("------ Print Media Feed Data ------");
-		
-		System.out.println("------ Media Feed Item #"+item.getId()+" ------");
-		
-		System.out.println("Source : "+item.getSource());
-		System.out.println("Title : "+item.getTitle());
-		System.out.println("Tags : ");
-		if(item.getTags()!=null)
-			for(int i=0;i<item.getTags().length;i++){
-				System.out.println("# "+i+" "+item.getTags()[i]);
-			}
-		System.out.println("Author : "+item.getStreamUser().getUsername());
-		System.out.println("Publication Time : "+item.getPublicationTime());
-		System.out.println("Comments : ");
-		if(item.getComments()!=null)
-			for(int i=0;i<item.getComments().length;i++){
-				System.out.println("# "+i+" "+item.getComments()[i]);
-			}
-		if(item.getLocation()!=null)
-			System.out.println("Location : "+item.getLocation().getLatitude()+","+item.getLocation().getLongitude());
-		if(item.getPopularity()!=null){
-			System.out.println("Popularity on Comments : "+item.getPopularity().get("comments"));
-			System.out.println("Popularity on Likes : "+item.getPopularity().get("likes"));
-		}
-		System.out.println("URL : "+item.getMediaLinks().get(0).getMediaLink());
-		
-	
-	}
 	
 	public List<Item> retrieve (Feed feed) {
 	

@@ -255,8 +255,6 @@ public class GooglePlusRetriever implements Retriever{
 					
 					if(publicationDate.after(lastItemDate) && activity != null && activity.getId() != null){
 						GooglePlusItem googlePlusUpdate = new GooglePlusItem(activity,feed);
-						googlePlusUpdate.setDyscoId(feed.getDyscoId());
-						
 						items.add(googlePlusUpdate);
 						
 					}

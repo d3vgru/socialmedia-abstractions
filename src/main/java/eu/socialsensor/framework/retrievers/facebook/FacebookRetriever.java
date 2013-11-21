@@ -160,8 +160,6 @@ public class FacebookRetriever implements Retriever {
 				if(publicationDate.after(lastItemDate) && post!=null && post.getId()!=null){
 					
 					FacebookItem facebookUpdate = new FacebookItem(post,feed);
-					facebookUpdate.setDyscoId(feed.getDyscoId());
-				    
 					items.add(facebookUpdate);
 				  
 				}

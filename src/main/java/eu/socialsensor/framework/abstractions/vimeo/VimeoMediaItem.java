@@ -34,12 +34,10 @@ public class VimeoMediaItem extends MediaItem {
 		this.setStreamId("Vimeo");
 		this.setType("video");
 		
-		Map<String, Integer> popularity = new HashMap<String, Integer>();
-		popularity.put("comments", video.stats_number_of_comments);
-		popularity.put("likes", video.stats_number_of_likes);
-		popularity.put("views", video.stats_number_of_plays);		
-	
-		this.setPopularity(popularity);
+		
+		likes = video.stats_number_of_likes;
+		views = video.stats_number_of_plays;
+		comments = video.stats_number_of_comments;
 		
 		try {
 			Date date = formatter.parse(video.upload_date);

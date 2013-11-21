@@ -42,10 +42,8 @@ public class TwitPicMediaItem extends MediaItem {
 		}
 		catch(Exception e){}
 		
-		Map<String, Integer> popularity = new HashMap<String, Integer>();
-		popularity.put("comments", image.number_of_comments);
-		popularity.put("views", image.views);
-		this.setPopularity(popularity);
+		comments = image.number_of_comments;
+		views = image.views;
 		
 		this.setSize(image.width, image.height);
 		

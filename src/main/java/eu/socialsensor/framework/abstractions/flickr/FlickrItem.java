@@ -2,10 +2,7 @@ package eu.socialsensor.framework.abstractions.flickr;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collection;
-
-import java.util.HashMap;
 
 import com.aetrion.flickr.people.User;
 import com.aetrion.flickr.photos.GeoData;
@@ -16,7 +13,6 @@ import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.Location;
 import eu.socialsensor.framework.common.domain.MediaItem;
-import eu.socialsensor.framework.common.domain.MediaItemLight;
 import eu.socialsensor.framework.common.domain.Source;
 
 /**
@@ -75,11 +71,8 @@ public class FlickrItem extends Item {
 			location = new Location(latitude, longitude);
 		}
 		//Popularity
-		popularity = new HashMap<String, Integer>();
-		popularity.put("comments", photo.getComments());
-		
+	
 		//Getting the photo
-		mediaLinks = new ArrayList<MediaItemLight>();
 	
 		String url = null;
 		try {
@@ -104,8 +97,7 @@ public class FlickrItem extends Item {
 				mediaItem.setType("image");
 				mediaItem.setThumbnail(thumbnail);
 				mediaItem.setRef(id);
-				mediaItems.put(mediaUrl, mediaItem);
-				mediaLinks.add(new MediaItemLight(url, thumbnail));
+				mediaItems.add(mediaItem);
 				mediaIds.add(mediaId);
 				
 			}

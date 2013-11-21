@@ -77,21 +77,18 @@ public class YtMediaRetriever implements MediaRetriever {
 					// Set popularity
 					Map<String, Integer> popularity = new HashMap<String, Integer>();
 					if(statistics!=null){
-						Long views = statistics.getViewCount();
-						if(views!=null)
-							popularity.put("views", views.intValue());
-						Long favorites = statistics.getFavoriteCount();
-						if(favorites!=null)
-							popularity.put("favorites", favorites.intValue());
+						mediaItem.setViews((int) statistics.getViewCount());
+						
+						mediaItem.setLikes((int) statistics.getFavoriteCount());
+						
 					}
 					Rating rating = entry.getRating();
 					if(rating != null) {
-						Integer ratings = rating.getNumRaters();
-						popularity.put("ratings", ratings);
-						Float avg = rating.getAverage();
-						popularity.put("avgRating", avg.intValue());
+						mediaItem.setRatings(rating.getAverage().intValue());
 					}
-					mediaItem.setPopularity(popularity);
+					
+					
+					
 					
 					// Set thumbnail
 					MediaThumbnail thumb = null;

@@ -240,8 +240,6 @@ public class TumblrRetriever implements Retriever{
 							e.printStackTrace();
 							return items;
 						}
-						tumblrItem.setDyscoId(feed.getDyscoId());
-						
 						items.add(tumblrItem);
 						
 					}
