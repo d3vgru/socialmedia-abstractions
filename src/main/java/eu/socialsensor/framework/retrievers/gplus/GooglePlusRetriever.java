@@ -143,7 +143,7 @@ public class GooglePlusRetriever implements Retriever{
 						return items;
 					}
 					
-					if(publicationDate.after(lastItemDate) && activity.getObject().getAttachments() != null){
+					if(publicationDate.after(lastItemDate) && activity != null && activity.getId() != null){
 						GooglePlusItem googlePlusUpdate = new GooglePlusItem(activity,feed);
 						
 						items.add(googlePlusUpdate);
@@ -253,7 +253,7 @@ public class GooglePlusRetriever implements Retriever{
 						return items;
 					}
 					
-					if(publicationDate.after(lastItemDate) && activity.getObject().getAttachments() != null){
+					if(publicationDate.after(lastItemDate) && activity != null && activity.getId() != null){
 						GooglePlusItem googlePlusUpdate = new GooglePlusItem(activity,feed);
 						googlePlusUpdate.setDyscoId(feed.getDyscoId());
 						

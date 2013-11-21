@@ -120,16 +120,17 @@ public class InstagramRetriever implements Retriever {
 						int createdTime = Integer.parseInt(mfeed.getCreatedTime());
 						Date publicationDate = new Date((long) createdTime * 1000);
 						
-						if(lastItemDate.before(publicationDate) || lastItemDate.equals(publicationDate)){
+						if(lastItemDate.after(publicationDate) || items.size()>results_threshold 
+								|| numberOfRequests>request_threshold){
+    						isFinished = true;
+							break;
+    					}
+						if(mfeed != null && mfeed.getId() != null){
 							InstagramItem instagramUpdate = new InstagramItem(mfeed,feed);
 							
 							items.add(instagramUpdate);	
 						}
 						
-						if(items.size()>results_threshold || numberOfRequests>request_threshold){
-							isFinished = true;
-							break;
-						}
 					}
 				}
 				
@@ -159,7 +160,7 @@ public class InstagramRetriever implements Retriever {
 		
 		boolean isFinished = false;
 		
-		int totalRequests = 0;
+		int numberOfRequests = 0;
 		
 		Keyword keyword = feed.getKeyword();
 		List<Keyword> keywords = feed.getKeywords();
@@ -192,7 +193,7 @@ public class InstagramRetriever implements Retriever {
 		//retrieve first page
 		try{
 			tagFeed = instagram.getRecentMediaTags(tags);
-			totalRequests++;
+			numberOfRequests++;
 		}
 		catch(InstagramException e){
 			/*logger.error("#First Instagram Exception : "+e);*/
@@ -206,24 +207,24 @@ public class InstagramRetriever implements Retriever {
 			for(MediaFeedData mfeed : tagFeed.getData()) {
 				int createdTime = Integer.parseInt(mfeed.getCreatedTime());
 				Date publicationDate = new Date((long) createdTime * 1000);
-				if(publicationDate.after(lastItemDate)){
+				
+				if(publicationDate.before(lastItemDate) || items.size()>results_threshold || numberOfRequests>request_threshold){
+					isFinished = true;
+					break;
+				}
+				
+				if(mfeed != null && mfeed.getId() != null){
 					InstagramItem instagramItem;
 					try {
 						instagramItem = new InstagramItem(mfeed,feed);
 					} catch (MalformedURLException e) {
-						// TODO Auto-generated catch block
-						/*logger.error("#Instagram Exception : "+e);
-						e.printStackTrace();*/
+						
 						return items;
 					}
 					instagramItem.setDyscoId(feed.getDyscoId());
 					
 					items.add(instagramItem);
 					
-				}
-				else if(publicationDate.before(lastItemDate) || items.size()>results_threshold){
-					isFinished = true;
-					break;
 				}
 		
 			}
@@ -233,28 +234,30 @@ public class InstagramRetriever implements Retriever {
 				while(pagination.hasNextPage()){
 					
 					try{
-						if(totalRequests>=request_threshold)
+						if(numberOfRequests>=request_threshold)
 							break;
 						
 						tagFeed = instagram.getTagMediaInfoNextPage(pagination);
-						totalRequests++;
+						numberOfRequests++;
 						pagination = tagFeed.getPagination();
 						if(tagFeed.getData() != null){
 							
 							for(MediaFeedData mfeed : tagFeed.getData()) {
 								int createdTime = Integer.parseInt(mfeed.getCreatedTime());
 								Date publicationDate = new Date((long) createdTime * 1000);
-								if(publicationDate.after(lastItemDate)){
+								if(publicationDate.before(lastItemDate) || items.size()>results_threshold
+										|| numberOfRequests>request_threshold){
+									isFinished = true;
+									break;
+								}
+								
+								if(mfeed != null && mfeed.getId() != null){
 									InstagramItem instagramItem = new InstagramItem(mfeed,feed);
 									instagramItem.setDyscoId(feed.getDyscoId());
 									
 									items.add(instagramItem);
 								}
-								else if(publicationDate.before(lastItemDate) || items.size()>results_threshold){
-									isFinished = true;
-									break;
-								}
-							
+	
 							}
 							if(isFinished)
 								break;
@@ -269,9 +272,7 @@ public class InstagramRetriever implements Retriever {
 						e1.printStackTrace();*/
 						return items;
 					}
-					
-					
-				
+
 				}
 			}
 			
@@ -292,6 +293,7 @@ public class InstagramRetriever implements Retriever {
 		DateUtil dateUtil = new DateUtil();
 		
 		int it = 0 ;
+		int numberOfRequests = 0;
 		
 		boolean isFinished = false;
 		
@@ -330,20 +332,24 @@ public class InstagramRetriever implements Retriever {
     			it++;
     			try{
         			mediaFeed = instagram.getRecentMediaByLocation(location.getId(),0,0,upDate,downDate);
+        			numberOfRequests++;
         			if(mediaFeed != null){
         				logger.info("#Instagram : Retrieving page "+it+" that contains "+mediaFeed.getData().size()+" posts");	
             			
                 		for(MediaFeedData mfeed : mediaFeed.getData()){
         					int createdTime = Integer.parseInt(mfeed.getCreatedTime());
         					Date publicationDate = new Date((long) createdTime * 1000);
-        					InstagramItem instagramUpdate = new InstagramItem(mfeed,feed);
-        					
-        					items.add(instagramUpdate);
-    						
-        					if(lastItemDate.after(publicationDate) || items.size()>results_threshold){
+        					if(lastItemDate.after(publicationDate) || items.size()>results_threshold 
+        							|| numberOfRequests>request_threshold){
         						isFinished = true;
 								break;
         					}
+        					
+        					if((mfeed != null && mfeed.getId() != null)){
+        						InstagramItem instagramUpdate = new InstagramItem(mfeed,feed);
+        						items.add(instagramUpdate);
+        					}
+        					
         				}
         			}
         		}

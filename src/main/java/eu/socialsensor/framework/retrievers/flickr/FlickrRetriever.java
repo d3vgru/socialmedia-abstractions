@@ -142,11 +142,12 @@ public class FlickrRetriever implements Retriever {
 			for (int i = 0; i < photoNodes.getLength(); i++) {
 				Element photoElement = (Element) photoNodes.item(i);
 				Photo photo = PhotoUtils.createPhoto(photoElement);
-			
-				FlickrItem flickrUpdate = new FlickrItem(photo,feed);
 				
-				items.add(flickrUpdate);
+				if (photo != null || photo.getId() != null){
+					FlickrItem flickrUpdate = new FlickrItem(photo,feed);
 				
+					items.add(flickrUpdate);
+				}
 				if(items.size()>results_threshold || numberOfRequests > request_threshold){
 					isFinished = true;
 					break;

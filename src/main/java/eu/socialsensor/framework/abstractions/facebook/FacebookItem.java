@@ -3,15 +3,10 @@ package eu.socialsensor.framework.abstractions.facebook;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
-
 
 import com.restfb.types.CategorizedFacebookType;
 import com.restfb.types.Comment;
-import com.restfb.types.NamedFacebookType;
 import com.restfb.types.Place;
 import com.restfb.types.Post;
 
@@ -33,7 +28,7 @@ public class FacebookItem extends Item {
 	
 	public FacebookItem(String id, Operation operation) {
 		super(Source.Type.Facebook.toString(), operation);
-		setId(Source.Type.Facebook+"::"+id);
+		setId(Source.Type.Facebook+"#"+id);
 	}
 	
 	public FacebookItem(Post post) {
@@ -42,175 +37,39 @@ public class FacebookItem extends Item {
 		
 		if (post == null || post.getId() == null) return;
 		
-		id = Source.Type.Facebook+"::"+post.getId();
-		
-		NamedFacebookType application = post.getApplication();
-		if(application != null)
-			source = application.getName();
-		
-		author = null;
+		//Id
+		id = Source.Type.Facebook+"#"+post.getId();
+		//SocialNetwork Name
+		streamId = Source.Type.Facebook.toString();
+		//Timestamp of the creation of the post
+		publicationTime = post.getCreatedTime().getTime();
+		//Message that post contains
+		String msg = post.getMessage();
+		if(msg!=null) {
+			title = msg.subSequence(0, 100)+"...";
+			description = post.getDescription();
+		}
+		//All the text inside the post
+		text = msg; 
+		//User that posted the post
 		CategorizedFacebookType user = post.getFrom();
 		if (user != null) {
 			streamUser = new FacebookStreamUser(user);
 			uid = streamUser.getId();
-			
-			author = user.getName();
 		}
+		//Location 
+		Place place = post.getPlace();
+		if(place != null) {
+			String placeName = place.getName();
+			com.restfb.types.Location loc = place.getLocation();
+			if(loc != null) {
+				Double latitude = loc.getLatitude();
+				Double longitude = loc.getLongitude();
 		
-		text = post.getMessage();
-		
-		Date pubDate = post.getCreatedTime();
-		publicationTime = pubDate.getTime();
-		
-		Set<URL> ulinks = new HashSet<URL>();
-		Set<URL> mlinks = new HashSet<URL>();
-		
-		String type = post.getType();
-		
-		if(type.equals("photo")) {
-		
-			String picture = post.getPicture();
-			
-			try {
-				if (picture != null) { 
-					
-					URL p_url = new URL(picture);
-					
-					String mediaId = Source.Type.Facebook+"::"+post.getId();
-					MediaItem mediaItem = new MediaItem(p_url);
-					mediaItem.setId(mediaId);
-					mediaItem.setType("image");
-					mediaItem.setRef(id);
-					String pageUrl = post.getLink();
-					mediaItem.setPageUrl(pageUrl);
-					
-					// TODO: Cannot take media size. This needs a separate request. 
-					
-					String thumbnail = picture;
-					mediaItem.setThumbnail(thumbnail);
-					StringBuilder b = new StringBuilder(picture);
-					int index = picture.lastIndexOf("_s.");
-					if(index>0) {
-						b.replace(index, index+3, "_n." );
-						picture = picture.replaceAll("_s.", "_n.");
-						p_url = new URL(picture);
-					}
-					mediaLinks = new ArrayList<MediaItemLight>();
-					mediaLinks.add(new MediaItemLight(picture, thumbnail));
-					
-					mlinks.add(p_url);
-					mediaItems.put(p_url, mediaItem);	
-					mediaIds.add(mediaId);
-				}
-			} catch (MalformedURLException e) { 
-				e.printStackTrace();
+				location = new Location(latitude, longitude, placeName);
 			}
 		}
-		else if(type.equals("link")) {
-			webPages = new ArrayList<WebPage>();
-			String picture = post.getPicture(); 
-			if (picture != null) { 
-				
-				URL p_url = null;
-				try {
-					p_url = new URL(picture);
-				} catch (MalformedURLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
-				String mediaId = Source.Type.Facebook+"::"+post.getId();
-				MediaItem mediaItem = new MediaItem(p_url);
-				mediaItem.setId(mediaId);
-				mediaItem.setType("image");
-				mediaItem.setRef(id);
-				String pageUrl = post.getLink();
-				mediaItem.setPageUrl(pageUrl);
-				
-				String thumbnail = picture;
-				mediaItem.setThumbnail(thumbnail);
-				StringBuilder b = new StringBuilder(picture);
-				int index = picture.lastIndexOf("_s.");
-				if(index>0) {
-					b.replace(index, index+3, "_n." );
-					picture = picture.replaceAll("_s.", "_n.");
-					try {
-						p_url = new URL(picture);
-					} catch (MalformedURLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-				mediaLinks = new ArrayList<MediaItemLight>();
-				mediaLinks.add(new MediaItemLight(picture, thumbnail));
-				
-				mlinks.add(p_url);
-				mediaItems.put(p_url, mediaItem);	
-				mediaIds.add(mediaId);
-			}
-			
-			String link = post.getLink();
-			try {
-				if (link != null) {
-					ulinks.add(new URL(link));
-					
-					WebPage webPage = new WebPage(link, id);
-					webPage.setStreamId(streamId);
-					webPage.setDate(new Date(publicationTime));
-					webPages.add(webPage);
-				}
-			} catch (MalformedURLException e) { 
-				e.printStackTrace();
-			}
-		}
-		else if(type.equals("video")) {
-			
-			String url = post.getSource();
-			String picture = post.getPicture();
-			if(picture!=null){
-				
-				URL videoUrl = null;
-				try {
-					videoUrl = new URL(url);
-					String mediaId = Source.Type.Facebook+"::"+post.getId();
-					MediaItem mediaItem = new MediaItem(videoUrl);
-					mediaItem.setId(mediaId);
-					mediaItem.setType("video");
-					mediaItem.setThumbnail(picture);
-					mediaItem.setRef(id);
-					String pageUrl = post.getLink();
-					mediaItem.setPageUrl(pageUrl);
-					mediaItem.setDyscoId(feed.getDyscoId());
-					
-					String thumbnail = post.getPicture();
-					
-					mediaLinks = new ArrayList<MediaItemLight>();
-					mediaLinks.add(new MediaItemLight(thumbnail, thumbnail));
-					
-					mlinks.add(videoUrl);
-					mediaItems.put(videoUrl, mediaItem);	
-					mediaIds.add(mediaId);
-				} catch (MalformedURLException e) {
-					
-				}
-			}
-		}
-		
-		links = ulinks.toArray(new URL[ulinks.size()]);
-		//mediaLinks = mlinks.toArray(new URL[mlinks.size()]);
-		
-		String msg = post.getMessage();
-		
-		if(msg!=null && msg.length() > 100) {
-			title = msg.subSequence(0, 100)+"...";
-			description = msg;
-		}
-		else {
-			title = msg;
-			description = post.getDescription();
-		}
-		
-		
+		//Popularity of the post
 		popularity = new HashMap<String, Integer>();
 		
 		Long likes = post.getLikesCount();
@@ -226,49 +85,7 @@ public class FacebookItem extends Item {
 				popularity.put("comments", numberOfComments.intValue());
 		}
 		
-		Place place = post.getPlace();
-		if(place != null) {
-			String placeName = place.getName();
-			com.restfb.types.Location loc = place.getLocation();
-			if(loc != null) {
-				Double latitude = loc.getLatitude();
-				Double longitude = loc.getLongitude();
-		
-				location = new Location(latitude, longitude, placeName);
-			}
-		}
-		
-		
-	}
-    
-	public FacebookItem(Post post, Feed itemFeed) {
-		
-		super(Source.Type.Facebook.toString(), Operation.NEW);
-		
-		if (post == null || post.getId() == null) return;
-		
-		id = Source.Type.Facebook+"::"+post.getId();
-		
-		NamedFacebookType application = post.getApplication();
-		if(application != null)
-			source = application.getName();
-		
-		author = null;
-		CategorizedFacebookType user = post.getFrom();
-		if (user != null) {
-			streamUser = new FacebookStreamUser(user);
-			uid = streamUser.getId();
-			
-			author = user.getName();
-		}
-			
-		feed = itemFeed;
-		feedType = itemFeed.getFeedtype().toString();
-		
-		text = post.getMessage();
-		
-		Set<URL> ulinks = new HashSet<URL>();
-		Set<URL> mlinks = new HashSet<URL>();
+		//Media Items - WebPages in a post
 		
 		String type = post.getType();
 		
@@ -288,14 +105,13 @@ public class FacebookItem extends Item {
 					
 						if(p_url != null){
 							
-							String mediaId = Source.Type.Facebook+"::"+post.getId();
+							String mediaId = Source.Type.Facebook+"#"+post.getId();
 							MediaItem mediaItem = new MediaItem(p_url);
 							mediaItem.setId(mediaId);
 							mediaItem.setType("image");
 							mediaItem.setRef(id);
 							String pageUrl = post.getLink();
 							mediaItem.setPageUrl(pageUrl);
-							mediaItem.setDyscoId(feed.getDyscoId());
 							// TODO: Cannot take media size. This needs a separate request. 
 							
 							String thumbnail = post.getPicture();
@@ -304,7 +120,6 @@ public class FacebookItem extends Item {
 							mediaLinks = new ArrayList<MediaItemLight>();
 							mediaLinks.add(new MediaItemLight(picture, thumbnail));
 							
-							mlinks.add(p_url);
 							mediaItems.put(p_url, mediaItem);	
 							mediaIds.add(mediaId);
 						}
@@ -334,14 +149,14 @@ public class FacebookItem extends Item {
 				
 					if(p_url != null){
 						
-						String mediaId = Source.Type.Facebook+"::"+post.getId();
+						String mediaId = Source.Type.Facebook+"#"+post.getId();
 						MediaItem mediaItem = new MediaItem(p_url);
 						mediaItem.setId(mediaId);
 						mediaItem.setType("image");
 						mediaItem.setRef(id);
 						String pageUrl = post.getLink();
 						mediaItem.setPageUrl(pageUrl);
-						mediaItem.setDyscoId(feed.getDyscoId());
+
 						// TODO: Cannot take media size. This needs a separate request. 
 						
 						String thumbnail = post.getPicture();
@@ -350,7 +165,6 @@ public class FacebookItem extends Item {
 						mediaLinks = new ArrayList<MediaItemLight>();
 						mediaLinks.add(new MediaItemLight(picture, thumbnail));
 						
-						mlinks.add(p_url);
 						mediaItems.put(p_url, mediaItem);	
 						mediaIds.add(mediaId);
 					}
@@ -358,16 +172,11 @@ public class FacebookItem extends Item {
 			}
 			
 			String link = post.getLink();
-			try {
-				if (link != null) {
-					ulinks.add(new URL(link));
-					
-					WebPage webPage = new WebPage(link, id);
-					webPage.setStreamId(streamId);
-					webPages.add(webPage);
-				}
-			} catch (MalformedURLException e) { 
-				e.printStackTrace();
+			if (link != null) {
+				
+				WebPage webPage = new WebPage(link, id);
+				webPage.setStreamId(streamId);
+				webPages.add(webPage);
 			}
 		}
 		else if(type.equals("video")) {
@@ -379,7 +188,7 @@ public class FacebookItem extends Item {
 				URL videoUrl = null;
 				try {
 					videoUrl = new URL(url);
-					String mediaId = Source.Type.Facebook+"::"+post.getId();
+					String mediaId = Source.Type.Facebook+"#"+post.getId();
 					MediaItem mediaItem = new MediaItem(videoUrl);
 					mediaItem.setId(mediaId);
 					mediaItem.setType("video");
@@ -387,14 +196,12 @@ public class FacebookItem extends Item {
 					mediaItem.setRef(id);
 					String pageUrl = post.getLink();
 					mediaItem.setPageUrl(pageUrl);
-					mediaItem.setDyscoId(feed.getDyscoId());
 					
 					String thumbnail = post.getPicture();
 					
 					mediaLinks = new ArrayList<MediaItemLight>();
 					mediaLinks.add(new MediaItemLight(thumbnail, thumbnail));
 					
-					mlinks.add(videoUrl);
 					mediaItems.put(videoUrl, mediaItem);	
 					mediaIds.add(mediaId);
 				} catch (MalformedURLException e) {
@@ -403,82 +210,52 @@ public class FacebookItem extends Item {
 			}
 			
 		}
+	
+	}
+    
+	public FacebookItem(Post post, Feed itemFeed) {
 		
-		Date pubDate = post.getCreatedTime();
-		publicationTime = pubDate.getTime();
-		
-		links = ulinks.toArray(new URL[ulinks.size()]);
-		//mediaLinks = mlinks.toArray(new URL[mlinks.size()]);
-		
-		String msg = post.getMessage();
-		
-		if(msg!=null && msg.length() > 100) {
-			title = msg.subSequence(0, 100)+"...";
-			description = msg;
-		}
-		else {
-			title = msg;
-			description = post.getDescription();
-		}
-		
-		popularity = new HashMap<String, Integer>();
-		
-		Long likes = post.getLikesCount();
-		if(likes != null)
-			popularity.put("likes", likes.intValue());
-		
-		Long shares = post.getSharesCount();
-		if(shares != null)
-			popularity.put("shares", shares.intValue());	
-		if(post.getComments()!=null){
-			Long numberOfComments = post.getComments().getCount();
-			if(numberOfComments != null)
-				popularity.put("comments", numberOfComments.intValue());
-		}
-		
-		Place place = post.getPlace();
-		if(place != null) {
-			String placeName = place.getName();
-			com.restfb.types.Location loc = place.getLocation();
-			if(loc != null) {
-				Double latitude = loc.getLatitude();
-				Double longitude = loc.getLongitude();
-		
-				location = new Location(latitude, longitude, placeName);
-			}
-		}
-		
-		
+		this(post);
+
+		feed = itemFeed;
+		feedType = itemFeed.getFeedtype().toString();
+
 	}
 	
-	public FacebookItem(Comment comment) {
+	public FacebookItem(Comment comment,Post post) {
 		super(Source.Type.Facebook.toString(), Operation.NEW);
+		
 		if (comment == null) return;
 		
+		//Id
 		id = Source.Type.Facebook+"::"+comment.getId();
-		
-		author = null;
+		//Reference to the original post
+		reference = Source.Type.Facebook+"#"+post.getId();
+		//SocialNetwork Name
+		streamId = Source.Type.Facebook.toString();
+		//Timestamp of the creation of the post
+		publicationTime = comment.getCreatedTime().getTime();
+		//Message that post contains
+		String msg = comment.getMessage();
+		if(msg!=null) {
+			title = msg.subSequence(0, 100)+"...";
+			description = "Comment";
+		}
+		//All the text inside the comment
+		text = msg; 
+		//User that posted the post
 		CategorizedFacebookType user = comment.getFrom();
 		if (user != null) {
 			streamUser = new FacebookStreamUser(user);
 			uid = streamUser.getId();
-			author = streamUser.getUserId();
 		}
 		
-		Date pubDate = comment.getCreatedTime();
-		publicationTime = pubDate.getTime();
-
-		title = comment.getMessage();
-		description = "comment";
-		
-		links = new URL[0];
-		mediaLinks = new ArrayList<MediaItemLight>();
-		
+		//Popularity of the post
 		popularity = new HashMap<String, Integer>();
 		
 		Long likes = comment.getLikeCount();
 		if(likes != null)
 			popularity.put("likes", likes.intValue());
-		
+	
 	}
 }

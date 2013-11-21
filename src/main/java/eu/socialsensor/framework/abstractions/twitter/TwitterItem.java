@@ -1,5 +1,6 @@
 package eu.socialsensor.framework.abstractions.twitter;
 
+import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.Location;
 import eu.socialsensor.framework.common.domain.MediaItem;
@@ -43,59 +44,40 @@ public class TwitterItem extends Item {
 
 	public TwitterItem(String id, Operation operation) {
 		super(Source.Type.Twitter.toString(), operation);
-		setId(Source.Type.Twitter+"::"+id);
+		setId(Source.Type.Twitter+"#"+id);
 	}
     
 	public TwitterItem(Status status) {
-
+		
 		if (status == null) return;
 		
-		id = Source.Type.Twitter+"::"+status.getId();
+		//Id
+		id = Source.Type.Twitter+"#"+status.getId();
+		//SocialNetwork Name
 		streamId = Source.Type.Twitter.toString();
-		source = "Twitter";
-		
-		Date pubDate = status.getCreatedAt();
-		publicationTime = pubDate.getTime();
-		
-		author = null;
+		//Timestamp of the creation of the tweet
+		publicationTime = status.getCreatedAt().getTime();
+		//User that wrote the tweet
 		User user = status.getUser();
 		if (user != null) {
 			streamUser = new TwitterStreamUser(user);
 			uid = streamUser.getId();
-			author = user.getScreenName();
 		}
 		
-		GeoLocation geoLocation = status.getGeoLocation();
-		if (geoLocation != null) {
-			double latitude = status.getGeoLocation().getLatitude();
-			double longitude = status.getGeoLocation().getLongitude();
-		
-			location = new Location(latitude, longitude);
-		}
-		Place place = status.getPlace();
-		if (place != null) { 
-			String placeName = status.getPlace().getFullName();
-			if(location==null) {
-				location = new Location(placeName);
-			}
-			else {
-				location.setName(placeName);
-			}
-		}
-		
+		//Store/Update on the basis that it is an original tweet or a retweet
 		Status retweetStatus = status.getRetweetedStatus();
 		if(retweetStatus != null) {
 			operation = Operation.UPDATE;
 			
-			reference = Source.Type.Twitter+"::"+retweetStatus.getId();
+			reference = Source.Type.Twitter+"#"+retweetStatus.getId();
 			super.referencedUser = retweetStatus.getUser().getScreenName();
 			super.referencedUserId = Long.toString(retweetStatus.getUser().getId());
 		}
 		else {
 			operation = Operation.NEW;
-			
-			//text = DataObjectFactory.getRawJSON(status);
-			
+			//Title of the tweet
+			title = status.getText();
+			//Tags 
 			HashtagEntity[] hashtags = status.getHashtagEntities();
 			tags = null;
 			if (hashtags != null) {
@@ -104,7 +86,7 @@ public class TwitterItem extends Item {
 					tags[i] = hashtags[i].getText();
 				}
 			}
-		
+			//User that are mentioned inside the tweet
 			UserMentionEntity[] userMentions = status.getUserMentionEntities();
 			List<String> mentions = new ArrayList<String>();
 			for(UserMentionEntity userMention : userMentions) {
@@ -113,7 +95,25 @@ public class TwitterItem extends Item {
 			}
 			super.mentions = mentions.toArray(new String[mentions.size()]);
 			super.inReply = status.getInReplyToScreenName();
-		
+			//Location
+			GeoLocation geoLocation = status.getGeoLocation();
+			if (geoLocation != null) {
+				double latitude = status.getGeoLocation().getLatitude();
+				double longitude = status.getGeoLocation().getLongitude();
+			
+				location = new Location(latitude, longitude);
+			}
+			Place place = status.getPlace();
+			if (place != null) { 
+				String placeName = status.getPlace().getFullName();
+				if(location==null) {
+					location = new Location(placeName);
+				}
+				else {
+					location.setName(placeName);
+				}
+			}
+			//WebPages inside the tweet
 			URLEntity[] urlEntities = status.getURLEntities();
 			Set<URL> urls = new HashSet<URL>();
 			webPages = new ArrayList<WebPage>();
@@ -149,7 +149,8 @@ public class TwitterItem extends Item {
 				}
 			}
 			links = urls.toArray(new URL[urls.size()]);
-
+			
+			//MediaItems inside the tweet
 			mediaLinks = new ArrayList<MediaItemLight>();
 			MediaEntity[] mediaEntities = status.getMediaEntities();
 			if (mediaEntities != null) {
@@ -170,7 +171,7 @@ public class TwitterItem extends Item {
 						pageUrl = mediaEntity.getURL();
 					}
 				
-					String mediaId = Source.Type.Twitter + "::" + mediaUrl;
+					String mediaId = Source.Type.Twitter + "#" + mediaUrl;
 				
 					MediaItem mediaItem = new MediaItem(temp_url);
 					mediaItem.setId(mediaId);
@@ -193,13 +194,19 @@ public class TwitterItem extends Item {
 				}
 			}
 		
-			title = status.getText();
-		
+			//Popularity
 			Long retweet = status.getRetweetCount();
 			if (retweet > 0) {
 				popularity = new HashMap<String, Integer>();
 				popularity.put(RETWEET, retweet.intValue());
 			}
 		}
+	}
+	
+	public TwitterItem(Status status,Feed itemFeed){
+		this(status);
+		
+		feed = itemFeed;
+		feedType = itemFeed.getFeedtype().toString();
 	}
 }

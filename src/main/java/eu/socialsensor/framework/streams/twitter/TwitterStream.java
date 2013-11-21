@@ -316,14 +316,15 @@ public class TwitterStream extends Stream {
 			@Override
 			public void onStatus(Status status) {
 				synchronized(this) {
-					store(new TwitterItem(status));
-					totalItems++;
-					// Update original tweet
-					Status retweetedStatus = status.getRetweetedStatus();
-					if(retweetedStatus != null) {
-						store(new TwitterItem(retweetedStatus));
+					if(status != null){
+						store(new TwitterItem(status));
+					
+						// Update original tweet
+						Status retweetedStatus = status.getRetweetedStatus();
+						if(retweetedStatus != null) {
+							store(new TwitterItem(retweetedStatus));
+						}
 					}
-	
 				}
 			}
 			
@@ -427,13 +428,15 @@ public class TwitterStream extends Stream {
 				
 				List<Status> statuses = response.getTweets();
 				for(Status status : statuses) {
-					TwitterItem item = new TwitterItem(status);
-					item.setDyscoId(dyscoId);
-					for(MediaItem mediaItem : item.getMediaItems().values()){
-						mediaItem.setDyscoId(dyscoId);
+					if(status != null){
+						TwitterItem item = new TwitterItem(status);
+						item.setDyscoId(dyscoId);
+						for(MediaItem mediaItem : item.getMediaItems().values()){
+							mediaItem.setDyscoId(dyscoId);
+						}
+						items++;
+						handler.update(item);
 					}
-					items++;
-					handler.update(item);
 				}
 				if(!response.hasNext())
 					break;

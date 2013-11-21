@@ -103,7 +103,7 @@ public class TumblrRetriever implements Retriever{
 			
 			for(Post post : posts){
 				
-				if(post.getType().equals("photo") || post.getType().equals("video")){
+				if(post.getType().equals("photo") || post.getType().equals("video") || post.getType().equals("link")){
 					
 					String retrievedDate = post.getDateGMT().replace(" GMT", "");
 					retrievedDate+=".0";
@@ -116,7 +116,7 @@ public class TumblrRetriever implements Retriever{
 						logger.error("#Tumblr - ParseException: "+e);
 					}
 					
-					if(publicationDate.after(lastItemDate)){
+					if(publicationDate.after(lastItemDate) && post != null && post.getId() != null){
 						TumblrItem tumblrItem = null;
 						try {
 							tumblrItem = new TumblrItem(post,feed);
@@ -217,7 +217,7 @@ public class TumblrRetriever implements Retriever{
 			
 			for(Post post : posts){
 				
-				if(post.getType().equals("photo") || post.getType().equals("video")) {
+				if(post.getType().equals("photo") || post.getType().equals("video") ||  post.getType().equals("link")) {
 					
 					String retrievedDate = post.getDateGMT().replace(" GMT", "");
 					retrievedDate+=".0";
@@ -230,7 +230,7 @@ public class TumblrRetriever implements Retriever{
 						return items;
 					}
 					
-					if(publicationDate.after(lastItemDate)){
+					if(publicationDate.after(lastItemDate) && post != null && post.getId() != null){
 						TumblrItem tumblrItem = null;
 						try {
 							tumblrItem = new TumblrItem(post,feed);

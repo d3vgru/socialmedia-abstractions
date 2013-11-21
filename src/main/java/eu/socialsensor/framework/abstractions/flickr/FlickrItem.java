@@ -4,12 +4,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
 
-import com.aetrion.flickr.FlickrException;
+import java.util.HashMap;
+
 import com.aetrion.flickr.people.User;
 import com.aetrion.flickr.photos.GeoData;
 import com.aetrion.flickr.photos.Photo;
@@ -31,31 +28,27 @@ public class FlickrItem extends Item {
 
 	public FlickrItem(String id, Operation operation) {
 		super(Source.Type.Flickr.toString(), operation);
-		setId(Source.Type.Flickr+"::"+id);
+		setId(Source.Type.Flickr+"#"+id);
 	}
 	
 	public FlickrItem(Photo photo) {
 		super(Source.Type.Flickr.toString(), Operation.NEW);
 		if (photo == null || photo.getId() == null) return;
 		
-		id = Source.Type.Flickr + "::" + photo.getId();
-		
-		source = "Flickr";
-		
-		User user = photo.getOwner();
-		if(user != null) {
-			streamUser = new FlickrStreamUser(user);
-			uid = streamUser.getId();
-			author = user.getUsername();
+		//Id
+		id = Source.Type.Flickr + "#" + photo.getId();
+		//SocialNetwork Name
+		streamId = Source.Type.Flickr.toString();
+		//Timestamp of the creation of the photo
+		publicationTime = photo.getDatePosted().getTime();
+		//Title of the photo
+		if(photo.getTitle()!=null){
+			title = photo.getTitle().subSequence(0, 100)+"...";
+			text = photo.getTitle();
 		}
-		
-		Date datePosted = photo.getDatePosted();
-		publicationTime = datePosted.getTime();
-		
+		//Description of the photo
 		description = photo.getDescription();
-		title = photo.getTitle();
-		
-		tags = null;
+		//Tags of the photo
 		@SuppressWarnings("unchecked")
 		Collection<Tag> photoTags = photo.getTags();
 		if (photoTags != null) {
@@ -65,56 +58,13 @@ public class FlickrItem extends Item {
 				tags[i++] = tag.getValue();
 			}
 		}
-		
-		comments = new String[0];
-		
-		mediaLinks = new ArrayList<MediaItemLight>();
-		Set<URL> mlinks = new HashSet<URL>();
-		String url = null;
-		
-		try {
-			String thumbnail = photo.getMediumUrl();
-			if(thumbnail==null) {
-				thumbnail = photo.getThumbnailUrl();
-			}
-			URL mediaUrl = null;
-			if((url = photo.getLargeUrl()) != null) {
-				mediaUrl = new URL(url);
-				
-			}
-			else if ((url = photo.getMediumUrl()) != null) {
-				mediaUrl = new URL(url);
-			}
-			else if ((url = photo.getSmallUrl()) != null) {
-				mediaUrl = new URL(url);
-			}
-			else if ((url = photo.getOriginalUrl()) != null) {
-				mediaUrl = new URL(url);
-				
-			}
-			
-			if(mediaUrl!=null){
-				mlinks.add(mediaUrl);
-				
-				MediaItem mediaItem = new MediaItem(mediaUrl);
-				String mediaId = Source.Type.Flickr + "::"+photo.getId(); 
-				mediaItem.setId(mediaId);
-				mediaItem.setType("image");
-				mediaItem.setThumbnail(thumbnail);
-				mediaItem.setRef(id);
-				mediaItems.put(mediaUrl, mediaItem);
-				mediaLinks.add(new MediaItemLight(url, thumbnail));
-				mediaIds.add(mediaId);
-			}
-			
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (FlickrException e) {
-			e.printStackTrace();
+		//User that posted the photo
+		User user = photo.getOwner();
+		if(user != null) {
+			streamUser = new FlickrStreamUser(user);
+			uid = streamUser.getId();
 		}
-		
-		links = new URL[0];
-		
+		//Location
 		if(photo.hasGeoData()){
 			
 			GeoData geo = photo.getGeoData();
@@ -124,104 +74,53 @@ public class FlickrItem extends Item {
 			
 			location = new Location(latitude, longitude);
 		}
-		
+		//Popularity
 		popularity = new HashMap<String, Integer>();
-		int numOfComments = photo.getComments();
+		popularity.put("comments", photo.getComments());
 		
-		popularity.put("comments", numOfComments);
+		//Getting the photo
+		mediaLinks = new ArrayList<MediaItemLight>();
+	
+		String url = null;
+		try {
+			String thumbnail = photo.getMediumUrl();
+			if(thumbnail==null) {
+				thumbnail = photo.getThumbnailUrl();
+			}
+			URL mediaUrl = null;
+			if((url = photo.getLargeUrl()) != null) {
+				mediaUrl = new URL(url);
+			
+			}
+			else if ((url = photo.getMediumUrl()) != null) {
+				mediaUrl = new URL(url);
+			}
+			
+			if(mediaUrl!=null){
+				
+				MediaItem mediaItem = new MediaItem(mediaUrl);
+				String mediaId = Source.Type.Flickr + "#"+photo.getId(); 
+				mediaItem.setId(mediaId);
+				mediaItem.setType("image");
+				mediaItem.setThumbnail(thumbnail);
+				mediaItem.setRef(id);
+				mediaItems.put(mediaUrl, mediaItem);
+				mediaLinks.add(new MediaItemLight(url, thumbnail));
+				mediaIds.add(mediaId);
+				
+			}
+			
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
 
 	}
 	
 	public FlickrItem(Photo photo,Feed itemFeed) {
-		super(Source.Type.Flickr.toString(), Operation.NEW);
-		if (photo == null || photo.getId() == null) return;
-		
-		id = Source.Type.Flickr + "::" + photo.getId();
-		
-		source = "Flickr";
-		
-		User user = photo.getOwner();
-		if(user != null) {
-			streamUser = new FlickrStreamUser(user);
-			uid = streamUser.getId();
-			author = user.getUsername();
-		}
-		
+		this(photo);
+
 		feed = itemFeed;
 		feedType = itemFeed.getFeedtype().toString();
-		
-		Date datePosted = photo.getDatePosted();
-		publicationTime = datePosted.getTime();
-		
-		description = photo.getDescription();
-		title = photo.getTitle();
-		
-		tags = null;
-		@SuppressWarnings("unchecked")
-		Collection<Tag> photoTags = photo.getTags();
-		if (photoTags != null) {
-			tags = new String[photoTags.size()];
-			int i = 0;
-			for(Tag tag : photoTags) {
-				tags[i++] = tag.getValue();
-			}
-		}
-		
-		comments = new String[0];
-		
-		mediaLinks = new ArrayList<MediaItemLight>();
-		Set<URL> mlinks = new HashSet<URL>();
-		String url = null;
-		try {
-			String thumbnail = photo.getMediumUrl();
-			if(thumbnail==null) {
-				thumbnail = photo.getThumbnailUrl();
-			}
-			URL mediaUrl = null;
-			if((url = photo.getLargeUrl()) != null) {
-				mediaUrl = new URL(url);
-			
-			}
-			else if ((url = photo.getMediumUrl()) != null) {
-				mediaUrl = new URL(url);
-			}
-			
-			
-			if(mediaUrl!=null){
-				mlinks.add(mediaUrl);
-				
-				MediaItem mediaItem = new MediaItem(mediaUrl);
-				String mediaId = Source.Type.Flickr + "::"+photo.getId(); 
-				mediaItem.setId(mediaId);
-				mediaItem.setType("image");
-				mediaItem.setThumbnail(thumbnail);
-				mediaItem.setRef(id);
-				mediaItems.put(mediaUrl, mediaItem);
-				mediaLinks.add(new MediaItemLight(url, thumbnail));
-				mediaIds.add(mediaId);
-				mediaItem.setDyscoId(feed.getDyscoId());
-			}
-			
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		}
-		
-		links = new URL[0];
-		
-		if(photo.hasGeoData()){
-			
-			GeoData geo = photo.getGeoData();
-			
-			double latitude = (double)geo.getLatitude();
-			double longitude = (double) geo.getLongitude();
-			
-			location = new Location(latitude, longitude);
-		}
-		
-		popularity = new HashMap<String, Integer>();
-		int numOfComments = photo.getComments();
-		
-		popularity.put("comments", numOfComments);
 
 	}
 	

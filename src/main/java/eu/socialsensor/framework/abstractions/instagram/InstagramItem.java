@@ -6,9 +6,7 @@ import java.util.HashMap;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.jinstagram.entity.comments.CommentData;
 import org.jinstagram.entity.common.Caption;
-import org.jinstagram.entity.common.Comments;
 import org.jinstagram.entity.common.ImageData;
 import org.jinstagram.entity.common.Images;
 import org.jinstagram.entity.users.feed.MediaFeedData;
@@ -21,7 +19,6 @@ import eu.socialsensor.framework.common.domain.MediaItemLight;
 import eu.socialsensor.framework.common.domain.Source;
 
 
-
 /**
  * Class that holds the information regarding the instagram image
  * @author ailiakop
@@ -31,7 +28,7 @@ public class InstagramItem extends Item {
 
 	public InstagramItem(String id, Operation operation) {
 		super(Source.Type.Instagram.toString(), operation);
-		setId(Source.Type.Instagram+"::"+id);
+		setId(Source.Type.Instagram+"#"+id);
 	}
 	
 	public InstagramItem(MediaFeedData image) throws MalformedURLException {
@@ -40,145 +37,46 @@ public class InstagramItem extends Item {
 		if(image == null || image.getId() == null)
 			return;
 		
-		//----photo id
-		id = Source.Type.Instagram + "::" + image.getId();
-		
-		//----photo author
-		streamUser = new InstagramStreamUser(image.getUser());
-		if(streamUser !=null){
-			author = streamUser.getId();
-			uid = streamUser.getId();
-		}
-	
-		//----photo publication time
+		//Id
+		id = Source.Type.Instagram + "#" + image.getId();
+		//SocialNetwork Name
+		streamId =  Source.Type.Instagram.toString();
+		//Timestamp of the creation of the photo
 		int createdTime = Integer.parseInt(image.getCreatedTime());
 		Date publicationDate = new Date((long) createdTime * 1000);
 		publicationTime = publicationDate.getTime();
-		
-		//----photo title
+		//Title of the photo
 		Caption caption = image.getCaption();
 		String captionText = null;
 		if(caption!=null){
 			captionText = caption.getText();
 			title = captionText;
 		}
-		
-		//----photo tags
+		//Tags
 		int tIndex=0;
 		int tagSize = image.getTags().size();
 		String[] tempTags = new String[tagSize];
 		
 		for(String tag:image.getTags())
 			tempTags[tIndex++]=tag;	
-		
-		//----photo comments
-		Comments com = image.getComments();
-		int cIndex=0;
-		int comSize = com.getComments().size();
-		comments = new String[comSize];
-		for(CommentData comment : com.getComments())
-			comments[cIndex++] = comment.getText();
-		
-		//----photo content
-		Images imageContent = image.getImages();
-		ImageData thumb = imageContent.getThumbnail();
-		String thumbnail = thumb.getImageUrl();
-		
-		ImageData standardUrl = imageContent.getStandardResolution();
-		String url = standardUrl.getImageUrl();
-		
-		if(url!=null){
-			URL mediaUrl = null;
-			try {
-				mediaUrl = new URL(url);
-			} catch (MalformedURLException e) {
-				
-				e.printStackTrace();
-			}
-			MediaItem mediaItem = new MediaItem(mediaUrl);
-			
-			String mediaId = Source.Type.Instagram + "::"+image.getId(); 
-			
-			mediaItem.setId(mediaId);
-			mediaItem.setThumbnail(thumbnail);
-			mediaItem.setType("image");
-			
-			mediaItem.setRef(id);
-			mediaItems.put(mediaUrl, mediaItem);
-			mediaIds.add(mediaId);
-			MediaItemLight mediaLink = new MediaItemLight(url, thumbnail);
-			mediaLinks = new ArrayList<MediaItemLight>();
-			mediaLinks.add(mediaLink);
+		//User that posted the photo
+		if(image.getUser() !=null){
+			streamUser = new InstagramStreamUser(image.getUser());
+			uid = streamUser.getId();
 		}
-		
-		//----photo source
-		source = url;
-		links = new URL[0];
-		
-		//----photo location
+		//Location
 		if(image.getLocation() != null){
 			double latitude = image.getLocation().getLatitude();
 			double longitude = image.getLocation().getLongitude();
 			
 			location = new Location(latitude, longitude);
 		}
-		
-		//----photo popularity
+		//Popularity
 		popularity = new HashMap<String, Integer>();
-		popularity.put("comments", com.getComments().size());
+		popularity.put("comments", image.getComments().getCount());
 		popularity.put("likes", image.getLikes().getCount());
-		
-	}
 	
-	public InstagramItem(MediaFeedData image,Feed itemFeed) throws MalformedURLException {
-		super(Source.Type.Instagram.toString(), Operation.NEW);
-		
-		if(image == null || image.getId() == null)
-			return;
-		
-		//----photo id
-		id = Source.Type.Instagram + "::" + image.getId();
-		
-		//----photo author
-		streamUser = new InstagramStreamUser(image.getUser());
-		if(streamUser !=null){
-			author = streamUser.getId();
-			uid = streamUser.getId();
-		}
-	
-		feed = itemFeed;
-		feedType = itemFeed.getFeedtype().toString();
-			
-		//----photo publication time
-		int createdTime = Integer.parseInt(image.getCreatedTime());
-		Date publicationDate = new Date((long) createdTime * 1000);
-		publicationTime = publicationDate.getTime();
-		
-		//----photo title
-		Caption caption = image.getCaption();
-		String captionText = null;
-		if(caption!=null){
-			captionText = caption.getText();
-			title = captionText;
-		}
-		
-		//----photo tags
-		int tIndex=0;
-		int tagSize = image.getTags().size();
-		String[] tempTags = new String[tagSize];
-		
-		for(String tag:image.getTags())
-			tempTags[tIndex++]=tag;	
-		
-		//----photo comments
-		Comments com = image.getComments();
-		int cIndex=0;
-		int comSize = com.getComments().size();
-		comments = new String[comSize];
-		for(CommentData comment : com.getComments())
-			comments[cIndex++] = comment.getText();
-		
-		//----photo content
+		//Getting the photo
 		Images imageContent = image.getImages();
 		ImageData thumb = imageContent.getThumbnail();
 		String thumbnail = thumb.getImageUrl();
@@ -200,13 +98,12 @@ public class InstagramItem extends Item {
 				}
 				MediaItem mediaItem = new MediaItem(mediaUrl);
 				
-				String mediaId = Source.Type.Instagram + "::"+image.getId(); 
+				String mediaId = Source.Type.Instagram + "#"+image.getId(); 
 				
 				mediaItem.setId(mediaId);
 				mediaItem.setThumbnail(thumbnail);
 				mediaItem.setType("image");
 				mediaItem.setRef(id);
-				mediaItem.setDyscoId(feed.getDyscoId());
 				mediaItems.put(mediaUrl, mediaItem);
 				mediaIds.add(mediaId);
 				MediaItemLight mediaLink = new MediaItemLight(url, thumbnail);
@@ -214,25 +111,16 @@ public class InstagramItem extends Item {
 				mediaLinks.add(mediaLink);
 			}
 			
-			//----photo source
-			source = url;
-			links = new URL[0];
-			
-			//----photo location
-			if(image.getLocation() != null){
-				double latitude = image.getLocation().getLatitude();
-				double longitude = image.getLocation().getLongitude();
-				
-				location = new Location(latitude, longitude);
-			}
-			
-			//----photo popularity
-			popularity = new HashMap<String, Integer>();
-			popularity.put("comments", com.getComments().size());
-			popularity.put("likes", image.getLikes().getCount());
-			
 		}
+
+	}
+	
+	public InstagramItem(MediaFeedData image,Feed itemFeed) throws MalformedURLException {
+		this(image);
 		
+		feed = itemFeed;
+		feedType = itemFeed.getFeedtype().toString();
+	
 	}
 	
 }

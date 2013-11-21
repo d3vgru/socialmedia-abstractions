@@ -91,7 +91,7 @@ public class YoutubeRetriever implements Retriever {
 					DateTime publishedDateTime = new DateTime(publishedTime.toString());
 					Date publicationDate = publishedDateTime.toDate();
 					
-					if(publicationDate.after(lastItemDate)){
+					if(publicationDate.after(lastItemDate) && (video != null && video.getId() != null)){
 						YoutubeItem videoItem = new YoutubeItem(video,feed);
 						
 						items.add(videoItem);
@@ -196,7 +196,7 @@ public class YoutubeRetriever implements Retriever {
 					DateTime publishedDateTime = new DateTime(publishedTime.toString());
 					Date publicationDate = publishedDateTime.toDate();
 					
-					if(publicationDate.after(lastItemDate)){
+					if(publicationDate.after(lastItemDate) && (video != null && video.getId() != null)){
 						YoutubeItem videoItem = new YoutubeItem(video,feed);
 						videoItem.setDyscoId(feed.getDyscoId());
 						
