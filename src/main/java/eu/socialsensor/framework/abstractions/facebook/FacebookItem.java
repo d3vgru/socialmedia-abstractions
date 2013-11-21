@@ -94,17 +94,34 @@ public class FacebookItem extends Item {
 						if(p_url != null){
 							
 							String mediaId = Source.Type.Facebook+"#"+post.getId();
+							//url
 							MediaItem mediaItem = new MediaItem(p_url);
+							
+							//id
 							mediaItem.setId(mediaId);
-							mediaItem.setType("image");
+							//SocialNetwork Name
+							mediaItem.setStreamId(streamId);
+							//Reference
 							mediaItem.setRef(id);
+							//Type 
+							mediaItem.setType("image");
+							//Time of publication
+							mediaItem.setPublicationTime(publicationTime);
+							//PageUrl
 							String pageUrl = post.getLink();
 							mediaItem.setPageUrl(pageUrl);
-							// TODO: Cannot take media size. This needs a separate request. 
-							
+							//Thumbnail
 							String thumbnail = post.getPicture();
 							mediaItem.setThumbnail(thumbnail);
+							//Title
+							mediaItem.setTitle(title);
+							//Tags
+							mediaItem.setTags(tags);
+							//Popularity
+							mediaItem.setLikes(likes);
+							mediaItem.setShares(shares);
 							
+							//Store mediaItems and their ids 
 							mediaItems.add(mediaItem);
 							mediaIds.add(mediaId);
 						}

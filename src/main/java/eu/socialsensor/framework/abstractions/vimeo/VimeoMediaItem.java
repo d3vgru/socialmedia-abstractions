@@ -3,8 +3,6 @@ package eu.socialsensor.framework.abstractions.vimeo;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import eu.socialsensor.framework.common.domain.MediaItem;
 
@@ -17,32 +15,40 @@ public class VimeoMediaItem extends MediaItem {
 	private static SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	public VimeoMediaItem(VimeoVideo video) throws Exception {
+		//url
 		super(new URL("http://vimeo.com/moogaloop.swf?clip_id="+video.id));
 		
+		//Id
 		this.setId("Vimeo::"+video.id);
-		this.setTitle(video.title);
-		
-		String tags = video.tags;
-		if(tags != null) {
-			this.setTags(tags.split(","));
-		}
-		this.setDescription(video.description);
-		this.setPageUrl(video.url);
-		this.setThumbnail(video.thumbnail_large);
-		this.setSize(video.width, video.height);
-		
+		//SocialNetwork Name
 		this.setStreamId("Vimeo");
+		//Type 
 		this.setType("video");
-		
-		
-		likes = video.stats_number_of_likes;
-		views = video.stats_number_of_plays;
-		comments = video.stats_number_of_comments;
-		
+		//Time of publication
 		try {
 			Date date = formatter.parse(video.upload_date);
 			this.setPublicationTime(date.getTime());
 		}
 		catch(Exception e) {}
+		//PageUrl
+		this.setPageUrl(video.url);
+		//Thumbnail
+		this.setThumbnail(video.thumbnail_large);
+		//Title
+		this.setTitle(video.title);
+		//Tags
+		String tags = video.tags;
+		if(tags != null) {
+			this.setTags(tags.split(","));
+		}
+		//Description
+		this.setDescription(video.description);
+		//Popularity
+		likes = video.stats_number_of_likes;
+		views = video.stats_number_of_plays;
+		comments = video.stats_number_of_comments;
+		//Size
+		this.setSize(video.width, video.height);
+
 	}
 }

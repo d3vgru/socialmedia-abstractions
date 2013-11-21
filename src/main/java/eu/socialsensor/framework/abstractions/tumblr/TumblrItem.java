@@ -80,17 +80,30 @@ public class TumblrItem extends Item{
 					if(photoUrl != null){
 						
 						URL url = new URL(photoUrl);
-						
+						//url
 						MediaItem mediaItem = new MediaItem(url);
 					
 						String mediaId = Source.Type.Tumblr + "#"+post.getId()+"_"+number; 
 						
+						//id
 						mediaItem.setId(mediaId);
-						mediaItem.setThumbnail(thumbnail);
-						mediaItem.setType("image");
-						mediaItem.setPageUrl(pageURL);
+						//SocialNetwork Name
+						mediaItem.setStreamId(streamId);
+						//Reference
 						mediaItem.setRef(id);
-
+						//Type 
+						mediaItem.setType("image");
+						//Time of publication
+						mediaItem.setPublicationTime(publicationTime);
+						//PageUrl
+						mediaItem.setPageUrl(pageURL);
+						//Thumbnail
+						mediaItem.setThumbnail(thumbnail);
+						//Title
+						mediaItem.setTitle(title);
+						//Tags
+						mediaItem.setTags(tags);
+					
 						mediaIds.add(mediaId);
 						mediaItems.add(mediaItem);
 					
@@ -165,11 +178,25 @@ public class TumblrItem extends Item{
 
 			String mediaId = Source.Type.Tumblr + "#"+post.getId()+"_"+number; 
 			
+			//id
 			mediaItem.setId(mediaId);
+			//SocialNetwork Name
+			mediaItem.setStreamId(streamId);
+			//Reference
+			mediaItem.setRef(id);
+			//Type 
 			mediaItem.setType("video");
+			//Time of publication
+			mediaItem.setPublicationTime(publicationTime);
+			//PageUrl
 			mediaItem.setPageUrl(pageURL);
-			mediaItem.setRef(mediaId);
+			//Thumbnail
 			mediaItem.setThumbnail(videoThumbnail);
+			//Title
+			mediaItem.setTitle(title);
+			//Tags
+			mediaItem.setTags(tags);
+
 			mediaItems.add(mediaItem);
 			mediaIds.add(mediaId);	
 		
@@ -185,9 +212,7 @@ public class TumblrItem extends Item{
 				webPages.add(webPage);
 			}
     	}
-		
-		
-		
+	
 	}
 	
 	public TumblrItem(Post post,Feed itemFeed) throws MalformedURLException{

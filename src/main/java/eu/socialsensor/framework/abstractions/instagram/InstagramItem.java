@@ -70,7 +70,7 @@ public class InstagramItem extends Item {
 		}
 		//Popularity
 		likes = image.getLikes().getCount();
-	
+		
 		//Getting the photo
 		Images imageContent = image.getImages();
 		ImageData thumb = imageContent.getThumbnail();
@@ -91,14 +91,36 @@ public class InstagramItem extends Item {
 					
 					e.printStackTrace();
 				}
+				
+				//url
 				MediaItem mediaItem = new MediaItem(mediaUrl);
 				
 				String mediaId = Source.Type.Instagram + "#"+image.getId(); 
 				
+				//id
 				mediaItem.setId(mediaId);
-				mediaItem.setThumbnail(thumbnail);
-				mediaItem.setType("image");
+				//SocialNetwork Name
+				mediaItem.setStreamId(streamId);
+				//Reference
 				mediaItem.setRef(id);
+				//Type 
+				mediaItem.setType("image");
+				//Time of publication
+				mediaItem.setPublicationTime(publicationTime);
+				//PageUrl
+				mediaItem.setPageUrl(image.getLink());
+				//Thumbnail
+				mediaItem.setThumbnail(thumbnail);
+				//Title
+				mediaItem.setTitle(title);
+				//Tags
+				mediaItem.setTags(tags);
+				//Popularity
+				mediaItem.setLikes(likes);
+				mediaItem.setComments(image.getComments().getCount());
+				//Location
+				mediaItem.setLocation(location);
+
 				mediaItems.add(mediaItem);
 				mediaIds.add(mediaId);
 			

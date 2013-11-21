@@ -3,8 +3,6 @@ package eu.socialsensor.framework.abstractions.twitpic;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import eu.socialsensor.framework.common.domain.MediaItem;
 
@@ -24,27 +22,32 @@ public class TwitPicMediaItem extends MediaItem {
 	public TwitPicMediaItem(TwitPicImage image) throws Exception {
 		super(new URL(urlBase + image.id + "." + image.type));
 		
+		//Id
 		this.setId("Twitpic::"+image.id);
-		this.setThumbnail(thumbBase + image.id + "." + image.type);
-		this.setPageUrl(pageBase + image.short_id);
-		
-		this.setType("image");
+		//SocialNetwork Name
 		this.setStreamId("Twitpic");
-		
-		this.setTitle(image.message);
-		if(image.tags != null) {
-			this.setTags(image.tags.split(","));
-		}
-		
+		//Type 
+		this.setType("image");
+		//Time of publication
 		try {
 			Date date = formatter.parse(image.timestamp);
 			this.setPublicationTime(date.getTime());
 		}
 		catch(Exception e){}
-		
+		//PageUrl
+		this.setPageUrl(pageBase + image.short_id);
+		//Thumbnail
+		this.setThumbnail(thumbBase + image.id + "." + image.type);
+		//Title
+		this.setTitle(image.message);
+		//Tags
+		if(image.tags != null) {
+			this.setTags(image.tags.split(","));
+		}
+		//Popularity
 		comments = image.number_of_comments;
 		views = image.views;
-		
+		//Size
 		this.setSize(image.width, image.height);
 		
 	}

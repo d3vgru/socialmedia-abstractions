@@ -11,6 +11,7 @@ import com.google.api.services.plus.model.Activity.PlusObject.Attachments.Embed;
 import com.google.api.services.plus.model.Activity.PlusObject.Attachments.FullImage;
 import com.google.api.services.plus.model.Activity.PlusObject.Attachments.Image;
 import com.google.api.services.plus.model.Activity.PlusObject.Attachments.Thumbnails;
+import com.google.gdata.data.extensions.Rating;
 
 import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Item;
@@ -95,16 +96,33 @@ public class GooglePlusItem extends Item {
 			    		} catch (MalformedURLException e1) {
 			    			return;
 			    		}
-			    		
+			    		//url
 			    		MediaItem mediaItem = new MediaItem(mediaUrl);
 			    		
 			    		String mediaId = Source.Type.GooglePlus + "#"+attachment.getId(); 
-			    		String thumbUrl = image.getUrl();
-			    		mediaItem.setId(mediaId);
-			    		mediaItem.setType("video");
-			    		mediaItem.setPageUrl(pageURL);
-			    		mediaItem.setRef(id);
-			    		mediaItem.setThumbnail(thumbUrl);
+			    		
+			    		//id
+						mediaItem.setId(mediaId);
+						//SocialNetwork Name
+						mediaItem.setStreamId(streamId);
+						//Reference
+						mediaItem.setRef(id);
+						//Type 
+						mediaItem.setType("video");
+						//Time of publication
+						mediaItem.setPublicationTime(publicationTime);
+						//PageUrl
+						mediaItem.setPageUrl(pageURL);
+						//Thumbnail
+						String thumbUrl = image.getUrl();
+						mediaItem.setThumbnail(thumbUrl);
+						//Title
+						mediaItem.setTitle(title);
+						//Tags
+						mediaItem.setTags(tags);
+						//Popularity
+						mediaItem.setLikes(likes);
+						mediaItem.setShares(shares);
 			    		
 			    		mediaItems.add(mediaItem);			
 			    		mediaIds.add(mediaId);		
@@ -127,18 +145,37 @@ public class GooglePlusItem extends Item {
 			    		} catch (MalformedURLException e2) {
 			    			return;
 			    		}
-		    			
-		    			String thumnailUrl = thumbnail.getUrl();
+
+		    			//url
 		    			MediaItem mediaItem = new MediaItem(mediaUrl);
 		    			
 		    			String mediaId = Source.Type.GooglePlus + "#"+attachment.getId(); 
 		    			
-		        		mediaItem.setId(mediaId);
-		        		mediaItem.setThumbnail(thumnailUrl);
-		        		mediaItem.setType("image");
-		        		mediaItem.setPageUrl(pageURL);
-		        		mediaItem.setSize(width,height);
-		        		mediaItem.setRef(id);
+		    			//id
+						mediaItem.setId(mediaId);
+						//SocialNetwork Name
+						mediaItem.setStreamId(streamId);
+						//Reference
+						mediaItem.setRef(id);
+						//Type 
+						mediaItem.setType("image");
+						//Time of publication
+						mediaItem.setPublicationTime(publicationTime);
+						//PageUrl
+						mediaItem.setPageUrl(pageURL);
+						//Thumbnail
+						String thumnailUrl = thumbnail.getUrl();
+						mediaItem.setThumbnail(thumnailUrl);
+						//Title
+						mediaItem.setTitle(title);
+						//Tags
+						mediaItem.setTags(tags);
+						//Popularity
+						mediaItem.setLikes(likes);
+						mediaItem.setShares(shares);
+		    			//Size
+						mediaItem.setSize(width,height);
+		        		
 		        		mediaItems.add(mediaItem);
 		        		mediaIds.add(mediaId);		
 		        		
@@ -164,22 +201,38 @@ public class GooglePlusItem extends Item {
 		    				MediaItem mediaItem = new MediaItem(mediaUrl);
 		    				
 		    				String mediaId = Source.Type.GooglePlus + "#"+attachment.getId(); 
-		    				String thumbnailUrl = thumbnail.getUrl();
-		    				mediaItem.setId(mediaId);
-			        		mediaItem.setThumbnail(thumbnailUrl);
-			        		mediaItem.setType("image");
-			        		mediaItem.setPageUrl(pageURL);
-			        		
-			        		Long width = image.getImage().getWidth();
+		    				
+		    				//id
+							mediaItem.setId(mediaId);
+							//SocialNetwork Name
+							mediaItem.setStreamId(streamId);
+							//Reference
+							mediaItem.setRef(id);
+							//Type 
+							mediaItem.setType("image");
+							//Time of publication
+							mediaItem.setPublicationTime(publicationTime);
+							//PageUrl
+							mediaItem.setPageUrl(pageURL);
+							//Thumbnail
+							String thumbnailUrl = thumbnail.getUrl();
+							mediaItem.setThumbnail(thumbnailUrl);
+							//Title
+							mediaItem.setTitle(title);
+							//Tags
+							mediaItem.setTags(tags);
+							//Popularity
+							mediaItem.setLikes(likes);
+							mediaItem.setShares(shares);
+			    			//Size
+							Long width = image.getImage().getWidth();
 			        		Long height = image.getImage().getHeight();
 			        		if(width != null && height != null) {
 			        			mediaItem.setSize(width.intValue(), height.intValue());
 			        		}
 			        		
-			        		mediaItem.setRef(id);
-			        		mediaItems.add(mediaItem);		
+			        		mediaItems.add(mediaItem);
 			        		mediaIds.add(mediaId);		
-				        		
 		    			}
 			    		
 		    		}

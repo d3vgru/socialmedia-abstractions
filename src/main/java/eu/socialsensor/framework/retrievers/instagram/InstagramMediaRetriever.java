@@ -1,9 +1,7 @@
 package eu.socialsensor.framework.retrievers.instagram;
 
 import java.net.URL;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.jinstagram.Instagram;
 import org.jinstagram.InstagramOembed;
@@ -72,26 +70,28 @@ public class InstagramMediaRetriever  implements MediaRetriever {
 				
 				Long publicationTime = new Long(Long.parseLong(mediaData.getCreatedTime()));
 				
+				//id
 				mediaItem.setId(mediaId);
-				mediaItem.setTags(tags.toArray(new String[tags.size()]));
-				
-				mediaItem.setThumbnail(thumbnail);
-				mediaItem.setPublicationTime(publicationTime);
-				mediaItem.setTitle(title);
-				
-				ImageData standard = images.getStandardResolution();
-				if(standard!=null) {
-					int height = standard.getImageHeight();
-					int width = standard.getImageWidth();
-					mediaItem.setSize(width, height);
-				}
-				
-				
-				
-				mediaItem.setType("image");
+				//SocialNetwork Name
 				mediaItem.setStreamId("Instagram");
-				
-				// Image geo-location
+				//Reference
+				mediaItem.setRef(id);
+				//Type 
+				mediaItem.setType("image");
+				//Time of publication
+				mediaItem.setPublicationTime(publicationTime);
+				//PageUrl
+				mediaItem.setPageUrl(url);
+				//Thumbnail
+				mediaItem.setThumbnail(thumbnail);
+				//Title
+				mediaItem.setTitle(title);
+				//Tags
+				mediaItem.setTags(tags.toArray(new String[tags.size()]));
+				//Popularity
+				mediaItem.setLikes(mediaData.getLikes().getCount());
+				mediaItem.setComments(mediaData.getComments().getCount());
+				//Location
 				org.jinstagram.entity.common.Location geoLocation = mediaData.getLocation();
 				if(geoLocation != null) {
 					double latitude = geoLocation.getLatitude();
@@ -101,34 +101,22 @@ public class InstagramMediaRetriever  implements MediaRetriever {
 					location.setName(geoLocation.getName());
 					mediaItem.setLocation(location);
 				}
-				
-				mediaItem.setLikes(mediaData.getLikes().getCount());
-				mediaItem.setComments(mediaData.getComments().getCount());
+				//Size
+				ImageData standard = images.getStandardResolution();
+				if(standard!=null) {
+					int height = standard.getImageHeight();
+					int width = standard.getImageWidth();
+					mediaItem.setSize(width, height);
+				}
 				
 				return mediaItem;
 			}
 		} catch (Exception e) {
 		
 		} 
-//		catch (MalformedURLException e) {
-//		
-//		}
+
 		
 		return null;
-	}
-	
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		String instagramToken = "342704836.5b9e1e6.503a35185da54224adaa76161a573e71";
-		String instagramSecret = "e53597da6d7749d2a944651bbe6e6f2a";
-		
-		InstagramMediaRetriever retriever = new InstagramMediaRetriever(instagramSecret,
-				instagramToken);
-		
-		MediaItem mediaItem = retriever.getMediaItem("brxPNgt3OS");
-		System.out.println(mediaItem.toJSONString());
 	}
 
 }

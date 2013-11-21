@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.gdata.data.extensions.Rating;
+
 import twitter4j.GeoLocation;
 import twitter4j.HashtagEntity;
 import twitter4j.MediaEntity;
@@ -93,6 +95,8 @@ public class TwitterItem extends Item {
 			}
 			super.mentions = mentions.toArray(new String[mentions.size()]);
 			super.inReply = status.getInReplyToScreenName();
+			//Popularity
+			shares = (int) status.getRetweetCount();
 			//Location
 			GeoLocation geoLocation = status.getGeoLocation();
 			if (geoLocation != null) {
@@ -168,32 +172,46 @@ public class TwitterItem extends Item {
 						pageUrl = mediaEntity.getURL();
 					}
 				
-					String mediaId = Source.Type.Twitter + "#" + mediaUrl;
-				
+					//url
 					MediaItem mediaItem = new MediaItem(temp_url);
+					
+					String mediaId = Source.Type.Twitter + "#" + mediaUrl;
+					
+					//id
 					mediaItem.setId(mediaId);
-					mediaItem.setType("image");
+					//SocialNetwork Name
+					mediaItem.setStreamId(streamId);
+					//Reference
 					mediaItem.setRef(id);
+					//Type 
+					mediaItem.setType("image");
+					//Time of publication
+					mediaItem.setPublicationTime(publicationTime);
+					//PageUrl
+					mediaItem.setPageUrl(pageUrl);
+					//Thumbnail
 					String thumbnail = mediaUrl+":thumb";
 					mediaItem.setThumbnail(thumbnail);
-					mediaItem.setPageUrl(pageUrl);
-				
+					//Title
+					mediaItem.setTitle(title);
+					//Tags
+					mediaItem.setTags(tags);
+					//Popularity
+					mediaItem.setShares(shares);
+					//Location
+					mediaItem.setLocation(location);
+					//Size
 					Map<Integer, Size> sizes = mediaEntity.getSizes();
 					Size size = sizes.get(Size.MEDIUM);
 					if(size != null) {
 						mediaItem.setSize(size.getWidth(), size.getHeight());
 					}
-				
+
 					mediaItems.add(mediaItem);
 					mediaIds.add(mediaId);
 				}
 			}
-		
-			//Popularity
-			Long retweet = status.getRetweetCount();
-			if (retweet != null) {
-				shares = retweet.intValue();
-			}
+	
 		}
 	}
 	

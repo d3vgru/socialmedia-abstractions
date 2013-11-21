@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import com.google.gdata.data.Person;
+import com.google.gdata.data.extensions.Rating;
 import com.google.gdata.data.media.mediarss.MediaDescription;
 import com.google.gdata.data.media.mediarss.MediaPlayer;
 import com.google.gdata.data.media.mediarss.MediaThumbnail;
@@ -69,15 +70,7 @@ public class YoutubeItem extends Item {
 			likes = (int) statistics.getFavoriteCount();
 			
 		}
-		
-//		Rating rating = videoEntry.getRating();
-//		if(rating != null) {
-//			Integer ratings = rating.getNumRaters();
-//			popularity.put("ratings", ratings);
-//			Float avg = rating.getAverage();
-//			popularity.put("avgRating", avg.intValue());
-//		}
-//		
+
 		//Getting the video
 		List<MediaThumbnail> thumbnails = mediaGroup.getThumbnails();
 		MediaPlayer mediaPlayer = mediaGroup.getPlayer();
@@ -113,16 +106,43 @@ public class YoutubeItem extends Item {
 		}
 		
 		if(thumbnail != null) {
+			//url
 			MediaItem mediaItem = new MediaItem(url);
 			
 			String mediaId = Source.Type.Youtube + "#"+videoID; 
-			String pageUrl = mediaPlayer.getUrl();
-			String thumbUrl = thumbnail.getUrl();
+			
+			//id
 			mediaItem.setId(mediaId);
+			//SocialNetwork Name
+			mediaItem.setStreamId(streamId);
+			//Reference
+			mediaItem.setRef(id);
+			//Type 
 			mediaItem.setType("video");
-			mediaItem.setSize(thumbnail.getWidth(), thumbnail.getHeight());
+			//Time of publication
+			mediaItem.setPublicationTime(publicationTime);
+			//PageUrl
+			String pageUrl = mediaPlayer.getUrl();
 			mediaItem.setPageUrl(pageUrl);
+			//Thumbnail
+			String thumbUrl = thumbnail.getUrl();
 			mediaItem.setThumbnail(thumbUrl);	
+			//Title
+			mediaItem.setTitle(title);
+			//Tags
+			mediaItem.setTags(tags);
+			//Popularity
+			if(statistics!=null){
+				mediaItem.setLikes((int) statistics.getFavoriteCount());
+				mediaItem.setViews((int) statistics.getViewCount());
+			}
+			Rating rating = videoEntry.getRating();
+			if(rating != null) {
+				mediaItem.setRatings(rating.getAverage().intValue());
+			}
+			//Size
+			mediaItem.setSize(thumbnail.getWidth(), thumbnail.getHeight());
+			
 			mediaItems.add(mediaItem);
 			mediaIds.add(mediaId);
 		}

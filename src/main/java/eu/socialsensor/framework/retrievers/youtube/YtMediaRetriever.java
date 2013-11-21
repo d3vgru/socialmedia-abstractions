@@ -1,9 +1,7 @@
 package eu.socialsensor.framework.retrievers.youtube;
 
 import java.net.URL;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.google.gdata.client.youtube.YouTubeService;
 import com.google.gdata.data.extensions.Rating;
@@ -64,33 +62,21 @@ public class YtMediaRetriever implements MediaRetriever {
 		
 					MediaDescription desc = mediaGroup.getDescription();
 					String description = desc==null ? "" : desc.getPlainTextContent();
-					
+					//url
 					MediaItem mediaItem = new MediaItem(url);
+					
+					//id
 					mediaItem.setId(mediaId);
-					mediaItem.setTitle(title);
-					mediaItem.setDescription(description);
-					mediaItem.setPublicationTime(publicationTime);
-					
-					mediaItem.setType("video");
+					//SocialNetwork Name
 					mediaItem.setStreamId("Youtube");
-					
-					// Set popularity
-					Map<String, Integer> popularity = new HashMap<String, Integer>();
-					if(statistics!=null){
-						mediaItem.setViews((int) statistics.getViewCount());
-						
-						mediaItem.setLikes((int) statistics.getFavoriteCount());
-						
-					}
-					Rating rating = entry.getRating();
-					if(rating != null) {
-						mediaItem.setRatings(rating.getAverage().intValue());
-					}
-					
-					
-					
-					
-					// Set thumbnail
+					//Type 
+					mediaItem.setType("video");
+					//Time of publication
+					mediaItem.setPublicationTime(publicationTime);
+					//PageUrl
+					String pageUrl = mediaPlayer.getUrl();
+					mediaItem.setPageUrl(pageUrl);
+					//Thumbnail
 					MediaThumbnail thumb = null;
 					int size = 0;
 					for(MediaThumbnail thumbnail : thumbnails) {
@@ -100,11 +86,21 @@ public class YtMediaRetriever implements MediaRetriever {
 							size = t_size;
 						}
 					}
+					//Title
+					mediaItem.setTitle(title);
+					//Popularity
+					if(statistics!=null){
+						mediaItem.setLikes((int) statistics.getFavoriteCount());
+						mediaItem.setViews((int) statistics.getViewCount());
+					}
+					Rating rating = entry.getRating();
+					if(rating != null) {
+						mediaItem.setRatings(rating.getAverage().intValue());
+					}
+					//Size
+					if(thumb!=null)
+						mediaItem.setSize(thumb.getWidth(), thumb.getHeight());
 					
-					mediaItem.setSize(thumb.getWidth(), thumb.getHeight());
-					mediaItem.setThumbnail(thumb.getUrl());
-					
-					mediaItem.setPageUrl(mediaPlayer.getUrl());
 					
 					return mediaItem;
 				}
@@ -121,13 +117,4 @@ public class YtMediaRetriever implements MediaRetriever {
 		return null;
 	}
 	
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		YtMediaRetriever retriever = new YtMediaRetriever("manosetro", "AI39si6DMfJRhrIFvJRv0qFubHHQypIwjkD-W7tsjLJArVKn9iR-QoT8t-UijtITl4TuyHzK-cxqDDCkCBoJB-seakq1gbt1iQ");
-
-		MediaItem mediaItem = retriever.getMediaItem("1h9j0Hk3Xdg");
-		System.out.println(mediaItem.toJSONString());
-	}
 }

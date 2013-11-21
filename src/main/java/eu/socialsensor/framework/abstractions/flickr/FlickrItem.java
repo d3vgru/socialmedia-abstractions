@@ -71,7 +71,7 @@ public class FlickrItem extends Item {
 			location = new Location(latitude, longitude);
 		}
 		//Popularity
-	
+		
 		//Getting the photo
 	
 		String url = null;
@@ -90,13 +90,35 @@ public class FlickrItem extends Item {
 			}
 			
 			if(mediaUrl!=null){
-				
+				//url
 				MediaItem mediaItem = new MediaItem(mediaUrl);
+				
 				String mediaId = Source.Type.Flickr + "#"+photo.getId(); 
+				
+				//id
 				mediaItem.setId(mediaId);
-				mediaItem.setType("image");
-				mediaItem.setThumbnail(thumbnail);
+				//SocialNetwork Name
+				mediaItem.setStreamId(streamId);
+				//Reference
 				mediaItem.setRef(id);
+				//Type 
+				mediaItem.setType("image");
+				//Time of publication
+				mediaItem.setPublicationTime(publicationTime);
+				//PageUrl
+				mediaItem.setPageUrl(photo.getUrl());
+				//Thumbnail
+				mediaItem.setThumbnail(thumbnail);
+				//Title
+				mediaItem.setTitle(title);
+				//Tags
+				mediaItem.setTags(tags);
+				//Popularity
+				mediaItem.setComments(photo.getComments());
+				//Location
+				mediaItem.setLocation(location);
+				
+				//Store mediaItems and their ids 
 				mediaItems.add(mediaItem);
 				mediaIds.add(mediaId);
 				
