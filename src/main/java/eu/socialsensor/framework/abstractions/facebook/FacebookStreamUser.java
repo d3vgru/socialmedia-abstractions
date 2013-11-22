@@ -16,7 +16,7 @@ public class FacebookStreamUser extends StreamUser {
 
 	
 	public FacebookStreamUser(CategorizedFacebookType user) {
-		super(Source.Type.Facebook.toString(), Operation.NEW_UPDATE);
+		super(Source.Type.Facebook.toString(), Operation.NEW);
 		if (user == null) return;
 		
 		id = Source.Type.Facebook+"::"+user.getId();
@@ -27,7 +27,7 @@ public class FacebookStreamUser extends StreamUser {
 	}
 
 	public FacebookStreamUser(User user) {
-		super(Source.Type.Facebook.toString(), Operation.NEW_UPDATE);
+		super(Source.Type.Facebook.toString(), Operation.NEW);
 		if (user == null) return;
 		
 		id = Source.Type.Facebook+"::"+user.getId();
@@ -40,7 +40,6 @@ public class FacebookStreamUser extends StreamUser {
 		if(loc != null) {
 			location = loc.getName();
 		}
-		
 	}
 	
 }

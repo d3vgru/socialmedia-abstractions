@@ -14,7 +14,7 @@ import eu.socialsensor.framework.common.domain.StreamUser;
 public class GooglePlusStreamUser extends StreamUser {
 	
 	public GooglePlusStreamUser(Actor actor) {
-		super(Source.Type.GooglePlus.toString(), Operation.NEW_UPDATE);
+		super(Source.Type.GooglePlus.toString(), Operation.NEW);
 		if (actor == null) return;
 		
 		id = Source.Type.GooglePlus + "::"+actor.getId();

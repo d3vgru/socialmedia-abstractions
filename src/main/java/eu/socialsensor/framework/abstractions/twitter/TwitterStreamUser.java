@@ -15,7 +15,7 @@ import eu.socialsensor.framework.common.domain.StreamUser;
 public class TwitterStreamUser extends StreamUser {
 
 	public TwitterStreamUser(User user) {
-		super(Source.Type.Twitter.toString(), Operation.NEW_UPDATE);
+		super(Source.Type.Twitter.toString(), Operation.NEW);
 		if (user == null) return;
 		
 		id = Source.Type.Twitter + "::" + user.getId();
@@ -34,10 +34,9 @@ public class TwitterStreamUser extends StreamUser {
 		}
 		location = user.getLocation();
 		
-		popularity = new HashMap<String, Long>();
 		
-		popularity.put("followers", (long) user.getFollowersCount());
-		popularity.put("friends", (long) user.getFriendsCount());
+		followers = (long) user.getFollowersCount();
+		friends = (long) user.getFriendsCount();
 		
 		description = user.getDescription();
 	}

@@ -15,7 +15,7 @@ import eu.socialsensor.framework.common.domain.StreamUser;
 public class FlickrStreamUser extends StreamUser {
 
 	public FlickrStreamUser(User user) {
-		super(Source.Type.Flickr.toString(), Operation.NEW_UPDATE);
+		super(Source.Type.Flickr.toString(), Operation.NEW);
 		if (user == null) return;
 		
 		id = Source.Type.Flickr+"::"+user.getId();

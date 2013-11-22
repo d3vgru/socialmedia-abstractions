@@ -13,15 +13,16 @@ import eu.socialsensor.framework.common.domain.StreamUser;
 public class InstagramStreamUser extends StreamUser {
 	
 	public InstagramStreamUser(User user) {
-		super(Source.Type.Instagram.toString(), Operation.NEW_UPDATE);
+		super(Source.Type.Instagram.toString(), Operation.NEW);
 		if (user == null) return;
 		
 		id = Source.Type.Instagram + "::" + user.getId();
 		
-		userid ="";
-		userid += user.getId();
+		userid = Long.toString(user.getId());
 		username = user.getUserName();
 		name = user.getFullName();
+		
+		imageUrl = user.getProfilePictureUrl();
 		
 	}
 }

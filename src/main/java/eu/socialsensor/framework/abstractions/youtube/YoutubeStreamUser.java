@@ -13,7 +13,7 @@ import eu.socialsensor.framework.common.domain.StreamUser;
 public class YoutubeStreamUser extends StreamUser {
 
 	public YoutubeStreamUser(String user) {
-		super(Source.Type.Youtube.toString(), Operation.NEW_UPDATE);
+		super(Source.Type.Youtube.toString(), Operation.NEW);
 		if (user == null) return;
 		
 		id = Source.Type.Youtube+"::"+user;
@@ -24,7 +24,7 @@ public class YoutubeStreamUser extends StreamUser {
 	}
 
 	public YoutubeStreamUser(Person user) {
-		super(Source.Type.Youtube.toString(), Operation.NEW_UPDATE);
+		super(Source.Type.Youtube.toString(), Operation.NEW);
 		if (user == null) return;
 		
 
