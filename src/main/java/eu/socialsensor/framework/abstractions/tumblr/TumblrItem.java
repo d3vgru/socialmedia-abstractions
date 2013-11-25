@@ -3,7 +3,6 @@ package eu.socialsensor.framework.abstractions.tumblr;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -19,6 +18,7 @@ import com.tumblr.jumblr.types.VideoPost;
 import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.MediaItem;
+import eu.socialsensor.framework.common.domain.SocialNetworkSource;
 import eu.socialsensor.framework.common.domain.Source;
 import eu.socialsensor.framework.common.domain.WebPage;
 
@@ -31,21 +31,21 @@ public class TumblrItem extends Item{
 	private Logger logger = Logger.getLogger(TumblrItem.class);
 	
 	public TumblrItem(String id, Operation operation) {
-		super(Source.Type.Tumblr.toString(), operation);
-		setId(Source.Type.Tumblr + "#" + id);
+		super(SocialNetworkSource.Tumblr.toString(), operation);
+		setId(SocialNetworkSource.Tumblr + "#" + id);
 	}
 
 	public TumblrItem(Post post) throws MalformedURLException{
 		
-		super(Source.Type.Tumblr.toString(), Operation.NEW);
+		super(SocialNetworkSource.Tumblr.toString(), Operation.NEW);
 		
 		if(post == null || post.getId() == null)
 			return;
 		
 		//Id
-		id = Source.Type.Tumblr + "#" + post.getId();
+		id = SocialNetworkSource.Tumblr + "#" + post.getId();
 		//SocialNetwork Name
-		streamId = Source.Type.Tumblr.toString();
+		streamId = SocialNetworkSource.Tumblr.toString();
 		//Timestamp of the creation of the post
 		publicationTime = post.getTimestamp()*1000;
 		//Tags
@@ -79,7 +79,7 @@ public class TumblrItem extends Item{
 						//url
 						MediaItem mediaItem = new MediaItem(url);
 					
-						String mediaId = Source.Type.Tumblr + "#"+post.getId()+"_"+number; 
+						String mediaId = SocialNetworkSource.Tumblr + "#"+post.getId()+"_"+number; 
 						
 						//id
 						mediaItem.setId(mediaId);
@@ -172,7 +172,7 @@ public class TumblrItem extends Item{
 		
 			MediaItem mediaItem = new MediaItem(url);
 
-			String mediaId = Source.Type.Tumblr + "#"+post.getId()+"_"+number; 
+			String mediaId = SocialNetworkSource.Tumblr + "#"+post.getId()+"_"+number; 
 			
 			//id
 			mediaItem.setId(mediaId);

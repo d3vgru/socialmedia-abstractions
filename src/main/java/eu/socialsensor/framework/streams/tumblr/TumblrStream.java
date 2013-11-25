@@ -3,7 +3,7 @@ package eu.socialsensor.framework.streams.tumblr;
 
 import org.apache.log4j.Logger;
 
-
+import eu.socialsensor.framework.common.domain.SocialNetworkSource;
 import eu.socialsensor.framework.common.domain.Source;
 import eu.socialsensor.framework.monitors.FeedsMonitor;
 import eu.socialsensor.framework.retrievers.tumblr.TumblrRetriever;
@@ -19,7 +19,7 @@ import eu.socialsensor.framework.streams.StreamException;
  */
 public class TumblrStream extends Stream {
 	
-	public static final Source.Type SOURCE = Source.Type.Tumblr;
+	public static final SocialNetworkSource SOURCE = SocialNetworkSource.Tumblr;
 	
 	private FeedsMonitor monitor;
 	private StreamConfiguration config;

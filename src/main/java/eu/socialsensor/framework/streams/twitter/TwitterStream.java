@@ -21,14 +21,13 @@ import twitter4j.TwitterStreamFactory;
 import twitter4j.User;
 import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
-
-
 import eu.socialsensor.framework.abstractions.twitter.TwitterItem;
 import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Feed.FeedType;
 import eu.socialsensor.framework.common.domain.Item.Operation;
 import eu.socialsensor.framework.common.domain.Keyword;
 import eu.socialsensor.framework.common.domain.MediaItem;
+import eu.socialsensor.framework.common.domain.SocialNetworkSource;
 import eu.socialsensor.framework.common.domain.Source;
 import eu.socialsensor.framework.common.domain.dysco.Dysco;
 import eu.socialsensor.framework.common.domain.feeds.KeywordsFeed;
@@ -45,7 +44,7 @@ import eu.socialsensor.framework.streams.StreamException;
  */
 public class TwitterStream extends Stream {
 	
-	public static Source.Type SOURCE = Source.Type.Twitter;
+	public static SocialNetworkSource SOURCE = SocialNetworkSource.Twitter;
 	
 	private Logger  logger = Logger.getLogger(TwitterStream.class);
 	

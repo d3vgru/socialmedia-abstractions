@@ -4,7 +4,7 @@ import com.restfb.types.Location;
 import com.restfb.types.Page;
 import com.restfb.types.User;
 
-
+import eu.socialsensor.framework.common.domain.SocialNetworkSource;
 import eu.socialsensor.framework.common.domain.Source;
 import eu.socialsensor.framework.common.domain.StreamUser;
 
@@ -17,12 +17,12 @@ public class FacebookStreamUser extends StreamUser {
 
 	
 	public FacebookStreamUser(User user) {
-		super(Source.Type.Facebook.toString(), Operation.NEW);
+		super(SocialNetworkSource.Facebook.toString(), Operation.NEW);
 		
 		if (user == null) return;
 		
 		//Id
-		id = Source.Type.Facebook+"#"+user.getId();
+		id = SocialNetworkSource.Facebook+"#"+user.getId();
 		//The id of the user in the network
 		userid = user.getId();
 		//The name of the user
@@ -33,7 +33,7 @@ public class FacebookStreamUser extends StreamUser {
 		//The username of the user
 		username = user.getUsername();
 		//streamId
-		streamId =  Source.Type.Facebook.toString();
+		streamId =  SocialNetworkSource.Facebook.toString();
 		//The description of the user
 		description = user.getAbout();
 		//The link to the user's profile
@@ -50,11 +50,11 @@ public class FacebookStreamUser extends StreamUser {
 	}
 
 	public FacebookStreamUser(Page page) {
-		super(Source.Type.Facebook.toString(), Operation.NEW);
+		super(SocialNetworkSource.Facebook.toString(), Operation.NEW);
 		if (page == null) return;
 		
 		//Id
-		id = Source.Type.Facebook+"#"+page.getId();
+		id = SocialNetworkSource.Facebook+"#"+page.getId();
 		//The id of the page in the network
 		userid = page.getId();
 		//The name of the page
@@ -62,7 +62,7 @@ public class FacebookStreamUser extends StreamUser {
 		//The username of the page
 		username = page.getUsername();
 		//The name of the Social Network
-		streamId = Source.Type.Facebook.toString();
+		streamId = SocialNetworkSource.Facebook.toString();
 		//The description of the page
 		description = page.getAbout();
 		//Link to the page

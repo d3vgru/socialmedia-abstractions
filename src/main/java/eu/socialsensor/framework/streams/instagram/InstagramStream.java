@@ -4,6 +4,7 @@ package eu.socialsensor.framework.streams.instagram;
 
 import org.apache.log4j.Logger;
 
+import eu.socialsensor.framework.common.domain.SocialNetworkSource;
 import eu.socialsensor.framework.common.domain.Source;
 import eu.socialsensor.framework.monitors.FeedsMonitor;
 import eu.socialsensor.framework.retrievers.instagram.InstagramRetriever;
@@ -21,7 +22,7 @@ public class InstagramStream extends Stream {
 	
 	private Logger logger = Logger.getLogger(InstagramStream.class);
 	
-	public static final Source.Type SOURCE = Source.Type.Instagram;
+	public static final SocialNetworkSource SOURCE = SocialNetworkSource.Instagram;
 
 	private FeedsMonitor monitor;
 	

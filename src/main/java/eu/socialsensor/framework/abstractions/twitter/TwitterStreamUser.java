@@ -3,6 +3,7 @@ package eu.socialsensor.framework.abstractions.twitter;
 import java.util.Date;
 
 import twitter4j.User;
+import eu.socialsensor.framework.common.domain.SocialNetworkSource;
 import eu.socialsensor.framework.common.domain.Source;
 import eu.socialsensor.framework.common.domain.StreamUser;
 
@@ -14,11 +15,11 @@ import eu.socialsensor.framework.common.domain.StreamUser;
 public class TwitterStreamUser extends StreamUser {
 
 	public TwitterStreamUser(User user) {
-		super(Source.Type.Twitter.toString(), Operation.NEW);
+		super(SocialNetworkSource.Twitter.toString(), Operation.NEW);
 		if (user == null) return;
 		
 		//Id
-		id = Source.Type.Twitter + "#" + user.getId();
+		id = SocialNetworkSource.Twitter + "#" + user.getId();
 		//The id of the user in the network
 		userid = Long.toString(user.getId());
 		//The name of the user
@@ -26,7 +27,7 @@ public class TwitterStreamUser extends StreamUser {
 		//The username of the user
 		username = user.getScreenName();
 		//streamId
-		streamId = Source.Type.Twitter.toString();
+		streamId = SocialNetworkSource.Twitter.toString();
 		//The description of the user
 		description = user.getDescription();
 		//Profile picture of the user

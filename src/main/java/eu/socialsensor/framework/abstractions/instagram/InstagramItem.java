@@ -13,6 +13,7 @@ import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.Location;
 import eu.socialsensor.framework.common.domain.MediaItem;
+import eu.socialsensor.framework.common.domain.SocialNetworkSource;
 import eu.socialsensor.framework.common.domain.Source;
 
 
@@ -24,20 +25,20 @@ import eu.socialsensor.framework.common.domain.Source;
 public class InstagramItem extends Item {
 
 	public InstagramItem(String id, Operation operation) {
-		super(Source.Type.Instagram.toString(), operation);
-		setId(Source.Type.Instagram+"#"+id);
+		super(SocialNetworkSource.Instagram.toString(), operation);
+		setId(SocialNetworkSource.Instagram+"#"+id);
 	}
 	
 	public InstagramItem(MediaFeedData image) throws MalformedURLException {
-		super(Source.Type.Instagram.toString(), Operation.NEW);
+		super(SocialNetworkSource.Instagram.toString(), Operation.NEW);
 		
 		if(image == null || image.getId() == null)
 			return;
 		
 		//Id
-		id = Source.Type.Instagram + "#" + image.getId();
+		id = SocialNetworkSource.Instagram + "#" + image.getId();
 		//SocialNetwork Name
-		streamId =  Source.Type.Instagram.toString();
+		streamId =  SocialNetworkSource.Instagram.toString();
 		//Timestamp of the creation of the photo
 		int createdTime = Integer.parseInt(image.getCreatedTime());
 		Date publicationDate = new Date((long) createdTime * 1000);
@@ -95,7 +96,7 @@ public class InstagramItem extends Item {
 				//url
 				MediaItem mediaItem = new MediaItem(mediaUrl);
 				
-				String mediaId = Source.Type.Instagram + "#"+image.getId(); 
+				String mediaId = SocialNetworkSource.Instagram + "#"+image.getId(); 
 				
 				//id
 				mediaItem.setId(mediaId);

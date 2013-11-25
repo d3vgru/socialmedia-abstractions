@@ -2,6 +2,7 @@ package eu.socialsensor.framework.abstractions.flickr;
 
 import com.aetrion.flickr.people.User;
 
+import eu.socialsensor.framework.common.domain.SocialNetworkSource;
 import eu.socialsensor.framework.common.domain.Source;
 import eu.socialsensor.framework.common.domain.StreamUser;
 
@@ -13,11 +14,11 @@ import eu.socialsensor.framework.common.domain.StreamUser;
 public class FlickrStreamUser extends StreamUser {
 
 	public FlickrStreamUser(User user) {
-		super(Source.Type.Flickr.toString(), Operation.NEW);
+		super(SocialNetworkSource.Flickr.toString(), Operation.NEW);
 		if (user == null) return;
 		
 		//Id
-		id = Source.Type.Flickr+"#"+user.getId();
+		id = SocialNetworkSource.Flickr+"#"+user.getId();
 		//The id of the user in the network
 		userid = user.getId();
 		//The name of the user
@@ -25,7 +26,7 @@ public class FlickrStreamUser extends StreamUser {
 		//The username of the user
 		username = user.getUsername();
 		//streamId
-		streamId = Source.Type.Flickr.toString();
+		streamId = SocialNetworkSource.Flickr.toString();
 		//Profile picture of the user
 		profileImage = user.getBuddyIconUrl();
 		//Location

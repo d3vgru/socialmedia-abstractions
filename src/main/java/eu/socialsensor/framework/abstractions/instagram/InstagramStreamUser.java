@@ -2,6 +2,7 @@ package eu.socialsensor.framework.abstractions.instagram;
 
 import org.jinstagram.entity.common.User;
 
+import eu.socialsensor.framework.common.domain.SocialNetworkSource;
 import eu.socialsensor.framework.common.domain.Source;
 import eu.socialsensor.framework.common.domain.StreamUser;
 
@@ -13,11 +14,11 @@ import eu.socialsensor.framework.common.domain.StreamUser;
 public class InstagramStreamUser extends StreamUser {
 	
 	public InstagramStreamUser(User user) {
-		super(Source.Type.Instagram.toString(), Operation.NEW);
+		super(SocialNetworkSource.Instagram.toString(), Operation.NEW);
 		if (user == null) return;
 		
 		//Id
-		id = Source.Type.Instagram + "#" + user.getId();
+		id = SocialNetworkSource.Instagram + "#" + user.getId();
 		//The id of the user in the network
 		Long userLId = user.getId();
 		userid = userLId.toString();
@@ -26,7 +27,7 @@ public class InstagramStreamUser extends StreamUser {
 		//The username of the user
 		username = user.getUserName();
 		//streamId
-		streamId = Source.Type.Instagram.toString();
+		streamId = SocialNetworkSource.Instagram.toString();
 		//The description of the user
 		description = user.getBio();
 		//Profile picture of the user

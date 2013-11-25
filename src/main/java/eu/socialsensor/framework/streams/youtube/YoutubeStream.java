@@ -4,6 +4,7 @@ package eu.socialsensor.framework.streams.youtube;
 
 import org.apache.log4j.Logger;
 
+import eu.socialsensor.framework.common.domain.SocialNetworkSource;
 import eu.socialsensor.framework.common.domain.Source;
 import eu.socialsensor.framework.retrievers.youtube.YoutubeRetriever;
 import eu.socialsensor.framework.streams.Stream;
@@ -17,7 +18,7 @@ import eu.socialsensor.framework.streams.StreamException;
 
 public class YoutubeStream extends Stream {
 
-	public static Source.Type SOURCE = Source.Type.Youtube;
+	public static SocialNetworkSource SOURCE = SocialNetworkSource.Youtube;
 	
 	private Logger logger = Logger.getLogger(YoutubeStream.class);
 	

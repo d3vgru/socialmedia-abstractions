@@ -2,6 +2,7 @@ package eu.socialsensor.framework.abstractions.tumblr;
 
 import com.tumblr.jumblr.types.Blog;
 
+import eu.socialsensor.framework.common.domain.SocialNetworkSource;
 import eu.socialsensor.framework.common.domain.Source;
 import eu.socialsensor.framework.common.domain.StreamUser;
 
@@ -13,16 +14,16 @@ import eu.socialsensor.framework.common.domain.StreamUser;
 public class TumblrStreamUser extends StreamUser{
 	
 	public TumblrStreamUser(Blog blog) {
-		super(Source.Type.Tumblr.toString(), Operation.NEW);
+		super(SocialNetworkSource.Tumblr.toString(), Operation.NEW);
 		
 		//Id
-		id = Source.Type.Tumblr + "#"+blog.getName();
+		id = SocialNetworkSource.Tumblr + "#"+blog.getName();
 		//The id of the user in the network
 		userid = blog.getName();
 		//The name of the blog
 		name = blog.getName();
 		//streamId
-		streamId = Source.Type.Tumblr.toString();
+		streamId = SocialNetworkSource.Tumblr.toString();
 		//The description of the blog
 		blog.getDescription();
 		//Profile picture of the blog

@@ -15,6 +15,7 @@ import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.Location;
 import eu.socialsensor.framework.common.domain.MediaItem;
 import eu.socialsensor.framework.common.domain.Source;
+import eu.socialsensor.framework.common.domain.SocialNetworkSource;
 import eu.socialsensor.framework.common.domain.WebPage;
 
 /**
@@ -26,20 +27,20 @@ import eu.socialsensor.framework.common.domain.WebPage;
 public class FacebookItem extends Item {
 	
 	public FacebookItem(String id, Operation operation) {
-		super(Source.Type.Facebook.toString(), operation);
-		setId(Source.Type.Facebook+"#"+id);
+		super(SocialNetworkSource.Facebook.toString(), operation);
+		setId(SocialNetworkSource.Facebook+"#"+id);
 	}
 	
 	public FacebookItem(Post post) {
 		
-		super(Source.Type.Facebook.toString(), Operation.NEW);
+		super(SocialNetworkSource.Facebook.toString(), Operation.NEW);
 		
 		if (post == null || post.getId() == null) return;
 		
 		//Id
-		id = Source.Type.Facebook+"#"+post.getId();
+		id = SocialNetworkSource.Facebook+"#"+post.getId();
 		//SocialNetwork Name
-		streamId = Source.Type.Facebook.toString();
+		streamId = SocialNetworkSource.Facebook.toString();
 		//Timestamp of the creation of the post
 		publicationTime = post.getCreatedTime().getTime();
 		//Message that post contains
@@ -95,7 +96,7 @@ public class FacebookItem extends Item {
 					
 						if(p_url != null){
 							
-							String mediaId = Source.Type.Facebook+"#"+post.getId();
+							String mediaId = SocialNetworkSource.Facebook+"#"+post.getId();
 							//url
 							MediaItem mediaItem = new MediaItem(p_url);
 							
@@ -153,7 +154,7 @@ public class FacebookItem extends Item {
 				
 					if(p_url != null){
 						
-						String mediaId = Source.Type.Facebook+"#"+post.getId();
+						String mediaId = SocialNetworkSource.Facebook+"#"+post.getId();
 						MediaItem mediaItem = new MediaItem(p_url);
 						mediaItem.setId(mediaId);
 						mediaItem.setType("image");
@@ -189,7 +190,7 @@ public class FacebookItem extends Item {
 				URL videoUrl = null;
 				try {
 					videoUrl = new URL(url);
-					String mediaId = Source.Type.Facebook+"#"+post.getId();
+					String mediaId = SocialNetworkSource.Facebook+"#"+post.getId();
 					MediaItem mediaItem = new MediaItem(videoUrl);
 					mediaItem.setId(mediaId);
 					mediaItem.setType("video");
@@ -232,16 +233,16 @@ public class FacebookItem extends Item {
 	}
 	
 	public FacebookItem(Comment comment,Post post,User user) {
-		super(Source.Type.Facebook.toString(), Operation.NEW);
+		super(SocialNetworkSource.Facebook.toString(), Operation.NEW);
 		
 		if (comment == null) return;
 		
 		//Id
-		id = Source.Type.Facebook+"#"+comment.getId();
+		id =SocialNetworkSource.Facebook+"#"+comment.getId();
 		//Reference to the original post
-		reference = Source.Type.Facebook+"#"+post.getId();
+		reference = SocialNetworkSource.Facebook+"#"+post.getId();
 		//SocialNetwork Name
-		streamId = Source.Type.Facebook.toString();
+		streamId = SocialNetworkSource.Facebook.toString();
 		//Timestamp of the creation of the post
 		publicationTime = comment.getCreatedTime().getTime();
 		//Message that post contains

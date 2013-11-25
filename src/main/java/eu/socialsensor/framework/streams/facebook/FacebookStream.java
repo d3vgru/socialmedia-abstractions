@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 import com.restfb.DefaultFacebookClient;
 import com.restfb.FacebookClient;
 
+import eu.socialsensor.framework.common.domain.SocialNetworkSource;
 import eu.socialsensor.framework.common.domain.Source;
 import eu.socialsensor.framework.retrievers.facebook.FacebookRetriever;
 import eu.socialsensor.framework.streams.Stream;
@@ -19,7 +20,7 @@ import eu.socialsensor.framework.streams.StreamException;
  */
 public class FacebookStream extends Stream {
 	
-	public static Source.Type SOURCE = Source.Type.Facebook;
+	public static SocialNetworkSource SOURCE = SocialNetworkSource.Facebook;
 	
 	public int maxRequests = 600;
 	public long minInterval = 600000;

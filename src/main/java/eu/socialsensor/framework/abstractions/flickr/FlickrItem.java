@@ -13,6 +13,7 @@ import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.Location;
 import eu.socialsensor.framework.common.domain.MediaItem;
+import eu.socialsensor.framework.common.domain.SocialNetworkSource;
 import eu.socialsensor.framework.common.domain.Source;
 
 /**
@@ -23,18 +24,18 @@ import eu.socialsensor.framework.common.domain.Source;
 public class FlickrItem extends Item {
 
 	public FlickrItem(String id, Operation operation) {
-		super(Source.Type.Flickr.toString(), operation);
-		setId(Source.Type.Flickr+"#"+id);
+		super(SocialNetworkSource.Flickr.toString(), operation);
+		setId(SocialNetworkSource.Flickr+"#"+id);
 	}
 	
 	public FlickrItem(Photo photo) {
-		super(Source.Type.Flickr.toString(), Operation.NEW);
+		super(SocialNetworkSource.Flickr.toString(), Operation.NEW);
 		if (photo == null || photo.getId() == null) return;
 		
 		//Id
-		id = Source.Type.Flickr + "#" + photo.getId();
+		id = SocialNetworkSource.Flickr + "#" + photo.getId();
 		//SocialNetwork Name
-		streamId = Source.Type.Flickr.toString();
+		streamId = SocialNetworkSource.Flickr.toString();
 		//Timestamp of the creation of the photo
 		publicationTime = photo.getDatePosted().getTime();
 		//Title of the photo
@@ -99,7 +100,7 @@ public class FlickrItem extends Item {
 				//url
 				MediaItem mediaItem = new MediaItem(mediaUrl);
 				
-				String mediaId = Source.Type.Flickr + "#"+photo.getId(); 
+				String mediaId = SocialNetworkSource.Flickr + "#"+photo.getId(); 
 				
 				//id
 				mediaItem.setId(mediaId);

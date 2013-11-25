@@ -2,6 +2,7 @@ package eu.socialsensor.framework.streams.gplus;
 
 import org.apache.log4j.Logger;
 
+import eu.socialsensor.framework.common.domain.SocialNetworkSource;
 import eu.socialsensor.framework.common.domain.Source;
 import eu.socialsensor.framework.monitors.FeedsMonitor;
 import eu.socialsensor.framework.retrievers.gplus.GooglePlusRetriever;
@@ -16,7 +17,7 @@ import eu.socialsensor.framework.streams.StreamException;
  */
 
 public class GooglePlusStream extends Stream {
-	public static final Source.Type SOURCE = Source.Type.GooglePlus;
+	public static final SocialNetworkSource SOURCE = SocialNetworkSource.GooglePlus;
 
 	
 	private Logger logger = Logger.getLogger(GooglePlusStream.class);

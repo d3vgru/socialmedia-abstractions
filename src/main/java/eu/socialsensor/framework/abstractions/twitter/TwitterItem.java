@@ -4,6 +4,7 @@ import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.Location;
 import eu.socialsensor.framework.common.domain.MediaItem;
+import eu.socialsensor.framework.common.domain.SocialNetworkSource;
 import eu.socialsensor.framework.common.domain.Source;
 import eu.socialsensor.framework.common.domain.WebPage;
 
@@ -43,8 +44,8 @@ public class TwitterItem extends Item {
 	private static final String RETWEET = "retweetCount";
 
 	public TwitterItem(String id, Operation operation) {
-		super(Source.Type.Twitter.toString(), operation);
-		setId(Source.Type.Twitter+"#"+id);
+		super(SocialNetworkSource.Twitter.toString(), operation);
+		setId(SocialNetworkSource.Twitter+"#"+id);
 	}
     
 	public TwitterItem(Status status) {
@@ -52,9 +53,9 @@ public class TwitterItem extends Item {
 		if (status == null) return;
 		
 		//Id
-		id = Source.Type.Twitter+"#"+status.getId();
+		id = SocialNetworkSource.Twitter+"#"+status.getId();
 		//SocialNetwork Name
-		streamId = Source.Type.Twitter.toString();
+		streamId = SocialNetworkSource.Twitter.toString();
 		//Timestamp of the creation of the tweet
 		publicationTime = status.getCreatedAt().getTime();
 		//User that wrote the tweet
@@ -69,7 +70,7 @@ public class TwitterItem extends Item {
 		if(retweetStatus != null) {
 			operation = Operation.UPDATE;
 			
-			reference = Source.Type.Twitter+"#"+retweetStatus.getId();
+			reference = SocialNetworkSource.Twitter+"#"+retweetStatus.getId();
 			super.referencedUser = retweetStatus.getUser().getScreenName();
 			super.referencedUserId = Long.toString(retweetStatus.getUser().getId());
 		}
@@ -178,7 +179,7 @@ public class TwitterItem extends Item {
 					//url
 					MediaItem mediaItem = new MediaItem(temp_url);
 					
-					String mediaId = Source.Type.Twitter + "#" + mediaUrl;
+					String mediaId = SocialNetworkSource.Twitter + "#" + mediaUrl;
 					
 					//id
 					mediaItem.setId(mediaId);
