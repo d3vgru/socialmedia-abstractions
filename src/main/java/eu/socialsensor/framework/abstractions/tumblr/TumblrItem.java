@@ -54,10 +54,6 @@ public class TumblrItem extends Item{
 		for(String tag : post.getTags()){
 			tags[i++] = tag;
 		}
-		//User that made the post
-		streamUser = new TumblrStreamUser(post.getBlogName());
-		uid = streamUser.getId();
-		
 		//Media Items - WebPages in a post
 		String pageURL = post.getPostUrl();
 		
@@ -218,6 +214,17 @@ public class TumblrItem extends Item{
 	public TumblrItem(Post post,Feed itemFeed) throws MalformedURLException{
 		this(post);
 		
+		feed = itemFeed;
+		feedType = itemFeed.getFeedtype().toString();
+		
+	}
+	public TumblrItem(Post post,TumblrStreamUser user,Feed itemFeed) throws MalformedURLException{
+		this(post);
+		
+		//User that posted the post
+		streamUser = user;
+		uid = streamUser.getId();
+		//Feed that retrieved the post
 		feed = itemFeed;
 		feedType = itemFeed.getFeedtype().toString();
 		

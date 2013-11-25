@@ -1,7 +1,6 @@
 package eu.socialsensor.framework.abstractions.twitter;
 
 import java.util.Date;
-import java.util.HashMap;
 
 import twitter4j.User;
 import eu.socialsensor.framework.common.domain.Source;
@@ -18,31 +17,35 @@ public class TwitterStreamUser extends StreamUser {
 		super(Source.Type.Twitter.toString(), Operation.NEW);
 		if (user == null) return;
 		
-		id = Source.Type.Twitter + "::" + user.getId();
-		
+		//Id
+		id = Source.Type.Twitter + "#" + user.getId();
+		//The id of the user in the network
 		userid = Long.toString(user.getId());
-		username = user.getScreenName();
+		//The name of the user
 		name = user.getName();
-		
-		items = user.getStatusesCount();
-		imageUrl = user.getOriginalProfileImageURL();
+		//The username of the user
+		username = user.getScreenName();
+		//streamId
+		streamId = Source.Type.Twitter.toString();
+		//The description of the user
+		description = user.getDescription();
+		//Profile picture of the user
 		profileImage = user.getProfileImageURL();
-		
+		//Statuses of the user
+		items = user.getStatusesCount();
+		//Creation date of user's profile
 		Date date = user.getCreatedAt();
 		if(date != null) {
 			createdAt = date.toString();
 		}
+		//Location
 		location = user.getLocation();
-		
-		
+		//Followers of the user
 		followers = (long) user.getFollowersCount();
-		friends = (long) user.getFriendsCount();
+		//Friends of the user
+		friends =  (long) user.getFriendsCount();
 		
-		description = user.getDescription();
+		
 	}
 	
-	public static void main(String[] args) {
-		
-		
-	}
 }

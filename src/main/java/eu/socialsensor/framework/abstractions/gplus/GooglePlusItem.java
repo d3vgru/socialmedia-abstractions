@@ -49,11 +49,11 @@ public class GooglePlusItem extends Item {
 		//Title of the post
 		title = activity.getTitle();
 		//User that made the post
-		Actor actor = activity.getActor();
-		if(actor != null) {
-			streamUser = new GooglePlusStreamUser(actor);
-			uid = streamUser.getId();
-		}
+        Actor actor = activity.getActor();
+        if(actor != null) {
+                streamUser = new GooglePlusStreamUser(actor);
+                uid = streamUser.getId();
+        }
 		//Location
 		if(activity.getGeocode() != null){
 			
@@ -256,6 +256,19 @@ public class GooglePlusItem extends Item {
 	public GooglePlusItem(Activity activity, Feed itemFeed) {
 		this(activity);
 		
+		feed = itemFeed;
+		feedType = itemFeed.getFeedtype().toString();
+		
+		
+	}
+	
+	public GooglePlusItem(Activity activity,GooglePlusStreamUser user, Feed itemFeed) {
+		this(activity);
+		
+		//User that posted the post
+		streamUser = user;
+		uid = streamUser.getId();
+		//Feed that retrieved the post
 		feed = itemFeed;
 		feedType = itemFeed.getFeedtype().toString();
 		

@@ -20,6 +20,7 @@ import com.tumblr.jumblr.types.Blog;
 import com.tumblr.jumblr.types.Post;
 
 import eu.socialsensor.framework.abstractions.tumblr.TumblrItem;
+import eu.socialsensor.framework.abstractions.tumblr.TumblrStreamUser;
 import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.Keyword;
@@ -83,6 +84,7 @@ public class TumblrRetriever implements Retriever{
 		//logger.info("#Tumblr : Retrieving User Feed : "+uName);
 		
 		Blog blog = client.blogInfo(uName);
+		TumblrStreamUser tumblrStreamUser = new TumblrStreamUser(blog);
 		List<Post> posts;
 		Map<String,String> options = new HashMap<String,String>();
 		
@@ -117,9 +119,10 @@ public class TumblrRetriever implements Retriever{
 					}
 					
 					if(publicationDate.after(lastItemDate) && post != null && post.getId() != null){
+						
 						TumblrItem tumblrItem = null;
 						try {
-							tumblrItem = new TumblrItem(post,feed);
+							tumblrItem = new TumblrItem(post,tumblrStreamUser,feed);
 						} catch (MalformedURLException e) {
 							// TODO Auto-generated catch block
 							logger.error("#Tumblr Exception: "+e);
@@ -231,9 +234,14 @@ public class TumblrRetriever implements Retriever{
 					}
 					
 					if(publicationDate.after(lastItemDate) && post != null && post.getId() != null){
+						//Get the blog
+						String blogName = post.getBlogName();
+						Blog blog = client.blogInfo(blogName);
+						TumblrStreamUser tumblrStreamUser = new TumblrStreamUser(blog);
+						
 						TumblrItem tumblrItem = null;
 						try {
-							tumblrItem = new TumblrItem(post,feed);
+							tumblrItem = new TumblrItem(post,tumblrStreamUser,feed);
 						} catch (MalformedURLException e) {
 							// TODO Auto-generated catch block
 							logger.error("#Tumblr Exception: "+e);

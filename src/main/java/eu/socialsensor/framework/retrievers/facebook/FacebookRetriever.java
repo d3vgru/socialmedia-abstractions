@@ -10,9 +10,14 @@ import com.restfb.Connection;
 import com.restfb.FacebookClient;
 import com.restfb.Parameter;
 import com.restfb.exception.FacebookResponseStatusException;
+import com.restfb.json.JsonObject;
+import com.restfb.types.CategorizedFacebookType;
+import com.restfb.types.Page;
 import com.restfb.types.Post;
+import com.restfb.types.User;
 
 import eu.socialsensor.framework.abstractions.facebook.FacebookItem;
+import eu.socialsensor.framework.abstractions.facebook.FacebookStreamUser;
 import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.Keyword;
@@ -57,16 +62,20 @@ public class FacebookRetriever implements Retriever {
 		boolean isFinished = false;
 		
 		Source source = feed.getSource();
-		String uName = source.getName();
 		
-		if(uName == null){
+		String userName = source.getName();
+		if(userName == null){
 			logger.info("#Facebook : No source feed");
 			return null;
 		}
-				
-		//logger.info("#Facebook : Retrieving User Feed : "+uName);
+		String userFeed = source.getName()+"/feed";
 		
-		Connection<Post> connection = facebookClient.fetchConnection(uName , Post.class);
+		logger.info("#Facebook : Retrieving User Feed : "+userName);
+		
+		Connection<Post> connection = facebookClient.fetchConnection(userFeed , Post.class);
+		Page page = facebookClient.fetchObject(userName, Page.class);
+		FacebookStreamUser facebookUser = new FacebookStreamUser(page);
+		
 		for(List<Post> connectionPage : connection) {
 			rateLimitsMonitor.check();
 			
@@ -77,8 +86,7 @@ public class FacebookRetriever implements Retriever {
 				Date publicationDate = post.getCreatedTime();
 				
 				if(publicationDate.after(lastItemDate) && post!=null && post.getId()!=null){
-					FacebookItem facebookUpdate = new FacebookItem(post,feed);
-					
+					FacebookItem facebookUpdate = new FacebookItem(post,facebookUser,feed);
 				    items.add(facebookUpdate);	
 				}
 				
@@ -143,7 +151,7 @@ public class FacebookRetriever implements Retriever {
 		try{
 			connection = facebookClient.fetchConnection("search",Post.class,
 					Parameter.with("q",tags),Parameter.with("type","post"));
-			numberOfRequests++;
+			
 		}catch(FacebookResponseStatusException e1){
 			
 			return items;
@@ -158,8 +166,12 @@ public class FacebookRetriever implements Retriever {
 				Date publicationDate = post.getCreatedTime();
 				
 				if(publicationDate.after(lastItemDate) && post!=null && post.getId()!=null){
+					//Get the user of the post
+					CategorizedFacebookType c_user = post.getFrom();
+					User user = facebookClient.fetchObject(c_user.getId(), User.class);
+					FacebookStreamUser facebookUser = new FacebookStreamUser(user);
 					
-					FacebookItem facebookUpdate = new FacebookItem(post,feed);
+					FacebookItem facebookUpdate = new FacebookItem(post,facebookUser,feed);
 					items.add(facebookUpdate);
 				  
 				}

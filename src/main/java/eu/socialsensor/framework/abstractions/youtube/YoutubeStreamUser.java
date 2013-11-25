@@ -15,24 +15,28 @@ public class YoutubeStreamUser extends StreamUser {
 	public YoutubeStreamUser(String user) {
 		super(Source.Type.Youtube.toString(), Operation.NEW);
 		if (user == null) return;
-		
-		id = Source.Type.Youtube+"::"+user;
-		
-		userid = user;
+		//Id
+		id = Source.Type.Youtube+"#"+user;
+		//The name of the user
 		username = user;
-		
+		//streamId
+		streamId = Source.Type.Youtube.toString();
 	}
 
 	public YoutubeStreamUser(Person user) {
 		super(Source.Type.Youtube.toString(), Operation.NEW);
 		if (user == null) return;
 		
-
-		id = Source.Type.Youtube+"::"+user.getName();
-		
+		//Id
+		id = Source.Type.Youtube+"#"+user.getName();
+		//The id of the user in the network
 		userid = user.getName();
+		//The name of the user
 		username = user.getName();
-		
+		//streamId
+		streamId = Source.Type.Youtube.toString();
+		//The link to the user's profile
+		//link = user.getUri();
 	}
 	
 }

@@ -102,6 +102,7 @@ public class FlickrRetriever implements Retriever {
 		
 		boolean isFinished = false;
 		
+		//Here we search the user by the userId given (NSID) - however we can get NSID via flickrAPI given user's username
 		Source source = feed.getSource();
 		String userID = source.getId();
 		

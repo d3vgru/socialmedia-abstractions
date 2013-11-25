@@ -57,10 +57,10 @@ public class InstagramItem extends Item {
 		for(String tag:image.getTags())
 			tempTags[tIndex++]=tag;	
 		//User that posted the photo
-		if(image.getUser() !=null){
-			streamUser = new InstagramStreamUser(image.getUser());
-			uid = streamUser.getId();
-		}
+        if(image.getUser() !=null){
+                streamUser = new InstagramStreamUser(image.getUser());
+                uid = streamUser.getId();
+        }
 		//Location
 		if(image.getLocation() != null){
 			double latitude = image.getLocation().getLatitude();
@@ -133,6 +133,18 @@ public class InstagramItem extends Item {
 	public InstagramItem(MediaFeedData image,Feed itemFeed) throws MalformedURLException {
 		this(image);
 		
+		feed = itemFeed;
+		feedType = itemFeed.getFeedtype().toString();
+	
+	}
+	
+	public InstagramItem(MediaFeedData image,InstagramStreamUser user,Feed itemFeed) throws MalformedURLException {
+		this(image);
+		
+		//User that posted the post
+		streamUser = user;
+		uid = streamUser.getId();
+		//Feed that retrieved the post
 		feed = itemFeed;
 		feedType = itemFeed.getFeedtype().toString();
 	

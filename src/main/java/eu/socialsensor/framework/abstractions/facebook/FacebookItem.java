@@ -8,6 +8,7 @@ import com.restfb.types.CategorizedFacebookType;
 import com.restfb.types.Comment;
 import com.restfb.types.Place;
 import com.restfb.types.Post;
+import com.restfb.types.User;
 
 import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Item;
@@ -44,17 +45,18 @@ public class FacebookItem extends Item {
 		//Message that post contains
 		String msg = post.getMessage();
 		if(msg!=null) {
-			title = msg.subSequence(0, 100)+"...";
-			description = post.getDescription();
+			if(msg.length()>100){
+				title = msg.subSequence(0, 100)+"...";
+				description = post.getDescription();
+			}
+			else{
+				title = msg;
+				description = post.getDescription();
+			}
 		}
 		//All the text inside the post
 		text = msg; 
-		//User that posted the post
-		CategorizedFacebookType user = post.getFrom();
-		if (user != null) {
-			streamUser = new FacebookStreamUser(user);
-			uid = streamUser.getId();
-		}
+		
 		//Location 
 		Place place = post.getPlace();
 		if(place != null) {
@@ -216,7 +218,20 @@ public class FacebookItem extends Item {
 
 	}
 	
-	public FacebookItem(Comment comment,Post post) {
+	public FacebookItem(Post post, FacebookStreamUser user,Feed itemFeed) {
+		
+		this(post);
+		
+		//User that posted the post
+		streamUser = user;
+		uid = streamUser.getId();
+		//Feed that retrieved the post
+		feed = itemFeed;
+		feedType = itemFeed.getFeedtype().toString();
+
+	}
+	
+	public FacebookItem(Comment comment,Post post,User user) {
 		super(Source.Type.Facebook.toString(), Operation.NEW);
 		
 		if (comment == null) return;
@@ -238,11 +253,8 @@ public class FacebookItem extends Item {
 		//All the text inside the comment
 		text = msg; 
 		//User that posted the post
-		CategorizedFacebookType user = comment.getFrom();
-		if (user != null) {
-			streamUser = new FacebookStreamUser(user);
-			uid = streamUser.getId();
-		}
+		streamUser = new FacebookStreamUser(user);
+		uid = streamUser.getId();
 		
 		//Popularity of the post
 		if(comment.getLikeCount() != null)

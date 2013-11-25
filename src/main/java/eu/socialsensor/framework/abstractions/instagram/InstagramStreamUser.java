@@ -16,13 +16,22 @@ public class InstagramStreamUser extends StreamUser {
 		super(Source.Type.Instagram.toString(), Operation.NEW);
 		if (user == null) return;
 		
-		id = Source.Type.Instagram + "::" + user.getId();
-		
-		userid = Long.toString(user.getId());
-		username = user.getUserName();
+		//Id
+		id = Source.Type.Instagram + "#" + user.getId();
+		//The id of the user in the network
+		Long userLId = user.getId();
+		userid = userLId.toString();
+		//The name of the user
 		name = user.getFullName();
-		
-		imageUrl = user.getProfilePictureUrl();
-		
+		//The username of the user
+		username = user.getUserName();
+		//streamId
+		streamId = Source.Type.Instagram.toString();
+		//The description of the user
+		user.getBio();
+		//Profile picture of the user
+		user.getProfilePictureUrl();
+		//The link to the user's profile
+		user.getWebsiteUrl();
 	}
 }

@@ -159,5 +159,18 @@ public class YoutubeItem extends Item {
 	
 	}
 	
+	public YoutubeItem(VideoEntry videoEntry, YoutubeStreamUser user,Feed itemFeed) {
+		
+		this(videoEntry);
+		
+		//User that posted the post
+		streamUser = user;
+		uid = streamUser.getId();
+		//Feed that retrieved the post
+		feed = itemFeed;
+		feedType = itemFeed.getFeedtype().toString();
+	
+	}
+	
 	
 }

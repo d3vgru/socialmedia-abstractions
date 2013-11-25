@@ -1,7 +1,5 @@
 package eu.socialsensor.framework.abstractions.flickr;
 
-import java.util.Date;
-
 import com.aetrion.flickr.people.User;
 
 import eu.socialsensor.framework.common.domain.Source;
@@ -18,20 +16,19 @@ public class FlickrStreamUser extends StreamUser {
 		super(Source.Type.Flickr.toString(), Operation.NEW);
 		if (user == null) return;
 		
-		id = Source.Type.Flickr+"::"+user.getId();
-		
+		//Id
+		id = Source.Type.Flickr+"#"+user.getId();
+		//The id of the user in the network
 		userid = user.getId();
-		username = user.getUsername();
+		//The name of the user
 		name = user.getRealName();
-		
-		items = user.getPhotosCount();
-	
-		imageUrl = user.getBuddyIconUrl();
-		Date d = user.getPhotosFirstDate();
-		if(d != null) {
-			createdAt = d.toString();
-		}
-		
+		//The username of the user
+		username = user.getUsername();
+		//streamId
+		streamId = Source.Type.Flickr.toString();
+		//Profile picture of the user
+		profileImage = user.getBuddyIconUrl();
+		//Location
 		location = user.getLocation();
 	}
 

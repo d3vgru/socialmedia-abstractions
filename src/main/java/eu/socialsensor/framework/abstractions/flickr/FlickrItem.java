@@ -55,11 +55,11 @@ public class FlickrItem extends Item {
 			}
 		}
 		//User that posted the photo
-		User user = photo.getOwner();
-		if(user != null) {
-			streamUser = new FlickrStreamUser(user);
-			uid = streamUser.getId();
-		}
+        User user = photo.getOwner();
+        if(user != null) {
+                streamUser = new FlickrStreamUser(user);
+                uid = streamUser.getId();
+        }
 		//Location
 		if(photo.hasGeoData()){
 			
@@ -137,5 +137,5 @@ public class FlickrItem extends Item {
 		feedType = itemFeed.getFeedtype().toString();
 
 	}
-	
+
 }
