@@ -11,6 +11,7 @@ import com.google.api.services.plus.model.Activity.PlusObject.Attachments.Embed;
 import com.google.api.services.plus.model.Activity.PlusObject.Attachments.FullImage;
 import com.google.api.services.plus.model.Activity.PlusObject.Attachments.Image;
 import com.google.api.services.plus.model.Activity.PlusObject.Attachments.Thumbnails;
+import com.google.api.services.plus.model.Comment;
 import com.google.gdata.data.extensions.Rating;
 
 import eu.socialsensor.framework.common.domain.Feed;
@@ -19,6 +20,7 @@ import eu.socialsensor.framework.common.domain.Location;
 import eu.socialsensor.framework.common.domain.MediaItem;
 import eu.socialsensor.framework.common.domain.Source;
 import eu.socialsensor.framework.common.domain.WebPage;
+import eu.socialsensor.framework.common.domain.Item.Operation;
 
 /**
  * Class that holds the information regarding the google plus activity
@@ -273,5 +275,28 @@ public class GooglePlusItem extends Item {
 		feedType = itemFeed.getFeedtype().toString();
 		
 		
+	}
+	
+	public GooglePlusItem(Comment comment, Activity activity, GooglePlusStreamUser user){
+		super(Source.Type.GooglePlus.toString(), Operation.NEW);
+		
+		if (comment == null) return;
+		
+		//Id
+		id = Source.Type.GooglePlus+"#"+comment.getId();
+		//Reference to the original post
+		reference = Source.Type.GooglePlus+"#"+activity.getId();
+		//SocialNetwork Name
+		streamId = Source.Type.GooglePlus.toString();
+		//Timestamp of the creation of the post
+		publicationTime = comment.getPublished().getValue();
+		description = "Comment";
+		//User that posted the post
+		streamUser = user;
+		uid = streamUser.getId();
+		//Popularity of the post
+		if(comment.getPlusoners() != null){
+			likes = comment.getPlusoners().size();
+		}
 	}
 }

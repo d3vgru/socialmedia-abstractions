@@ -237,7 +237,7 @@ public class FacebookItem extends Item {
 		if (comment == null) return;
 		
 		//Id
-		id = Source.Type.Facebook+"::"+comment.getId();
+		id = Source.Type.Facebook+"#"+comment.getId();
 		//Reference to the original post
 		reference = Source.Type.Facebook+"#"+post.getId();
 		//SocialNetwork Name
@@ -247,7 +247,13 @@ public class FacebookItem extends Item {
 		//Message that post contains
 		String msg = comment.getMessage();
 		if(msg!=null) {
-			title = msg.subSequence(0, 100)+"...";
+			if(msg.length()>100){
+				title = msg.subSequence(0, 100)+"...";
+			}
+			else{
+				title = msg;
+			}
+			
 			description = "Comment";
 		}
 		//All the text inside the comment

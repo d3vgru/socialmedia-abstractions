@@ -39,8 +39,14 @@ public class FlickrItem extends Item {
 		publicationTime = photo.getDatePosted().getTime();
 		//Title of the photo
 		if(photo.getTitle()!=null){
-			title = photo.getTitle().subSequence(0, 100)+"...";
-			text = photo.getTitle();
+			if(photo.getTitle().length()>100){
+				title = photo.getTitle().subSequence(0, 100)+"...";
+				text = photo.getTitle();
+			}
+			else{
+				title = photo.getTitle();
+				text = photo.getTitle();
+			}
 		}
 		//Description of the photo
 		description = photo.getDescription();

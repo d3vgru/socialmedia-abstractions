@@ -39,7 +39,8 @@ public class FacebookStreamUser extends StreamUser {
 		//The link to the user's profile
 		linkToProfile = user.getLink(); 
 		//Last time user's profile was updated
-		lastUpdated = user.getUpdatedTime().getTime();
+		if(user.getUpdatedTime() != null)
+			lastUpdated = user.getUpdatedTime().getTime();
 		//Location
 		if(user.getLocation()!= null)
 			location = user.getLocation().getName();
