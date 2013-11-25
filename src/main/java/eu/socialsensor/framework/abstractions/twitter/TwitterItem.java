@@ -179,7 +179,7 @@ public class TwitterItem extends Item {
 					//url
 					MediaItem mediaItem = new MediaItem(temp_url);
 					
-					String mediaId = SocialNetworkSource.Twitter + "#" + mediaUrl;
+					String mediaId = SocialNetworkSource.Twitter + "#" + mediaEntity.getId();
 					
 					//id
 					mediaItem.setId(mediaId);
