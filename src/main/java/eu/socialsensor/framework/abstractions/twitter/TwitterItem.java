@@ -95,8 +95,11 @@ public class TwitterItem extends Item {
 			}
 			super.mentions = mentions.toArray(new String[mentions.size()]);
 			super.inReply = status.getInReplyToScreenName();
+			
 			//Popularity
-			shares = status.getRetweetCount();
+			likes = (long) status.getFavoriteCount();
+			shares = (long) status.getRetweetCount();
+			
 			//Location
 			GeoLocation geoLocation = status.getGeoLocation();
 			if (geoLocation != null) {
