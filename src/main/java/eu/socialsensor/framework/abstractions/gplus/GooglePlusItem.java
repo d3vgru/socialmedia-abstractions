@@ -68,10 +68,10 @@ public class GooglePlusItem extends Item {
 		}
 		//Popularity
 		if(activity.getObject().getPlusoners() != null)
-			likes = activity.getObject().getPlusoners().getTotalItems().intValue();
+			likes = activity.getObject().getPlusoners().getTotalItems();
 			
 		if(activity.getObject().getResharers() != null)
-			shares = activity.getObject().getResharers().getTotalItems().intValue();
+			shares = activity.getObject().getResharers().getTotalItems();
 			
 		
 		//Media Items - WebPages in a post
@@ -296,7 +296,7 @@ public class GooglePlusItem extends Item {
 		uid = streamUser.getId();
 		//Popularity of the post
 		if(comment.getPlusoners() != null){
-			likes = comment.getPlusoners().size();
+			likes = new Long(comment.getPlusoners().size());
 		}
 	}
 }

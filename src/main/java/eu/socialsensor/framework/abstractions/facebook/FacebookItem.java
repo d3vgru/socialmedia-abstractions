@@ -71,9 +71,9 @@ public class FacebookItem extends Item {
 		}
 		//Popularity of the post
 		if(post.getLikesCount() != null)
-			likes = post.getLikesCount().intValue();
+			likes = post.getLikesCount();
 		if(post.getSharesCount() != null)
-			shares = post.getSharesCount().intValue();
+			shares = post.getSharesCount();
 		
 		//Media Items - WebPages in a post
 		
@@ -264,7 +264,7 @@ public class FacebookItem extends Item {
 		
 		//Popularity of the post
 		if(comment.getLikeCount() != null)
-			likes = comment.getLikeCount().intValue();
+			likes = comment.getLikeCount();
 	
 	}
 }

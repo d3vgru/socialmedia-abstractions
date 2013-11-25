@@ -120,7 +120,7 @@ public class FlickrItem extends Item {
 				//Tags
 				mediaItem.setTags(tags);
 				//Popularity
-				mediaItem.setComments(photo.getComments());
+				mediaItem.setComments(new Long(photo.getComments()));
 				//Location
 				mediaItem.setLocation(location);
 				

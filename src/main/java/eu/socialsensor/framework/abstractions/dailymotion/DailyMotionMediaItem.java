@@ -33,9 +33,9 @@ public class DailyMotionMediaItem extends MediaItem {
 		//Tags
 		this.setTags(video.tags);
 		//Popularity
-		comments = video.comments_total;
-		views = video.views_total;
-		ratings = video.ratings_total;
+		comments = new Long(video.comments_total);
+		views = new Long(video.views_total);
+		ratings = new Float(video.ratings_total);
 		//Location
 		double[] geoloc = video.geoloc;
 		if(geoloc != null && geoloc.length>0) {

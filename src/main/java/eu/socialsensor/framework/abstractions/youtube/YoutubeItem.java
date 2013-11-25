@@ -67,7 +67,7 @@ public class YoutubeItem extends Item {
 		//Popularity
 		YtStatistics statistics = videoEntry.getStatistics();
 		if(statistics!=null){
-			likes = (int) statistics.getFavoriteCount();
+			likes = statistics.getFavoriteCount();
 			
 		}
 
@@ -133,12 +133,12 @@ public class YoutubeItem extends Item {
 			mediaItem.setTags(tags);
 			//Popularity
 			if(statistics!=null){
-				mediaItem.setLikes((int) statistics.getFavoriteCount());
-				mediaItem.setViews((int) statistics.getViewCount());
+				mediaItem.setLikes(statistics.getFavoriteCount());
+				mediaItem.setViews(statistics.getViewCount());
 			}
 			Rating rating = videoEntry.getRating();
 			if(rating != null) {
-				mediaItem.setRatings(rating.getAverage().intValue());
+				mediaItem.setRatings(rating.getAverage());
 			}
 			//Size
 			mediaItem.setSize(thumbnail.getWidth(), thumbnail.getHeight());

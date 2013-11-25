@@ -44,9 +44,9 @@ public class VimeoMediaItem extends MediaItem {
 		//Description
 		this.setDescription(video.description);
 		//Popularity
-		likes = video.stats_number_of_likes;
-		views = video.stats_number_of_plays;
-		comments = video.stats_number_of_comments;
+		likes = new Long(video.stats_number_of_likes);
+		views = new Long(video.stats_number_of_plays);
+		comments = new Long(video.stats_number_of_comments);
 		//Size
 		this.setSize(video.width, video.height);
 

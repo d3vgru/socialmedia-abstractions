@@ -69,7 +69,7 @@ public class InstagramItem extends Item {
 			location = new Location(latitude, longitude);
 		}
 		//Popularity
-		likes = image.getLikes().getCount();
+		likes = new Long(image.getLikes().getCount());
 		
 		//Getting the photo
 		Images imageContent = image.getImages();
@@ -117,7 +117,7 @@ public class InstagramItem extends Item {
 				mediaItem.setTags(tags);
 				//Popularity
 				mediaItem.setLikes(likes);
-				mediaItem.setComments(image.getComments().getCount());
+				mediaItem.setComments(new Long(image.getComments().getCount()));
 				//Location
 				mediaItem.setLocation(location);
 

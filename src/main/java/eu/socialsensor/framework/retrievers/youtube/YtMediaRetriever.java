@@ -90,12 +90,12 @@ public class YtMediaRetriever implements MediaRetriever {
 					mediaItem.setTitle(title);
 					//Popularity
 					if(statistics!=null){
-						mediaItem.setLikes((int) statistics.getFavoriteCount());
-						mediaItem.setViews((int) statistics.getViewCount());
+						mediaItem.setLikes(statistics.getFavoriteCount());
+						mediaItem.setViews(statistics.getViewCount());
 					}
 					Rating rating = entry.getRating();
 					if(rating != null) {
-						mediaItem.setRatings(rating.getAverage().intValue());
+						mediaItem.setRatings(rating.getAverage());
 					}
 					//Size
 					if(thumb!=null)

@@ -45,8 +45,8 @@ public class TwitPicMediaItem extends MediaItem {
 			this.setTags(image.tags.split(","));
 		}
 		//Popularity
-		comments = image.number_of_comments;
-		views = image.views;
+		comments = new Long(image.number_of_comments);
+		views = new Long(image.views);
 		//Size
 		this.setSize(image.width, image.height);
 		
