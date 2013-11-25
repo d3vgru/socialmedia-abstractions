@@ -28,10 +28,10 @@ public class InstagramStreamUser extends StreamUser {
 		//streamId
 		streamId = Source.Type.Instagram.toString();
 		//The description of the user
-		user.getBio();
+		description = user.getBio();
 		//Profile picture of the user
-		user.getProfilePictureUrl();
+		profileImage = user.getProfilePictureUrl();
 		//The link to the user's profile
-		user.getWebsiteUrl();
+		linkToProfile = user.getWebsiteUrl();
 	}
 }

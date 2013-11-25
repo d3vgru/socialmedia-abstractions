@@ -36,7 +36,7 @@ public class YoutubeStreamUser extends StreamUser {
 		//streamId
 		streamId = Source.Type.Youtube.toString();
 		//The link to the user's profile
-		//link = user.getUri();
+		linkToProfile = user.getUri();
 	}
 	
 }

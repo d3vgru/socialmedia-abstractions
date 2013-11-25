@@ -30,7 +30,7 @@ public class GooglePlusStreamUser extends StreamUser {
 		//Profile picture of the user
 		profileImage = actor.getImage().getUrl();
 		//The link to the user's profile
-		//link = actor.getUrl();
+		linkToProfile = actor.getUrl();
 		
 	}
 

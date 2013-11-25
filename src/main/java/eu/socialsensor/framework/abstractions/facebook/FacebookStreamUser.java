@@ -37,9 +37,9 @@ public class FacebookStreamUser extends StreamUser {
 		//The description of the user
 		description = user.getAbout();
 		//The link to the user's profile
-		//link = user.getLink(); 
+		linkToProfile = user.getLink(); 
 		//Last time user's profile was updated
-		//lastUpdate = user.getUpdatedTime();
+		lastUpdated = user.getUpdatedTime().getTime();
 		//Location
 		if(user.getLocation()!= null)
 			location = user.getLocation().getName();
@@ -65,7 +65,7 @@ public class FacebookStreamUser extends StreamUser {
 		//The description of the page
 		description = page.getAbout();
 		//Link to the page
-		//link = page.getLink();
+		linkToProfile = page.getLink();
 		//Avatar of the page
 		//TO DO : MISSING FROM THE API
 		profileImage = page.getPicture();
