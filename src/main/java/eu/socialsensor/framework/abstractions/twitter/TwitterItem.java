@@ -70,9 +70,9 @@ public class TwitterItem extends Item {
 		if(retweetStatus != null) {
 			operation = Operation.UPDATE;
 			
-			reference = SocialNetworkSource.Twitter+"#"+retweetStatus.getId();
-			super.referencedUser = retweetStatus.getUser().getScreenName();
-			super.referencedUserId = Long.toString(retweetStatus.getUser().getId());
+			reference = SocialNetworkSource.Twitter + "#" + retweetStatus.getId();
+			//super.referencedUser = retweetStatus.getUser().getScreenName();
+			super.referencedUserId = SocialNetworkSource.Twitter + "#" + retweetStatus.getUser().getId();
 		}
 		else {
 			operation = Operation.NEW;
@@ -94,11 +94,12 @@ public class TwitterItem extends Item {
 		UserMentionEntity[] userMentions = status.getUserMentionEntities();
 		List<String> mentions = new ArrayList<String>();
 		for(UserMentionEntity userMention : userMentions) {
-			String screenname = userMention.getScreenName();
-			mentions.add(screenname);
+			//String screenname = userMention.getScreenName();
+			String mentionedUserId = SocialNetworkSource.Twitter + "#" + userMention.getId();
+			mentions.add(mentionedUserId);
 		}
 		super.mentions = mentions.toArray(new String[mentions.size()]);
-		super.inReply = status.getInReplyToScreenName();
+		super.inReply = SocialNetworkSource.Twitter + "#" + status.getInReplyToUserId();
 			
 		//Popularity
 		likes = (long) status.getFavoriteCount();
