@@ -5,7 +5,6 @@ import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.Location;
 import eu.socialsensor.framework.common.domain.MediaItem;
 import eu.socialsensor.framework.common.domain.SocialNetworkSource;
-import eu.socialsensor.framework.common.domain.Source;
 import eu.socialsensor.framework.common.domain.WebPage;
 
 import java.net.MalformedURLException;
@@ -16,8 +15,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import com.google.gdata.data.extensions.Rating;
 
 import twitter4j.GeoLocation;
 import twitter4j.HashtagEntity;
@@ -41,7 +38,7 @@ public class TwitterItem extends Item {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private static final String RETWEET = "retweetCount";
+	//private static final String RETWEET = "retweetCount";
 
 	public TwitterItem(String id, Operation operation) {
 		super(SocialNetworkSource.Twitter.toString(), operation);
@@ -99,8 +96,10 @@ public class TwitterItem extends Item {
 			mentions.add(mentionedUserId);
 		}
 		super.mentions = mentions.toArray(new String[mentions.size()]);
-		super.inReply = SocialNetworkSource.Twitter + "#" + status.getInReplyToUserId();
-			
+		if(status.getInReplyToUserId() > 0) {
+			super.inReply = SocialNetworkSource.Twitter + "#" + status.getInReplyToUserId();
+		}
+		
 		//Popularity
 		likes = (long) status.getFavoriteCount();
 		shares = (long) status.getRetweetCount();
