@@ -32,6 +32,8 @@ public class TwitterStreamUser extends StreamUser {
 		description = user.getDescription();
 		//Profile picture of the user
 		profileImage = user.getProfileImageURL();
+		//Page URL of the user
+		pageUrl = user.getURLEntity().getURL();
 		//Statuses of the user
 		items = user.getStatusesCount();
 		//Creation date of user's profile
