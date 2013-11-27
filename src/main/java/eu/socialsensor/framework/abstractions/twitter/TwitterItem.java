@@ -49,6 +49,8 @@ public class TwitterItem extends Item {
 		
 		if (status == null) return;
 		
+		operation = Operation.NEW;
+		
 		//Id
 		id = SocialNetworkSource.Twitter+"#"+status.getId();
 		//SocialNetwork Name
@@ -65,14 +67,15 @@ public class TwitterItem extends Item {
 		//Store/Update on the basis that it is an original tweet or a retweet
 		Status retweetStatus = status.getRetweetedStatus();
 		if(retweetStatus != null) {
-			operation = Operation.UPDATE;
+			
+			original = false;
 			
 			reference = SocialNetworkSource.Twitter + "#" + retweetStatus.getId();
 			//super.referencedUser = retweetStatus.getUser().getScreenName();
 			super.referencedUserId = SocialNetworkSource.Twitter + "#" + retweetStatus.getUser().getId();
 		}
 		else {
-			operation = Operation.NEW;
+			original = true;
 		}
 		
 		//Title of the tweet
