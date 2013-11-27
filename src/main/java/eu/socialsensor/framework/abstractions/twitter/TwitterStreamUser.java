@@ -2,9 +2,9 @@ package eu.socialsensor.framework.abstractions.twitter;
 
 import java.util.Date;
 
+import twitter4j.URLEntity;
 import twitter4j.User;
 import eu.socialsensor.framework.common.domain.SocialNetworkSource;
-import eu.socialsensor.framework.common.domain.Source;
 import eu.socialsensor.framework.common.domain.StreamUser;
 
 /**
@@ -33,7 +33,7 @@ public class TwitterStreamUser extends StreamUser {
 		//Profile picture of the user
 		profileImage = user.getProfileImageURL();
 		//Page URL of the user
-		pageUrl = user.getURLEntity().getURL();
+		pageUrl = "https://twitter.com/" + user.getScreenName();
 		//Statuses of the user
 		items = user.getStatusesCount();
 		//Creation date of user's profile
