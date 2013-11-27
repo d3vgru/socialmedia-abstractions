@@ -316,13 +316,16 @@ public class TwitterStream extends Stream {
 			public void onStatus(Status status) {
 				synchronized(this) {
 					if(status != null){
-						store(new TwitterItem(status));
-					
-						// Update original tweet
+						
+						// Update original tweet in case of retweets
 						Status retweetedStatus = status.getRetweetedStatus();
 						if(retweetedStatus != null) {
 							store(new TwitterItem(retweetedStatus));
 						}
+						
+						// store
+						store(new TwitterItem(status));
+					
 					}
 				}
 			}

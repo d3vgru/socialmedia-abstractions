@@ -207,6 +207,7 @@ public class TwitterItem extends Item {
 				//Tags
 				mediaItem.setTags(tags);
 				//Popularity
+				mediaItem.setLikes(likes);
 				mediaItem.setShares(shares);
 				//Location
 				mediaItem.setLocation(location);
