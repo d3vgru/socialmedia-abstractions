@@ -3,13 +3,15 @@
 package eu.socialsensor.framework.streams;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 
 import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.dysco.Dysco;
-import eu.socialsensor.framework.common.domain.feeds.KeywordsFeed;
 import eu.socialsensor.framework.monitors.FeedsMonitor;
 import eu.socialsensor.framework.retrievers.Retriever;
 
@@ -39,6 +41,8 @@ public abstract class Stream implements Runnable {
 	protected BlockingQueue<Feed> feedsQueue;
 	protected Retriever retriever;
 	protected StreamHandler handler;
+	
+	private Map<String, Set<String>> usersToLists;
 	
 	/**
 	 * Open a stream for updates delivery
@@ -84,6 +88,10 @@ public abstract class Stream implements Runnable {
 		
 		monitor = new FeedsMonitor(retriever);
 		return true;
+	}
+	
+	public void setUserLists(Map<String, Set<String>> usersToLists) {
+		this.usersToLists = usersToLists;
 	}
 	
 	/**
@@ -134,12 +142,35 @@ public abstract class Stream implements Runnable {
 	 * @param item
 	 */
 	public synchronized void store(Item item) {
-		if(handler == null){
+		if(handler == null) {
 			System.out.println("NULL Handler!");
 			return;
 		}
 			
+		
+		item.setList(getuserList(item));
 		handler.update(item);
+	}
+	
+	private String[] getuserList(Item item) {
+		Set<String> lists = new HashSet<String>();
+		
+		Set<String> userLists = usersToLists.get(item.getUserId());
+		if(userLists != null) {
+			lists.addAll(userLists);
+		}
+		
+		for(String mention : item.getMentions()) {
+			userLists = usersToLists.get(mention);
+			if(userLists != null) {
+				lists.addAll(userLists);
+			}
+		}
+		if(lists.size() > 0)
+			return lists.toArray(new String[lists.size()]);
+		else
+			return null;
+		
 	}
 	
 	/**

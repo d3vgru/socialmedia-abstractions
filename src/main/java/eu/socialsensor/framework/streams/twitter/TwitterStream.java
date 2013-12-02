@@ -2,7 +2,9 @@
 package eu.socialsensor.framework.streams.twitter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -26,7 +28,6 @@ import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Feed.FeedType;
 import eu.socialsensor.framework.common.domain.Item.Operation;
 import eu.socialsensor.framework.common.domain.Keyword;
-import eu.socialsensor.framework.common.domain.MediaItem;
 import eu.socialsensor.framework.common.domain.SocialNetworkSource;
 import eu.socialsensor.framework.common.domain.Source;
 import eu.socialsensor.framework.common.domain.dysco.Dysco;
@@ -49,8 +50,6 @@ public class TwitterStream extends Stream {
 	private Logger  logger = Logger.getLogger(TwitterStream.class);
 	
 	public static long FILTER_EDIT_WAIT_TIME = 10000;
-	
-	private int totalItems;
 	
 	public enum AccessLevel {
 		PUBLIC(400, 5000, 25);
@@ -87,12 +86,12 @@ public class TwitterStream extends Stream {
 	
 	private long lastFilterInitTime = System.currentTimeMillis();
 	private AccessLevel accessLevel = AccessLevel.PUBLIC;
-
+	
 	@Override
 	public synchronized void open(StreamConfiguration config) throws StreamException {
 		if (twitterStream != null) {
 			logger.error("#Twitter : Stream is already opened");
-			throw new StreamException("Stream is already opened",null);
+			throw new StreamException("Stream is already opened", null);
 		}
 		
 		logger.info("#Twitter : Open stream");
@@ -173,9 +172,9 @@ public class TwitterStream extends Stream {
 			List<String> keys = new ArrayList<String>();
 			List<String> users = new ArrayList<String>();
 			List<double[]> locs = new ArrayList<double[]>();
-			totalItems = 0;
+			
 			for(Feed feed : feeds){
-				if(feed.getFeedtype().equals(FeedType.KEYWORDS)){
+				if(feed.getFeedtype().equals(FeedType.KEYWORDS)) {
 					if(((KeywordsFeed) feed).getKeyword() != null)
 						keys.add(((KeywordsFeed) feed).getKeyword().getName());
 					else{
@@ -184,8 +183,9 @@ public class TwitterStream extends Stream {
 					}
 						
 				}
-				else if(feed.getFeedtype().equals(FeedType.SOURCE)){
-					users.add(((SourceFeed) feed).getSource().getId());
+				else if(feed.getFeedtype().equals(FeedType.SOURCE)) {
+					Source source = ((SourceFeed) feed).getSource();					
+					users.add(source.getId());
 				}
 				else if(feed.getFeedtype().equals(FeedType.LOCATION)){
 					double[] location = new double[2];
@@ -261,7 +261,7 @@ public class TwitterStream extends Stream {
 			return query;
 	}
 	
-	private long[] getUserIds(String[] followsUsernames) {
+	public long[] getUserIds(String[] followsUsernames) {
 	
 		List<Long> ids = new ArrayList<Long>();
 		List<String> usernames = new ArrayList<String>(followsUsernames.length);
@@ -412,7 +412,7 @@ public class TwitterStream extends Stream {
 
 	@Override
 	public void search(Dysco dysco) throws StreamException {
-		String dyscoId = dysco.getId();
+
 		List<String> keywords = dysco.getKeywords();
 		String queryStr = "";
 		for(int i = 0; i < keywords.size() ; i++){
