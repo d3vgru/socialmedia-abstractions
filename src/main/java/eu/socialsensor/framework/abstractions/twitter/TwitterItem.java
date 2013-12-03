@@ -117,13 +117,19 @@ public class TwitterItem extends Item {
 		}
 		Place place = status.getPlace();
 		if (place != null) { 
-			String placeName = status.getPlace().getFullName();
+			String placeName = place.getFullName();
+			String country = place.getCountry();
+			String city = place.getName();
 			if(location==null) {
 				location = new Location(placeName);
 			}
 			else {
 				location.setName(placeName);
 			}
+			if(city != null)
+				location.setCityName(city);
+			if(country != null)
+				location.setCountryName(country);
 		}
 		
 		//WebPages inside the tweet
