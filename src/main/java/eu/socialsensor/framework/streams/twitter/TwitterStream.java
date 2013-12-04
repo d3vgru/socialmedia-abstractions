@@ -413,7 +413,8 @@ public class TwitterStream extends Stream {
 	@Override
 	public void search(Dysco dysco) throws StreamException {
 
-		List<String> keywords = dysco.getKeywords();
+		List<String> keywords = new ArrayList<String>();
+		keywords.addAll(dysco.getKeywords().keySet());
 		String queryStr = "";
 		for(int i = 0; i < keywords.size() ; i++){
 			if(i == keywords.size())
