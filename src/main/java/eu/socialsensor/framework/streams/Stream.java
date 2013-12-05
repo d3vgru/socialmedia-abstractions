@@ -154,14 +154,19 @@ public abstract class Stream implements Runnable {
 			return;
 		}
 			
+		if(usersToLists != null && getUserList(item) != null)
+			item.setList(getUserList(item));
 		
-		//item.setList(getuserList(item));
 		handler.update(item);
 	}
 	
-	private String[] getuserList(Item item) {
-		Set<String> lists = new HashSet<String>();
+	private String[] getUserList(Item item) {
 		
+		Set<String> lists = new HashSet<String>();
+		if(usersToLists == null)
+			System.out.println("User list is null");
+		if(item.getUserId() == null)
+			System.out.println("User in item is null");
 		Set<String> userLists = usersToLists.get(item.getUserId());
 		if(userLists != null) {
 			lists.addAll(userLists);
