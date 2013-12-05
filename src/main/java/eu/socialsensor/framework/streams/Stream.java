@@ -69,6 +69,7 @@ public abstract class Stream implements Runnable {
 		
 	}
 	
+	
 	/**
 	 * Set the handler that is responsible for the handling 
 	 * of the retrieved items
@@ -94,6 +95,10 @@ public abstract class Stream implements Runnable {
 		this.usersToLists = usersToLists;
 	}
 	
+	public void subscribe(List<Feed> feed) throws StreamException{
+		
+	}
+	
 	/**
 	 * Searches with the wrapper of the stream for a particular
 	 * set of feeds (feeds can be keywordsFeeds, userFeeds or locationFeeds)
@@ -101,7 +106,7 @@ public abstract class Stream implements Runnable {
 	 * @return the total number of retrieved items for the stream
 	 * @throws StreamException
 	 */
-	public Integer search(List<Feed> feeds) throws StreamException {
+	public Integer poll(List<Feed> feeds) throws StreamException {
 		List<Item> items = new ArrayList<Item>();
 		
 		if(retriever != null) {
@@ -127,6 +132,8 @@ public abstract class Stream implements Runnable {
 	
 	}
 	
+	
+	
 	/**
 	 * Store a set of items in the selected databases
 	 * @param items
@@ -148,7 +155,7 @@ public abstract class Stream implements Runnable {
 		}
 			
 		
-		item.setList(getuserList(item));
+		//item.setList(getuserList(item));
 		handler.update(item);
 	}
 	

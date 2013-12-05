@@ -160,7 +160,7 @@ public class TwitterStream extends Stream {
 	}
 
 	@Override
-	public synchronized Integer search(List<Feed> feeds) throws StreamException {
+	public synchronized void subscribe(List<Feed> feeds) throws StreamException {
 		logger.info("#Twitter : Set stream");
 		
 		if (twitterStream == null) {
@@ -234,7 +234,6 @@ public class TwitterStream extends Stream {
 			}
 		}
 		
-		return 0;
 	}
 
 	private FilterQuery getFilterQuery(String[] keywords, long[] follows, double[][] locations) {
