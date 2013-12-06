@@ -88,7 +88,6 @@ public class TwitterSubscriber implements Subscriber{
 		twitterStream = new TwitterStreamFactory(conf).getInstance();	
 		twitterStream.addListener(listener);	
 		
-		logger.info("Twitte Subscriber initialized");
 	}
 	
 	@Override
