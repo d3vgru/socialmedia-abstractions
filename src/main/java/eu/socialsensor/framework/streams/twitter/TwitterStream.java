@@ -26,6 +26,7 @@ import twitter4j.conf.ConfigurationBuilder;
 import eu.socialsensor.framework.abstractions.twitter.TwitterItem;
 import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Feed.FeedType;
+import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.Item.Operation;
 import eu.socialsensor.framework.common.domain.Keyword;
 import eu.socialsensor.framework.common.domain.SocialNetworkSource;
@@ -410,21 +411,32 @@ public class TwitterStream extends Stream {
 //	}
 
 	@Override
-	public void search(Dysco dysco) throws StreamException {
-
+	public Integer poll(List<Feed> feeds) throws StreamException {
+		List<Item> items = new ArrayList<Item>();
 		List<String> keywords = new ArrayList<String>();
-		keywords.addAll(dysco.getKeywords().keySet());
 		String queryStr = "";
-		for(int i = 0; i < keywords.size() ; i++){
-			if(i == keywords.size())
-				queryStr += keywords.get(i);
-			else
-				queryStr += keywords.get(i) + ",";
+		
+		for(int i=0;i<feeds.size();i++){
+			KeywordsFeed keywordsFeed = (KeywordsFeed) feeds.get(i);
+			
+			if(keywordsFeed.getKeywords() != null || !keywordsFeed.getKeywords().isEmpty()){
+				String keywordsQuery = "";
+				for(Keyword key : keywordsFeed.getKeywords()){
+					keywordsQuery += key.getName()+" ";
+				}
+				queryStr += keywordsQuery;
+			}
+			else{
+				queryStr += keywordsFeed.getKeyword().getName();
+			}
+			
+			if(i != feeds.size()-1)
+				queryStr +=",";
 		}
 		
 		try {	
 			Query query = new Query(queryStr);
-			int items = 0;
+		
 			while(true) {
 				QueryResult response = twitter.search(query);		
 				
@@ -432,19 +444,19 @@ public class TwitterStream extends Stream {
 				for(Status status : statuses) {
 					if(status != null){
 						TwitterItem item = new TwitterItem(status);
-					
-						items++;
-						handler.update(item);
+						items.add(item);
 					}
 				}
 				if(!response.hasNext())
 					break;
 				response.nextQuery();
 			}
-			System.out.println(items + " items found!");
+			
 		} catch (TwitterException e) {
 			throw new StreamException(e);
 		}
+		
+		return items.size();
 	}	
 	
 	
