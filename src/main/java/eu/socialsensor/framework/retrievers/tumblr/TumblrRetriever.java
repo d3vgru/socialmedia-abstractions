@@ -38,25 +38,15 @@ public class TumblrRetriever implements Retriever{
 	private Logger logger = Logger.getLogger(TumblrRetriever.class);
 	
 	private JumblrClient client;
+
+	private int maxResults;
+	private int maxRequests;
 	
-	private String consumerKey;
-	private String consumerSecret;
-	
-	private int results_threshold;
-	private int requests_threshold;
-	
-	public String getKey() { 
-		return null;
-	}
-	public String getSecret() {
-		return null;
-	}
 
 	public TumblrRetriever(String consumerKey, String consumerSecret,Integer maxResults,Integer maxRequests) {
-		this.consumerKey = consumerKey;
-		this.consumerSecret = consumerSecret;
-		this.results_threshold = maxResults;
-		this.requests_threshold = maxRequests;
+		
+		this.maxResults = maxResults;
+		this.maxRequests = maxRequests;
 		
 		client = new JumblrClient(consumerKey,consumerSecret);
 	}
@@ -135,7 +125,7 @@ public class TumblrRetriever implements Retriever{
 					}
 				
 				}
-				if(items.size()>results_threshold || numberOfRequests>requests_threshold){
+				if(items.size()>maxResults || numberOfRequests>maxRequests){
 					isFinished = true;
 					break;
 				}
@@ -253,7 +243,7 @@ public class TumblrRetriever implements Retriever{
 					}
 				
 				}
-				if(items.size()>results_threshold || numberOfRequests>=requests_threshold){
+				if(items.size()>maxResults || numberOfRequests>=maxRequests){
 					isFinished = true;
 					break;
 				}
@@ -269,7 +259,7 @@ public class TumblrRetriever implements Retriever{
 //		logger.info("#Tumblr : Done retrieving for this session");
 //		logger.info("#Tumblr : Handler fetched " + items.size() + " posts from " + tags + 
 //				" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
-		feed.setTotalNumberOfItems(items.size());
+		
 		return items;
 		
 	}
@@ -302,8 +292,12 @@ public class TumblrRetriever implements Retriever{
 	
 		return null;
 	}
-	
-	
+	@Override
+	public void stop(){
+		if(client != null){
+			client = null;
+		}
+	}
 	public class DateUtil
 	{
 	    public Date addDays(Date date, int days)

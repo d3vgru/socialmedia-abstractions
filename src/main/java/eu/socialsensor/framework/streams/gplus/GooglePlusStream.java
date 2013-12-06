@@ -3,8 +3,6 @@ package eu.socialsensor.framework.streams.gplus;
 import org.apache.log4j.Logger;
 
 import eu.socialsensor.framework.common.domain.SocialNetworkSource;
-import eu.socialsensor.framework.common.domain.Source;
-import eu.socialsensor.framework.monitors.FeedsMonitor;
 import eu.socialsensor.framework.retrievers.gplus.GooglePlusRetriever;
 import eu.socialsensor.framework.streams.Stream;
 import eu.socialsensor.framework.streams.StreamConfiguration;
@@ -18,21 +16,10 @@ import eu.socialsensor.framework.streams.StreamException;
 
 public class GooglePlusStream extends Stream {
 	public static final SocialNetworkSource SOURCE = SocialNetworkSource.GooglePlus;
-
 	
 	private Logger logger = Logger.getLogger(GooglePlusStream.class);
-	private FeedsMonitor monitor;
-	private StreamConfiguration config;
 	
 	private String key;
-	
-	
-	@Override
-	public void close() throws StreamException {
-		monitor.stopMonitor();
-		logger.info("#GooglePlus : Close stream");
-	}
-	
 
 	@Override
 	public void open(StreamConfiguration config) throws StreamException {
@@ -43,9 +30,8 @@ public class GooglePlusStream extends Stream {
 			return;
 		}
 		
-		this.config = config;
-		
 		key = config.getParameter(KEY);
+		
 		String maxResults = config.getParameter(MAX_RESULTS);
 		String maxRequests = config.getParameter(MAX_REQUESTS);
 		
@@ -57,5 +43,5 @@ public class GooglePlusStream extends Stream {
 		this.retriever = new GooglePlusRetriever(key,Integer.parseInt(maxResults),Integer.parseInt(maxRequests));
 		
 	}
-
+	
 }

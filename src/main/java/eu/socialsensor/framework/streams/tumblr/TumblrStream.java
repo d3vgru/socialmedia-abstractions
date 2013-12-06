@@ -4,8 +4,6 @@ package eu.socialsensor.framework.streams.tumblr;
 import org.apache.log4j.Logger;
 
 import eu.socialsensor.framework.common.domain.SocialNetworkSource;
-import eu.socialsensor.framework.common.domain.Source;
-import eu.socialsensor.framework.monitors.FeedsMonitor;
 import eu.socialsensor.framework.retrievers.tumblr.TumblrRetriever;
 import eu.socialsensor.framework.streams.Stream;
 import eu.socialsensor.framework.streams.StreamConfiguration;
@@ -21,18 +19,11 @@ public class TumblrStream extends Stream {
 	
 	public static final SocialNetworkSource SOURCE = SocialNetworkSource.Tumblr;
 	
-	private FeedsMonitor monitor;
-	private StreamConfiguration config;
 	private String consumerKey;
 	private String consumerSecret;
 	
 	private Logger logger = Logger.getLogger(TumblrStream.class);
-	
-	@Override
-	public void close() throws StreamException {
-		monitor.stopMonitor();
-		logger.info("#Tumblr : Close stream");
-	}
+
 	
 	@Override
 	public void open(StreamConfiguration config) throws StreamException {
@@ -42,8 +33,6 @@ public class TumblrStream extends Stream {
 			logger.error("#Tumblr : Config file is null.");
 			return;
 		}
-		
-		this.config = config;
 		
 		consumerKey = config.getParameter(KEY);
 		consumerSecret = config.getParameter(SECRET);

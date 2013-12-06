@@ -49,8 +49,8 @@ public class FlickrRetriever implements Retriever {
 	private String flickrKey;
 	private String flickrSecret;
 	
-	private int results_threshold;
-	private int request_threshold;
+	private int maxResults;
+	private int maxRequests;
 	
 	private String flickrHost = "www.flickr.com";
 	
@@ -67,8 +67,8 @@ public class FlickrRetriever implements Retriever {
 		
 		this.flickrKey = flickrKey;
 		this.flickrSecret = flickrSecret;
-		this.results_threshold = maxResults;
-		this.request_threshold = maxRequests;
+		this.maxResults = maxResults;
+		this.maxRequests = maxRequests;
 		
 		Flickr.debugStream = false;
 		try {
@@ -144,12 +144,12 @@ public class FlickrRetriever implements Retriever {
 				Element photoElement = (Element) photoNodes.item(i);
 				Photo photo = PhotoUtils.createPhoto(photoElement);
 				
-				if (photo != null || photo.getId() != null){
+				if (photo != null &&  photo.getId() != null){
 					FlickrItem flickrUpdate = new FlickrItem(photo,feed);
 				
 					items.add(flickrUpdate);
 				}
-				if(items.size()>results_threshold || numberOfRequests > request_threshold){
+				if(items.size()>maxResults || numberOfRequests > maxRequests){
 					isFinished = true;
 					break;
 				}
@@ -253,7 +253,7 @@ public class FlickrRetriever implements Retriever {
 				FlickrItem flickrUpdate = new FlickrItem(photo,feed);
 				items.add(flickrUpdate);
 				
-				if(items.size()>results_threshold || numberOfRequests >= request_threshold){
+				if(items.size()>maxResults || numberOfRequests >= maxRequests){
 					isFinished = true;
 					break;
 				}
@@ -271,7 +271,7 @@ public class FlickrRetriever implements Retriever {
 //		logger.info("#Flickr : Done retrieving for this session");
 //		logger.info("#Flickr : Handler fetched " + items.size() + " photos from " + text + 
 //				" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
-		feed.setTotalNumberOfItems(items.size());
+		
 		return items;
 	}
 	@Override
@@ -322,7 +322,7 @@ public class FlickrRetriever implements Retriever {
 				
 				items.add(flickrUpdate);
 				
-				if(items.size()>results_threshold){
+				if(items.size()>maxResults){
 					isFinished = true;
 					break;
 				}
@@ -367,6 +367,12 @@ public class FlickrRetriever implements Retriever {
 		}
 	
 		return null;
+	}
+	
+	@Override
+	public void stop(){
+		if(flickrTransport != null)
+			flickrTransport = null;
 	}
 	
 }

@@ -13,7 +13,6 @@ import org.jinstagram.exceptions.InstagramException;
 import org.jinstagram.entity.common.Pagination;
 import org.jinstagram.entity.locations.LocationSearchFeed;
 import org.jinstagram.entity.tags.TagMediaFeed;
-import org.jinstagram.entity.users.basicinfo.UserInfo;
 import org.jinstagram.entity.users.feed.MediaFeed;
 import org.jinstagram.entity.users.feed.MediaFeedData;
 import org.jinstagram.entity.users.feed.UserFeed;
@@ -42,39 +41,20 @@ public class InstagramRetriever implements Retriever {
 	private Logger logger = Logger.getLogger(InstagramRetriever.class);
 	
 	StreamConfiguration instagramConfStorage;
-
-	private String instagramKey;
-	private String instagramSecret;
-	private Token instagramToken;
 	
 	private Instagram instagram = null;
 
-	private int results_threshold;
-	private int request_threshold;
+	private int maxResults;
+	private int maxRequests;
 	
-	List<Feed> feeds = new ArrayList<Feed>();
-	
-	MediaFeed mediaFeed = new MediaFeed();
-	TagMediaFeed tagFeed = new TagMediaFeed();
-	
-	
-	public UserInfo userInfo = new UserInfo();
-	
-	public String getKey() { 
-		return instagramKey;
-	}
-	public String getSecret() {
-		return instagramSecret;
-	}
-	public Token getToken() {
-		return instagramToken;
-	}
+	private MediaFeed mediaFeed = new MediaFeed();
+	private TagMediaFeed tagFeed = new TagMediaFeed();
 	
 	public InstagramRetriever(String secret, String token, int maxResults,int maxRequests) {
 		Token instagramToken = new Token(token,secret); 
 		this.instagram = new Instagram(instagramToken);
-		this.results_threshold = maxResults;
-		this.request_threshold = maxRequests;
+		this.maxResults = maxResults;
+		this.maxRequests = maxRequests;
 	}
 	
 	@Override
@@ -120,8 +100,8 @@ public class InstagramRetriever implements Retriever {
 						int createdTime = Integer.parseInt(mfeed.getCreatedTime());
 						Date publicationDate = new Date((long) createdTime * 1000);
 						
-						if(lastItemDate.after(publicationDate) || items.size()>results_threshold 
-								|| numberOfRequests>request_threshold){
+						if(lastItemDate.after(publicationDate) || items.size()>maxResults 
+								|| numberOfRequests>maxRequests){
     						isFinished = true;
 							break;
     					}
@@ -208,7 +188,7 @@ public class InstagramRetriever implements Retriever {
 				int createdTime = Integer.parseInt(mfeed.getCreatedTime());
 				Date publicationDate = new Date((long) createdTime * 1000);
 				
-				if(publicationDate.before(lastItemDate) || items.size()>results_threshold || numberOfRequests>request_threshold){
+				if(publicationDate.before(lastItemDate) || items.size()>maxResults || numberOfRequests>maxRequests){
 					isFinished = true;
 					break;
 				}
@@ -233,7 +213,7 @@ public class InstagramRetriever implements Retriever {
 				while(pagination.hasNextPage()){
 					
 					try{
-						if(numberOfRequests>=request_threshold)
+						if(numberOfRequests>=maxRequests)
 							break;
 						
 						tagFeed = instagram.getTagMediaInfoNextPage(pagination);
@@ -244,8 +224,8 @@ public class InstagramRetriever implements Retriever {
 							for(MediaFeedData mfeed : tagFeed.getData()) {
 								int createdTime = Integer.parseInt(mfeed.getCreatedTime());
 								Date publicationDate = new Date((long) createdTime * 1000);
-								if(publicationDate.before(lastItemDate) || items.size()>results_threshold
-										|| numberOfRequests>request_threshold){
+								if(publicationDate.before(lastItemDate) || items.size()>maxResults
+										|| numberOfRequests>maxRequests){
 									isFinished = true;
 									break;
 								}
@@ -278,7 +258,7 @@ public class InstagramRetriever implements Retriever {
 //		logger.info("#Instagram : Done retrieving for this session");
 //		logger.info("#Instagram : Handler fetched " + items.size() + " posts from " + tags + 
 //				" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
-		feed.setTotalNumberOfItems(items.size());
+		
 		return items;
 	}
 	@Override
@@ -322,7 +302,7 @@ public class InstagramRetriever implements Retriever {
     		Date upDate = currentDate;
     		Date downDate = dateUtil.addDays(upDate, -1);
     		
-    		logger.info("#Instagram : Retrieving for location : "+location.getName());	
+    		//logger.info("#Instagram : Retrieving for location : "+location.getName());	
     		
     		while(downDate.after(lastItemDate) || downDate.equals(lastItemDate)){
     	
@@ -336,8 +316,8 @@ public class InstagramRetriever implements Retriever {
                 		for(MediaFeedData mfeed : mediaFeed.getData()){
         					int createdTime = Integer.parseInt(mfeed.getCreatedTime());
         					Date publicationDate = new Date((long) createdTime * 1000);
-        					if(lastItemDate.after(publicationDate) || items.size()>results_threshold 
-        							|| numberOfRequests>request_threshold){
+        					if(lastItemDate.after(publicationDate) || items.size()>maxResults 
+        							|| numberOfRequests>maxRequests){
         						isFinished = true;
 								break;
         					}
@@ -374,7 +354,7 @@ public class InstagramRetriever implements Retriever {
 		
     	return items;
     }
-	
+	@Override
 	public List<Item> retrieve (Feed feed) {
 	
 		switch(feed.getFeedtype()){
@@ -396,6 +376,13 @@ public class InstagramRetriever implements Retriever {
 		}
 		 
 		return null;
+	}
+	
+	@Override
+	public void stop(){
+		if(instagram != null){
+			instagram = null;
+		}
 	}
 
 	public class DateUtil

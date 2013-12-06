@@ -9,11 +9,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 
+import org.apache.log4j.Logger;
+
 import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Item;
-import eu.socialsensor.framework.common.domain.dysco.Dysco;
 import eu.socialsensor.framework.monitors.FeedsMonitor;
 import eu.socialsensor.framework.retrievers.Retriever;
+import eu.socialsensor.framework.subscribers.Subscriber;
 
 
 
@@ -39,8 +41,13 @@ public abstract class Stream implements Runnable {
 	
 	protected FeedsMonitor monitor;
 	protected BlockingQueue<Feed> feedsQueue;
-	protected Retriever retriever;
+	protected Retriever retriever = null;
+	protected Subscriber subscriber = null;
 	protected StreamHandler handler;
+	
+	private Logger  logger = Logger.getLogger(Stream.class);
+	
+	protected boolean isSubscriber = false;
 	
 	private Map<String, Set<String>> usersToLists;
 	
@@ -58,15 +65,15 @@ public abstract class Stream implements Runnable {
 	 * @throws StreamException
 	 *      In any case of error during stream close
 	 */
-	public abstract void close() throws StreamException;
+	public void close() throws StreamException{
+		if(monitor != null)
+			monitor.stopMonitor();
+		if(retriever !=null)
+			retriever.stop();
+		if(subscriber != null)
+			subscriber.stop();
 		
-	/**
-	 * Search for a certain dysco
-	 * @param dysco
-	 * @throws StreamException
-	 */
-	public void search(Dysco dysco) throws StreamException {
-		
+		logger.info("Close Stream  : "+this.getClass().getName());
 	}
 	
 	
@@ -95,7 +102,15 @@ public abstract class Stream implements Runnable {
 		this.usersToLists = usersToLists;
 	}
 	
-	public void subscribe(List<Feed> feed) throws StreamException{
+	public void setAsSubscriber(){
+		this.isSubscriber = true;
+	}
+	
+	public synchronized void stream(List<Feed> feeds) throws StreamException {
+		
+		if(subscriber != null){
+			subscriber.subscribe(feeds);
+		}
 		
 	}
 	
@@ -125,7 +140,7 @@ public abstract class Stream implements Runnable {
 				store(items);
 			}	
 			
-			System.out.println("Retrieved items for "+this.getClass().getName()+ " are : "+items.size());
+			logger.info("Retrieved items for "+this.getClass().getName()+ " are : "+items.size());
 		}
 		
 		return items.size();
@@ -150,7 +165,7 @@ public abstract class Stream implements Runnable {
 	 */
 	public synchronized void store(Item item) {
 		if(handler == null) {
-			System.out.println("NULL Handler!");
+			logger.error("NULL Handler!");
 			return;
 		}
 			
@@ -164,9 +179,9 @@ public abstract class Stream implements Runnable {
 		
 		Set<String> lists = new HashSet<String>();
 		if(usersToLists == null)
-			System.out.println("User list is null");
+			logger.error("User list is null");
 		if(item.getUserId() == null)
-			System.out.println("User in item is null");
+			logger.error("User in item is null");
 		Set<String> userLists = usersToLists.get(item.getUserId());
 		if(userLists != null) {
 			lists.addAll(userLists);

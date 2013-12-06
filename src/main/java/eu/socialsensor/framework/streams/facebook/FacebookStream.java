@@ -7,7 +7,6 @@ import com.restfb.DefaultFacebookClient;
 import com.restfb.FacebookClient;
 
 import eu.socialsensor.framework.common.domain.SocialNetworkSource;
-import eu.socialsensor.framework.common.domain.Source;
 import eu.socialsensor.framework.retrievers.facebook.FacebookRetriever;
 import eu.socialsensor.framework.streams.Stream;
 import eu.socialsensor.framework.streams.StreamConfiguration;
@@ -22,14 +21,12 @@ public class FacebookStream extends Stream {
 	
 	public static SocialNetworkSource SOURCE = SocialNetworkSource.Facebook;
 	
-	public int maxRequests = 600;
+	public int maxFBRequests = 600;
 	public long minInterval = 600000;
 	
 	private Logger  logger = Logger.getLogger(FacebookStream.class);
 	
 	private FacebookClient facebookClient;
-	
-	private StreamConfiguration config;
 	
 	
 	@Override
@@ -41,10 +38,13 @@ public class FacebookStream extends Stream {
 			return;
 		}
 		
-		this.config = config;
 		
 		String access_token = config.getParameter(ACCESS_TOKEN);
-		String maxResults = config.getParameter(MAX_RESULTS);
+		int maxResults = Integer.parseInt(config.getParameter(MAX_RESULTS));
+		int maxRequests = Integer.parseInt(config.getParameter(MAX_REQUESTS));
+		
+		if(maxRequests > maxFBRequests)
+			maxRequests = maxFBRequests;   
 		
 		if (access_token == null) {
 			logger.error("#Facebook : Stream requires authentication.");
@@ -52,14 +52,8 @@ public class FacebookStream extends Stream {
 		}
 		
 		facebookClient = new DefaultFacebookClient(access_token);
-		retriever = new FacebookRetriever(facebookClient, maxRequests, minInterval,Integer.parseInt(maxResults));	
+		retriever = new FacebookRetriever(facebookClient, maxRequests, minInterval,maxResults);	
 
-	}
-	
-	@Override
-	public synchronized void close() {
-		monitor.stopMonitor();
-		logger.info("#Facebook : Close stream");
 	}
 
 }

@@ -318,7 +318,11 @@ public class YoutubeRetriever implements Retriever {
 		return null;
 	}
 
-	
+	public void stop(){
+		if(service != null){
+			service = null;
+		}
+	}
 	private URL getChannelUrl(String channel) throws MalformedURLException {
 		StringBuffer urlStr = new StringBuffer(activityFeedUserUrlPrefix);
 		urlStr.append(channel).append(uploadsActivityFeedUrlSuffix);

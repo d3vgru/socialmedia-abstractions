@@ -3,7 +3,6 @@ package eu.socialsensor.framework.streams.flickr;
 import org.apache.log4j.Logger;
 
 import eu.socialsensor.framework.common.domain.SocialNetworkSource;
-import eu.socialsensor.framework.common.domain.Source;
 import eu.socialsensor.framework.monitors.FeedsMonitor;
 import eu.socialsensor.framework.retrievers.flickr.FlickrRetriever;
 import eu.socialsensor.framework.streams.Stream;
@@ -25,16 +24,8 @@ public class FlickrStream extends Stream {
 	
 	private String key;
 	private String secret;
-		
-	private FeedsMonitor monitor;
-	private StreamConfiguration config;
-	
-	@Override
-	public void close() throws StreamException {
-		monitor.stopMonitor();
-		logger.info("#Flickr : Close stream");
-	}
 
+	
 	@Override
 	public void open(StreamConfiguration config) throws StreamException {
 		logger.info("#Flickr : Open stream");
@@ -43,8 +34,6 @@ public class FlickrStream extends Stream {
 			logger.error("#Flickr : Config file is null.");
 			return;
 		}
-		
-		this.config = config;
 		
 		key = config.getParameter(KEY);
 		secret = config.getParameter(SECRET);
@@ -60,5 +49,5 @@ public class FlickrStream extends Stream {
 		this.retriever = new FlickrRetriever(key, secret,Integer.parseInt(maxResults),Integer.parseInt(maxRequests));
 		
 	}
-
+	
 }

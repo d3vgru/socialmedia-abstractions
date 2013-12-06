@@ -48,8 +48,8 @@ public class GooglePlusRetriever implements Retriever{
 	private String GooglePlusKey;
 	
 	private int pageLimit = 10;
-	private int results_threshold;
-	private int requests_threshold;
+	private int maxResults;
+	private int maxRequests;
 	
 	public String getKey() { 
 		return GooglePlusKey;
@@ -66,8 +66,8 @@ public class GooglePlusRetriever implements Retriever{
 						.setHttpRequestInitializer(credential)
 						.setPlusRequestInitializer(new PlusRequestInitializer(GooglePlusKey)).build();
 		
-		this.results_threshold = maxResults;
-		this.requests_threshold = maxRequests;
+		this.maxResults = maxResults;
+		this.maxRequests = maxRequests;
 	}
 
 	@Override
@@ -89,7 +89,7 @@ public class GooglePlusRetriever implements Retriever{
 			return null;
 		}
 				
-		logger.info("#GooglePlus : Retrieving User Feed : "+uName);
+		//logger.info("#GooglePlus : Retrieving User Feed : "+uName);
 		
 		//Retrieve userID from Google+
 		String userID = null;
@@ -149,14 +149,14 @@ public class GooglePlusRetriever implements Retriever{
 						items.add(googlePlusUpdate);
 					}
 					
-					if(items.size()>results_threshold){
+					if(items.size()>maxResults){
 						isFinished = true;
 						break;
 					}
 					
 				}
 				 numberOfRequests++;
-				 if(numberOfRequests>requests_threshold || (activityFeed.getNextPageToken() == null))
+				 if(numberOfRequests>maxRequests || (activityFeed.getNextPageToken() == null))
 					 break;
 				 
 				 userActivities.setPageToken(activityFeed.getNextPageToken());
@@ -216,6 +216,7 @@ public class GooglePlusRetriever implements Retriever{
 		
 		if(tags.equals(""))
 			return items;
+		
 		//logger.info("#GooglePlus : Retrieving Keywords Feed :"+tags);
 		
 		Plus.Activities.Search searchActivities;
@@ -259,7 +260,7 @@ public class GooglePlusRetriever implements Retriever{
 						
 					}
 					
-					if(items.size()>results_threshold){
+					if(items.size()>maxResults){
 						isFinished = true;
 						break;
 					}
@@ -269,7 +270,7 @@ public class GooglePlusRetriever implements Retriever{
 			 }
 			
 			 totalRequests++;
-			 if(totalRequests>requests_threshold || isFinished || (activityFeed.getNextPageToken() == null))
+			 if(totalRequests>maxRequests || isFinished || (activityFeed.getNextPageToken() == null))
 				 break;
 			 
 			 searchActivities.setPageToken(activityFeed.getNextPageToken());
@@ -282,12 +283,11 @@ public class GooglePlusRetriever implements Retriever{
 			 pageOfActivities = activityFeed.getItems();
 		
 		}
-		 
 		
 //		logger.info("#GooglePlus : KeywordsFeed "+feed.getId()+" is done retrieving for this session");
 //		logger.info("#GooglePlus : Handler fetched " + items.size() + " posts from " + tags + 
 //				" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
-		feed.setTotalNumberOfItems(items.size());
+		
 		return items;
 		
 	}
@@ -319,6 +319,13 @@ public class GooglePlusRetriever implements Retriever{
 		}
 		
 		return null;
+	}
+	
+	@Override
+	public void stop(){
+		if(plusSrv != null){
+			plusSrv = null;
+		}
 	}
 	
 }

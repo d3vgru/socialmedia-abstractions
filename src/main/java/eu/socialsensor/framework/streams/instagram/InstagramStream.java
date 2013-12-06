@@ -1,12 +1,8 @@
 package eu.socialsensor.framework.streams.instagram;
 
-
-
 import org.apache.log4j.Logger;
 
 import eu.socialsensor.framework.common.domain.SocialNetworkSource;
-import eu.socialsensor.framework.common.domain.Source;
-import eu.socialsensor.framework.monitors.FeedsMonitor;
 import eu.socialsensor.framework.retrievers.instagram.InstagramRetriever;
 import eu.socialsensor.framework.streams.Stream;
 import eu.socialsensor.framework.streams.StreamConfiguration;
@@ -24,15 +20,6 @@ public class InstagramStream extends Stream {
 	
 	public static final SocialNetworkSource SOURCE = SocialNetworkSource.Instagram;
 
-	private FeedsMonitor monitor;
-	
-	private StreamConfiguration config;
-	
-	@Override
-	public void close() throws StreamException {
-		monitor.stopMonitor();
-		logger.info("#Instagram : Close stream");
-	}
 
 	@Override
 	public void open(StreamConfiguration config) throws StreamException {
@@ -42,8 +29,6 @@ public class InstagramStream extends Stream {
 			logger.error("#Instagram : Config file is null.");
 			return;
 		}
-		
-		this.config = config;
 		
 		String key = config.getParameter(KEY);
 		String secret = config.getParameter(SECRET);

@@ -10,7 +10,6 @@ import com.restfb.Connection;
 import com.restfb.FacebookClient;
 import com.restfb.Parameter;
 import com.restfb.exception.FacebookResponseStatusException;
-import com.restfb.json.JsonObject;
 import com.restfb.types.CategorizedFacebookType;
 import com.restfb.types.Page;
 import com.restfb.types.Post;
@@ -41,16 +40,16 @@ public class FacebookRetriever implements Retriever {
 			
 	private FacebookClient facebookClient;
 	
-	private int results_threshold;
-	private int request_threshold;
+	private int maxResults;
+	private int maxRequests;
 	
 	private Logger  logger = Logger.getLogger(FacebookRetriever.class);
 	
 	public FacebookRetriever(FacebookClient facebookClient, int maxRequests, long minInterval,Integer maxResults) {
 		this.facebookClient = facebookClient;		
 		this.rateLimitsMonitor = new RateLimitsMonitor(maxRequests, minInterval);
-		this.results_threshold = maxResults;
-		this.request_threshold = maxRequests;
+		this.maxResults = maxResults;
+		this.maxRequests = maxRequests;
 	}
 	
 	@Override
@@ -70,7 +69,7 @@ public class FacebookRetriever implements Retriever {
 		}
 		String userFeed = source.getName()+"/feed";
 		
-		logger.info("#Facebook : Retrieving User Feed : "+userName);
+		//logger.info("#Facebook : Retrieving User Feed : "+userName);
 		
 		Connection<Post> connection = facebookClient.fetchConnection(userFeed , Post.class);
 		Page page = facebookClient.fetchObject(userName, Page.class);
@@ -90,7 +89,7 @@ public class FacebookRetriever implements Retriever {
 				    items.add(facebookUpdate);	
 				}
 				
-				if(publicationDate.before(lastItemDate) || items.size()>results_threshold){
+				if(publicationDate.before(lastItemDate) || items.size()>maxResults){
 					isFinished = true;
 					break;
 				}
@@ -113,7 +112,7 @@ public class FacebookRetriever implements Retriever {
 		
 		Date lastItemDate = feed.getLastItemDate();
 		
-		int numberOfRequests = 0;
+		
 		
 		boolean isFinished = false;
 		
@@ -125,14 +124,13 @@ public class FacebookRetriever implements Retriever {
 			return items;
 		}
 		
-		int it = 0;
+		
 		
 		String tags = "";
 		
 		if(keyword != null){
-			for(String key : keyword.getName().split(" ")) 
-				if(key.length()>1)
-					tags += key.toLowerCase()+" ";
+			
+			tags += keyword.getName().toLowerCase();
 		}
 		else if(keywords != null){
 			for(Keyword key : keywords){
@@ -157,8 +155,7 @@ public class FacebookRetriever implements Retriever {
 			return items;
 		}
 		for(List<Post> connectionPage : connection) {
-			it++;
-			
+						
 			//logger.info("#Facebook : Retrieving page "+it+" that contains "+connectionPage.size()+" posts");
 			
 			for(Post post : connectionPage) {	
@@ -176,7 +173,7 @@ public class FacebookRetriever implements Retriever {
 				  
 				}
 				
-				if(publicationDate.before(lastItemDate) || items.size()>results_threshold){
+				if(publicationDate.before(lastItemDate) || items.size()>maxResults){
 					isFinished = true;
 					break;
 				}
@@ -190,7 +187,8 @@ public class FacebookRetriever implements Retriever {
 //		logger.info("#Facebook : Done retrieving for this session");
 //		logger.info("#Facebook : Handler fetched " + items.size() + " posts from " + tags + 
 //			" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
-		feed.setTotalNumberOfItems(items.size());
+		
+	
 		return items;
 	}
 	
@@ -223,4 +221,9 @@ public class FacebookRetriever implements Retriever {
 		return null;
 	}
 	
+	@Override
+	public void stop(){
+		if(facebookClient != null)
+			facebookClient = null;
+	}
 }
