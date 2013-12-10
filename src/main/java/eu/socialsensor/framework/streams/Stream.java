@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 
 import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Item;
+import eu.socialsensor.framework.common.domain.StreamUser.Category;
 import eu.socialsensor.framework.monitors.FeedsMonitor;
 import eu.socialsensor.framework.retrievers.Retriever;
 import eu.socialsensor.framework.subscribers.Subscriber;
@@ -50,6 +51,7 @@ public abstract class Stream implements Runnable {
 	protected boolean isSubscriber = false;
 	
 	private Map<String, Set<String>> usersToLists;
+	private Map<String,Category> usersToCategory;
 	
 	/**
 	 * Open a stream for updates delivery
@@ -100,6 +102,10 @@ public abstract class Stream implements Runnable {
 	
 	public void setUserLists(Map<String, Set<String>> usersToLists) {
 		this.usersToLists = usersToLists;
+	}
+	
+	public void setUserCategories(Map<String, Category> usersToCategory) {
+		this.usersToCategory = usersToCategory;
 	}
 	
 	public void setAsSubscriber(){
@@ -172,16 +178,25 @@ public abstract class Stream implements Runnable {
 		if(usersToLists != null && getUserList(item) != null)
 			item.setList(getUserList(item));
 		
+		if(usersToCategory != null && getUserCategory(item) != null)
+			item.setCategory(getUserCategory(item));
+		
 		handler.update(item);
 	}
 	
 	private String[] getUserList(Item item) {
 		
 		Set<String> lists = new HashSet<String>();
-		if(usersToLists == null)
+		if(usersToLists == null){
 			logger.error("User list is null");
-		if(item.getUserId() == null)
+			return null;
+		}
+			
+		if(item.getUserId() == null){
 			logger.error("User in item is null");
+			return null;
+		}
+				
 		Set<String> userLists = usersToLists.get(item.getUserId());
 		if(userLists != null) {
 			lists.addAll(userLists);
@@ -197,6 +212,23 @@ public abstract class Stream implements Runnable {
 			return lists.toArray(new String[lists.size()]);
 		else
 			return null;
+		
+	}
+	
+	private Category getUserCategory(Item item){
+		
+		if(usersToCategory == null){
+			logger.error("User categories is null");
+			return null;
+		}
+			
+		if(item.getUserId() == null){
+			logger.error("User in item is null");
+			return null;
+		}
+			
+		
+		return usersToCategory.get(item.getUserId());
 		
 	}
 	
