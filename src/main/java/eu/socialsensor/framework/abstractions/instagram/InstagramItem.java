@@ -53,10 +53,11 @@ public class InstagramItem extends Item {
 		//Tags
 		int tIndex=0;
 		int tagSize = image.getTags().size();
-		String[] tempTags = new String[tagSize];
+		tags = new String[tagSize];
 		
 		for(String tag:image.getTags())
-			tempTags[tIndex++]=tag;	
+			tags[tIndex++]=tag;	
+		
 		//User that posted the photo
         if(image.getUser() !=null){
                 streamUser = new InstagramStreamUser(image.getUser());
