@@ -34,6 +34,11 @@ public class TwitterStreamUser extends StreamUser {
 		profileImage = user.getProfileImageURL();
 		//Page URL of the user
 		pageUrl = "https://twitter.com/" + user.getScreenName();
+		url = user.getURL();
+		
+		verified = user.isVerified();
+		listedCount = (long) user.getListedCount();
+		
 		//Statuses of the user
 		items = user.getStatusesCount();
 		//Creation date of user's profile
