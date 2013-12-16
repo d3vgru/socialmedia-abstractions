@@ -36,6 +36,8 @@ public class VimeoMediaItem extends MediaItem {
 		this.setThumbnail(video.thumbnail_large);
 		//Title
 		this.setTitle(video.title);
+		//Description
+		this.setDescription(video.description);
 		//Tags
 		String tags = video.tags;
 		if(tags != null) {
