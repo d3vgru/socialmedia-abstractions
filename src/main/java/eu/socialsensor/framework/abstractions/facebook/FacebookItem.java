@@ -118,6 +118,8 @@ public class FacebookItem extends Item {
 							mediaItem.setThumbnail(thumbnail);
 							//Title
 							mediaItem.setTitle(title);
+							//Description
+							mediaItem.setDescription(description);
 							//Tags
 							mediaItem.setTags(tags);
 							//Popularity
@@ -178,6 +180,8 @@ public class FacebookItem extends Item {
 						mediaItem.setThumbnail(thumbnail);
 						//Title
 						mediaItem.setTitle(title);
+						//Description
+						mediaItem.setDescription(description);
 						//Tags
 						mediaItem.setTags(tags);
 						//Popularity
@@ -231,6 +235,8 @@ public class FacebookItem extends Item {
 					mediaItem.setThumbnail(thumbnail);
 					//Title
 					mediaItem.setTitle(title);
+					//Description
+					mediaItem.setDescription(description);
 					//Tags
 					mediaItem.setTags(tags);
 					//Popularity

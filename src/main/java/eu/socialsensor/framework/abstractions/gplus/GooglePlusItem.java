@@ -121,6 +121,8 @@ public class GooglePlusItem extends Item {
 						mediaItem.setThumbnail(thumbUrl);
 						//Title
 						mediaItem.setTitle(title);
+						//Description
+						mediaItem.setDescription(attachment.getDisplayName());
 						//Tags
 						mediaItem.setTags(tags);
 						//Popularity
@@ -171,6 +173,8 @@ public class GooglePlusItem extends Item {
 						mediaItem.setThumbnail(thumnailUrl);
 						//Title
 						mediaItem.setTitle(title);
+						//Description
+						mediaItem.setDescription(attachment.getDisplayName());
 						//Tags
 						mediaItem.setTags(tags);
 						//Popularity
@@ -222,6 +226,8 @@ public class GooglePlusItem extends Item {
 							mediaItem.setThumbnail(thumbnailUrl);
 							//Title
 							mediaItem.setTitle(title);
+							//Description
+							mediaItem.setDescription(attachment.getDisplayName());
 							//Tags
 							mediaItem.setTags(tags);
 							//Popularity

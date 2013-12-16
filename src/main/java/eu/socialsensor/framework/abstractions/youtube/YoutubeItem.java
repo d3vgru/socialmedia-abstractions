@@ -130,6 +130,8 @@ public class YoutubeItem extends Item {
 			mediaItem.setThumbnail(thumbUrl);	
 			//Title
 			mediaItem.setTitle(title);
+			//Description
+			mediaItem.setDescription(description);
 			//Tags
 			mediaItem.setTags(tags);
 			//Popularity

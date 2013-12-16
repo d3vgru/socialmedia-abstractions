@@ -97,6 +97,8 @@ public class TumblrItem extends Item{
 						mediaItem.setThumbnail(thumbnail);
 						//Title
 						mediaItem.setTitle(title);
+						//Description
+						mediaItem.setDescription(description);
 						//Tags
 						mediaItem.setTags(tags);
 					
