@@ -81,7 +81,7 @@ public class FacebookItem extends Item {
 		String type = post.getType();
 		
 		if(type.equals("photo")) {
-		
+			
 			String picture = post.getPicture();
 			
 			try {
@@ -123,9 +123,10 @@ public class FacebookItem extends Item {
 							//Popularity
 							mediaItem.setLikes(likes);
 							mediaItem.setShares(shares);
-							
+					
 							//Store mediaItems and their ids 
 							mediaItems.add(mediaItem);
+							
 							mediaIds.add(mediaId);
 						}
 					}
@@ -135,6 +136,7 @@ public class FacebookItem extends Item {
 			}
 		}
 		else if(type.equals("link")) {
+			
 			webPages = new ArrayList<WebPage>();
 			String picture = post.getPicture(); ///!!!!
 			if (picture != null) { 
@@ -155,20 +157,36 @@ public class FacebookItem extends Item {
 					if(p_url != null){
 						
 						String mediaId = SocialNetworkSource.Facebook+"#"+post.getId();
+						//url
 						MediaItem mediaItem = new MediaItem(p_url);
+						
+						//id
 						mediaItem.setId(mediaId);
-						mediaItem.setType("image");
+						//SocialNetwork Name
+						mediaItem.setStreamId(streamId);
+						//Reference
 						mediaItem.setRef(id);
+						//Type 
+						mediaItem.setType("image");
+						//Time of publication
+						mediaItem.setPublicationTime(publicationTime);
+						//PageUrl
 						String pageUrl = post.getLink();
 						mediaItem.setPageUrl(pageUrl);
-
-						// TODO: Cannot take media size. This needs a separate request. 
-						
+						//Thumbnail
 						String thumbnail = post.getPicture();
 						mediaItem.setThumbnail(thumbnail);
-						
-						mediaItems.add(mediaItem);	
+						//Title
+						mediaItem.setTitle(title);
+						//Tags
+						mediaItem.setTags(tags);
+						//Popularity
+						mediaItem.setLikes(likes);
+						mediaItem.setShares(shares);
+						//Store mediaItems and their ids 
+						mediaItems.add(mediaItem);
 						mediaIds.add(mediaId);
+						
 					}
 				}
 			}
@@ -190,17 +208,38 @@ public class FacebookItem extends Item {
 				URL videoUrl = null;
 				try {
 					videoUrl = new URL(url);
+					
 					String mediaId = SocialNetworkSource.Facebook+"#"+post.getId();
+					//url
 					MediaItem mediaItem = new MediaItem(videoUrl);
+					
+					//id
 					mediaItem.setId(mediaId);
-					mediaItem.setType("video");
-					mediaItem.setThumbnail(post.getPicture());
+					//SocialNetwork Name
+					mediaItem.setStreamId(streamId);
+					//Reference
 					mediaItem.setRef(id);
+					//Type 
+					mediaItem.setType("video");
+					//Time of publication
+					mediaItem.setPublicationTime(publicationTime);
+					//PageUrl
 					String pageUrl = post.getLink();
 					mediaItem.setPageUrl(pageUrl);
-					
+					//Thumbnail
+					String thumbnail = post.getPicture();
+					mediaItem.setThumbnail(thumbnail);
+					//Title
+					mediaItem.setTitle(title);
+					//Tags
+					mediaItem.setTags(tags);
+					//Popularity
+					mediaItem.setLikes(likes);
+					mediaItem.setShares(shares);
+					//Store mediaItems and their ids 
 					mediaItems.add(mediaItem);
 					mediaIds.add(mediaId);
+					
 				} catch (MalformedURLException e) {
 					
 				}
@@ -229,7 +268,7 @@ public class FacebookItem extends Item {
 		//Feed that retrieved the post
 		feed = itemFeed;
 		feedType = itemFeed.getFeedtype().toString();
-
+		
 	}
 	
 	public FacebookItem(Comment comment,Post post,User user) {

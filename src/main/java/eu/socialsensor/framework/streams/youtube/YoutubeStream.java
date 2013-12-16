@@ -28,7 +28,8 @@ public class YoutubeStream extends Stream {
 	
 	@Override
 	public void close() throws StreamException {
-		monitor.stopMonitor();
+		if(monitor != null)
+			monitor.stopMonitor();
 		logger.info("#YouTube : Close stream");
 	}
 	
