@@ -138,8 +138,6 @@ public class FlickrItem extends Item {
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
-
-		System.out.println(this.toJSONString());
 	}
 	
 	public FlickrItem(Photo photo,Feed itemFeed) {
