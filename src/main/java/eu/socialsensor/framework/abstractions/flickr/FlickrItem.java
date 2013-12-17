@@ -77,6 +77,7 @@ public class FlickrItem extends Item {
 			
 			location = new Location(latitude, longitude);
 		}
+		
 		//Popularity
 		
 		//Getting the photo
@@ -124,6 +125,7 @@ public class FlickrItem extends Item {
 				mediaItem.setTags(tags);
 				//Popularity
 				mediaItem.setComments(new Long(photo.getComments()));
+				mediaItem.setViews(new Long(photo.getViews()));
 				//Location
 				mediaItem.setLocation(location);
 				
@@ -137,6 +139,7 @@ public class FlickrItem extends Item {
 			e.printStackTrace();
 		}
 
+		System.out.println(this.toJSONString());
 	}
 	
 	public FlickrItem(Photo photo,Feed itemFeed) {
