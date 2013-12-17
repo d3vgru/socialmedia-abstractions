@@ -1,6 +1,7 @@
 package eu.socialsensor.framework.retrievers.twitter;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -48,7 +49,7 @@ public class TwitterRetriever implements Retriever{
 	public List<Item> retrieveKeywordsFeeds(KeywordsFeed feed) {
 		int count = 100 , numberOfRequests = 0;
 		String resultType = "recent";
-		
+		Date lastItemDate = feed.getLastItemDate();
 		List<Item> items = new ArrayList<Item>();
 		
 		Keyword keyword = feed.getKeyword();
@@ -82,7 +83,7 @@ public class TwitterRetriever implements Retriever{
 		Query query = new Query(tags);
 		query.setCount(count);
 		query.setResultType(resultType);
-		
+		query.setSince(lastItemDate.toString());
 		
 		while(true) {
 			try {
