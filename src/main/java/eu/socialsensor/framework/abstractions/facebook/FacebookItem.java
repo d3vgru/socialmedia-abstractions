@@ -3,6 +3,7 @@ package eu.socialsensor.framework.abstractions.facebook;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 import com.restfb.types.CategorizedFacebookType;
 import com.restfb.types.Comment;
@@ -74,19 +75,25 @@ public class FacebookItem extends Item {
 		//Popularity of the post
 		if(post.getLikesCount() != null)
 			likes = post.getLikesCount();
-
-		Likes likesPosts = post.getLikes();
-		if(likesPosts!=null) {
-			for(NamedFacebookType s : likesPosts.getData()) {
-				System.out.println(s);
+		else {
+			Likes likesPosts = post.getLikes();
+			if(likesPosts!=null) {
+				if(likesPosts.getCount()==null) {
+					List<NamedFacebookType> likeData = likesPosts.getData();
+					if(likeData != null) {
+						likes = (long) likeData.size();
+					}
+				}
+				else {
+					likes = likesPosts.getCount();
+				}
 			}
-			System.out.println("============================================");
 		}
 		
 		if(post.getSharesCount() != null)
 			shares = post.getSharesCount();
-		//Media Items - WebPages in a post
 		
+		//Media Items - WebPages in a post
 		String type = post.getType();
 		
 		if(type.equals("photo")) {

@@ -26,10 +26,13 @@ public class FacebookStreamUser extends StreamUser {
 		//The id of the user in the network
 		userid = user.getId();
 		//The name of the user
-		if(user.getMiddleName() != null)
+		if(user.getFirstName() == null && user.getLastName() == null)
+			name = user.getName();
+		else if(user.getMiddleName() != null) 
 			name = user.getFirstName()+" "+user.getMiddleName()+" "+user.getLastName();
 		else
 			name = user.getFirstName()+" "+user.getLastName();
+		
 		//The username of the user
 		username = user.getUsername();
 		//streamId
