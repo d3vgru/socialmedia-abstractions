@@ -6,8 +6,10 @@ import java.util.ArrayList;
 
 import com.restfb.types.CategorizedFacebookType;
 import com.restfb.types.Comment;
+import com.restfb.types.NamedFacebookType;
 import com.restfb.types.Place;
 import com.restfb.types.Post;
+import com.restfb.types.Post.Likes;
 import com.restfb.types.User;
 
 import eu.socialsensor.framework.common.domain.Feed;
@@ -45,18 +47,17 @@ public class FacebookItem extends Item {
 		publicationTime = post.getCreatedTime().getTime();
 		//Message that post contains
 		String msg = post.getMessage();
-		if(msg!=null) {
-			if(msg.length()>100){
+		if(msg != null) {
+			if(msg.length()>100) {
 				title = msg.subSequence(0, 100)+"...";
-				description = post.getDescription();
 			}
-			else{
+			else {
 				title = msg;
-				description = post.getDescription();
 			}
 		}
 		//All the text inside the post
 		text = msg; 
+		description = post.getDescription();
 		
 		//Location 
 		Place place = post.getPlace();
@@ -73,9 +74,17 @@ public class FacebookItem extends Item {
 		//Popularity of the post
 		if(post.getLikesCount() != null)
 			likes = post.getLikesCount();
+
+		Likes likesPosts = post.getLikes();
+		if(likesPosts!=null) {
+			for(NamedFacebookType s : likesPosts.getData()) {
+				System.out.println(s);
+			}
+			System.out.println("============================================");
+		}
+		
 		if(post.getSharesCount() != null)
 			shares = post.getSharesCount();
-		
 		//Media Items - WebPages in a post
 		
 		String type = post.getType();
