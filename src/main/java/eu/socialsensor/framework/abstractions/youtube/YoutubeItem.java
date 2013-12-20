@@ -122,6 +122,8 @@ public class YoutubeItem extends Item {
 			mediaItem.setType("video");
 			//Time of publication
 			mediaItem.setPublicationTime(publicationTime);
+			//Author
+			mediaItem.setUser(streamUser);
 			//PageUrl
 			String pageUrl = mediaPlayer.getUrl();
 			mediaItem.setPageUrl(pageUrl);

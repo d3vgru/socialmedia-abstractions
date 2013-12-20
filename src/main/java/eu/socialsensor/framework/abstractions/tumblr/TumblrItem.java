@@ -19,7 +19,6 @@ import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.MediaItem;
 import eu.socialsensor.framework.common.domain.SocialNetworkSource;
-import eu.socialsensor.framework.common.domain.Source;
 import eu.socialsensor.framework.common.domain.WebPage;
 
 /**
@@ -91,6 +90,8 @@ public class TumblrItem extends Item{
 						mediaItem.setType("image");
 						//Time of publication
 						mediaItem.setPublicationTime(publicationTime);
+						//Author
+						mediaItem.setUser(streamUser);
 						//PageUrl
 						mediaItem.setPageUrl(pageURL);
 						//Thumbnail

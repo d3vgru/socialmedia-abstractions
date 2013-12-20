@@ -5,7 +5,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.restfb.types.CategorizedFacebookType;
 import com.restfb.types.Comment;
 import com.restfb.types.NamedFacebookType;
 import com.restfb.types.Place;
@@ -17,7 +16,6 @@ import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.Location;
 import eu.socialsensor.framework.common.domain.MediaItem;
-import eu.socialsensor.framework.common.domain.Source;
 import eu.socialsensor.framework.common.domain.SocialNetworkSource;
 import eu.socialsensor.framework.common.domain.WebPage;
 
@@ -126,6 +124,8 @@ public class FacebookItem extends Item {
 							mediaItem.setType("image");
 							//Time of publication
 							mediaItem.setPublicationTime(publicationTime);
+							//Author
+							mediaItem.setUser(streamUser);
 							//PageUrl
 							String pageUrl = post.getLink();
 							mediaItem.setPageUrl(pageUrl);
@@ -188,6 +188,8 @@ public class FacebookItem extends Item {
 						mediaItem.setType("image");
 						//Time of publication
 						mediaItem.setPublicationTime(publicationTime);
+						//Author
+						mediaItem.setUser(streamUser);
 						//PageUrl
 						String pageUrl = post.getLink();
 						mediaItem.setPageUrl(pageUrl);
@@ -243,6 +245,8 @@ public class FacebookItem extends Item {
 					mediaItem.setType("video");
 					//Time of publication
 					mediaItem.setPublicationTime(publicationTime);
+					//Author
+					mediaItem.setUser(streamUser);
 					//PageUrl
 					String pageUrl = post.getLink();
 					mediaItem.setPageUrl(pageUrl);

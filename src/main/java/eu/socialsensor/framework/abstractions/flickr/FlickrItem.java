@@ -113,6 +113,8 @@ public class FlickrItem extends Item {
 				mediaItem.setType("image");
 				//Time of publication
 				mediaItem.setPublicationTime(publicationTime);
+				//Author
+				mediaItem.setUser(streamUser);
 				//PageUrl
 				mediaItem.setPageUrl(photo.getUrl());
 				//Thumbnail

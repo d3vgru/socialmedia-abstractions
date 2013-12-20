@@ -114,6 +114,8 @@ public class GooglePlusItem extends Item {
 						mediaItem.setType("video");
 						//Time of publication
 						mediaItem.setPublicationTime(publicationTime);
+						//Author
+						mediaItem.setUser(streamUser);
 						//PageUrl
 						mediaItem.setPageUrl(pageURL);
 						//Thumbnail
@@ -166,6 +168,8 @@ public class GooglePlusItem extends Item {
 						mediaItem.setType("image");
 						//Time of publication
 						mediaItem.setPublicationTime(publicationTime);
+						//Author
+						mediaItem.setUser(streamUser);
 						//PageUrl
 						mediaItem.setPageUrl(pageURL);
 						//Thumbnail
@@ -219,6 +223,8 @@ public class GooglePlusItem extends Item {
 							mediaItem.setType("image");
 							//Time of publication
 							mediaItem.setPublicationTime(publicationTime);
+							//Author
+							mediaItem.setUser(streamUser);
 							//PageUrl
 							mediaItem.setPageUrl(pageURL);
 							//Thumbnail
