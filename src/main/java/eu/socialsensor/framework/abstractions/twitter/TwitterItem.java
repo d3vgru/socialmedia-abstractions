@@ -205,6 +205,7 @@ public class TwitterItem extends Item {
 				mediaItem.setPublicationTime(publicationTime);
 				//Author
 				mediaItem.setUser(streamUser);
+				mediaItem.setUserId(streamUser.getId());
 				//PageUrl
 				mediaItem.setPageUrl(pageUrl);
 				//Thumbnail
