@@ -31,13 +31,13 @@ public class TwitterRetriever implements Retriever{
 	private Twitter twitter = null;
 	private TwitterFactory tf = null;
 	
-	private int maxResults;
-	private int maxRequests;
+	private int maxResults = 1;
+	private int maxRequests = 1 ;
 	
 	public TwitterRetriever(Configuration conf){
 		
 		this.tf = new TwitterFactory(conf);
-		twitter = tf.getInstance();		
+		twitter = tf.getInstance();
 	}
 	
 	@Override
@@ -66,6 +66,7 @@ public class TwitterRetriever implements Retriever{
 		if(keyword != null){
 		
 			tags += keyword.getName().toLowerCase();
+			tags = tags.trim();
 		}
 		else if(keywords != null){
 			for(Keyword key : keywords){
@@ -78,20 +79,20 @@ public class TwitterRetriever implements Retriever{
 		
 		if(tags.equals(""))
 			return items;
-		
+		System.out.println("twitter query : "+tags);
 		//Set the query
 		Query query = new Query(tags);
 		query.setCount(count);
-		query.setResultType(resultType);
-		query.setSince(lastItemDate.toString());
+		query.setResultType(resultType);//do not set last item date-causes problems!
 		
 		while(true) {
 			try {
 				QueryResult response = twitter.search(query);
-		
+				System.out.println(response.toString());
 				numberOfRequests++;
 				
 				List<Status> statuses = response.getTweets();
+				System.out.println("number of tweets : "+statuses.size());
 				for(Status status : statuses) {
 					if(status != null){
 						TwitterItem item = new TwitterItem(status);
