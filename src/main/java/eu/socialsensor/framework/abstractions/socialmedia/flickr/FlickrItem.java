@@ -1,4 +1,4 @@
-package eu.socialsensor.framework.abstractions.flickr;
+package eu.socialsensor.framework.abstractions.socialmedia.flickr;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -14,7 +14,6 @@ import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.Location;
 import eu.socialsensor.framework.common.domain.MediaItem;
 import eu.socialsensor.framework.common.domain.SocialNetworkSource;
-import eu.socialsensor.framework.common.domain.Source;
 
 /**
  * Class that holds the information regarding the flickr photo

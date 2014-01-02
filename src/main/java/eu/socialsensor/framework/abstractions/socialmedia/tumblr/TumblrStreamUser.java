@@ -1,9 +1,8 @@
-package eu.socialsensor.framework.abstractions.tumblr;
+package eu.socialsensor.framework.abstractions.socialmedia.tumblr;
 
 import com.tumblr.jumblr.types.Blog;
 
 import eu.socialsensor.framework.common.domain.SocialNetworkSource;
-import eu.socialsensor.framework.common.domain.Source;
 import eu.socialsensor.framework.common.domain.StreamUser;
 
 /**

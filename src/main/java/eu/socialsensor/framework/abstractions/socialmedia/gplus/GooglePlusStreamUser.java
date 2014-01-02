@@ -1,4 +1,4 @@
-package eu.socialsensor.framework.abstractions.gplus;
+package eu.socialsensor.framework.abstractions.socialmedia.gplus;
 
 import com.google.api.services.plus.model.Activity.Actor;
 

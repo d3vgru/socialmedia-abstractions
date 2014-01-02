@@ -1,4 +1,4 @@
-package eu.socialsensor.framework.abstractions.facebook;
+package eu.socialsensor.framework.abstractions.socialmedia.facebook;
 
 import java.net.MalformedURLException;
 import java.net.URL;

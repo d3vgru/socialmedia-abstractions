@@ -1,4 +1,4 @@
-package eu.socialsensor.framework.abstractions.tumblr;
+package eu.socialsensor.framework.abstractions.socialmedia.tumblr;
 
 import java.net.MalformedURLException;
 import java.net.URL;

@@ -1,4 +1,4 @@
-package eu.socialsensor.framework.abstractions.twitter;
+package eu.socialsensor.framework.abstractions.socialmedia.twitter;
 
 import java.util.Date;
 

@@ -1,4 +1,4 @@
-package eu.socialsensor.framework.abstractions.vimeo;
+package eu.socialsensor.framework.abstractions.socialmedia.vimeo;
 
 import java.net.URL;
 import java.text.SimpleDateFormat;

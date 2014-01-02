@@ -1,4 +1,4 @@
-package eu.socialsensor.framework.abstractions.vimeo;
+package eu.socialsensor.framework.abstractions.socialmedia.vimeo;
 
 import com.google.api.client.util.Key;
 /**

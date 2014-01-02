@@ -1,9 +1,8 @@
-package eu.socialsensor.framework.abstractions.instagram;
+package eu.socialsensor.framework.abstractions.socialmedia.instagram;
 
 import org.jinstagram.entity.common.User;
 
 import eu.socialsensor.framework.common.domain.SocialNetworkSource;
-import eu.socialsensor.framework.common.domain.Source;
 import eu.socialsensor.framework.common.domain.StreamUser;
 
 /**

@@ -1,4 +1,4 @@
-package eu.socialsensor.framework.abstractions.twitpic;
+package eu.socialsensor.framework.abstractions.socialmedia.twitpic;
 
 import com.google.api.client.util.Key;
 

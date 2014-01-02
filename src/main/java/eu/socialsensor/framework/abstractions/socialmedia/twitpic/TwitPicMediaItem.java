@@ -1,4 +1,4 @@
-package eu.socialsensor.framework.abstractions.twitpic;
+package eu.socialsensor.framework.abstractions.socialmedia.twitpic;
 
 import java.net.URL;
 import java.text.SimpleDateFormat;

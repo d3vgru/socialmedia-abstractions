@@ -1,4 +1,4 @@
-package eu.socialsensor.framework.abstractions.dailymotion;
+package eu.socialsensor.framework.abstractions.socialmedia.dailymotion;
 
 import java.net.URL;
 

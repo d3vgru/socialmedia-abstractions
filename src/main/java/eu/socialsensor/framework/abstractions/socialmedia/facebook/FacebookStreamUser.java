@@ -1,4 +1,4 @@
-package eu.socialsensor.framework.abstractions.facebook;
+package eu.socialsensor.framework.abstractions.socialmedia.facebook;
 
 import com.restfb.types.Location;
 import com.restfb.types.Page;

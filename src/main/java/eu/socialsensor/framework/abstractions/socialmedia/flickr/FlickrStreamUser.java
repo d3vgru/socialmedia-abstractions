@@ -1,4 +1,4 @@
-package eu.socialsensor.framework.abstractions.flickr;
+package eu.socialsensor.framework.abstractions.socialmedia.flickr;
 
 import com.aetrion.flickr.people.User;
 

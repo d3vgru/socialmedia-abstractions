@@ -1,4 +1,4 @@
-package eu.socialsensor.framework.abstractions.instagram;
+package eu.socialsensor.framework.abstractions.socialmedia.instagram;
 
 import java.util.Date;
 import java.net.MalformedURLException;
@@ -14,8 +14,6 @@ import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.Location;
 import eu.socialsensor.framework.common.domain.MediaItem;
 import eu.socialsensor.framework.common.domain.SocialNetworkSource;
-import eu.socialsensor.framework.common.domain.Source;
-
 
 /**
  * Class that holds the information regarding the instagram image

@@ -1,4 +1,4 @@
-package eu.socialsensor.framework.abstractions.youtube;
+package eu.socialsensor.framework.abstractions.socialmedia.youtube;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -20,7 +20,6 @@ import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.MediaItem;
 import eu.socialsensor.framework.common.domain.SocialNetworkSource;
-import eu.socialsensor.framework.common.domain.Source;
 
 /**
  * Class that holds the information regarding the youtube video

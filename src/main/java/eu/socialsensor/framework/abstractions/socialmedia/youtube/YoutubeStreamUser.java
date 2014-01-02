@@ -1,9 +1,8 @@
-package eu.socialsensor.framework.abstractions.youtube;
+package eu.socialsensor.framework.abstractions.socialmedia.youtube;
 
 import com.google.gdata.data.Person;
 
 import eu.socialsensor.framework.common.domain.SocialNetworkSource;
-import eu.socialsensor.framework.common.domain.Source;
 import eu.socialsensor.framework.common.domain.StreamUser;
 
 /**
