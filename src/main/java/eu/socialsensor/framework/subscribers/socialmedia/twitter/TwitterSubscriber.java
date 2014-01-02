@@ -1,4 +1,4 @@
-package eu.socialsensor.framework.subscribers.twitter;
+package eu.socialsensor.framework.subscribers.socialmedia.twitter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +24,7 @@ import eu.socialsensor.framework.common.domain.feeds.LocationFeed;
 import eu.socialsensor.framework.common.domain.feeds.SourceFeed;
 import eu.socialsensor.framework.streams.StreamException;
 import eu.socialsensor.framework.streams.socialmedia.twitter.TwitterStream;
-import eu.socialsensor.framework.subscribers.Subscriber;
+import eu.socialsensor.framework.subscribers.socialmedia.Subscriber;
 
 public class TwitterSubscriber implements Subscriber{
 	private Logger  logger = Logger.getLogger(TwitterSubscriber.class);

@@ -1,4 +1,4 @@
-package eu.socialsensor.framework.subscribers;
+package eu.socialsensor.framework.subscribers.socialmedia;
 
 import java.util.List;
 
