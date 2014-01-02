@@ -13,7 +13,7 @@ import twitter4j.StatusListener;
 import twitter4j.TwitterStreamFactory;
 import twitter4j.conf.Configuration;
 
-import eu.socialsensor.framework.abstractions.twitter.TwitterItem;
+import eu.socialsensor.framework.abstractions.socialmedia.twitter.TwitterItem;
 import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Keyword;
 import eu.socialsensor.framework.common.domain.Source;
@@ -23,7 +23,7 @@ import eu.socialsensor.framework.common.domain.feeds.KeywordsFeed;
 import eu.socialsensor.framework.common.domain.feeds.LocationFeed;
 import eu.socialsensor.framework.common.domain.feeds.SourceFeed;
 import eu.socialsensor.framework.streams.StreamException;
-import eu.socialsensor.framework.streams.twitter.TwitterStream;
+import eu.socialsensor.framework.streams.socialmedia.twitter.TwitterStream;
 import eu.socialsensor.framework.subscribers.Subscriber;
 
 public class TwitterSubscriber implements Subscriber{
