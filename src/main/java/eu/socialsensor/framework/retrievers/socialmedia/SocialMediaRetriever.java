@@ -44,5 +44,5 @@ public interface SocialMediaRetriever extends Retriever{
 	 */
 	public List<Item> retrieveLocationFeeds(LocationFeed feed) throws Exception;
 
-	public void stop();
+	
 }
