@@ -59,7 +59,7 @@ public class YoutubeItem extends Item {
 		if(authors.size()>0) {
 			streamUser = new YoutubeStreamUser(authors.get(0));
 		}
-		else{
+		else {
 			if(mediaGroup.getUploader()!=null){
 				streamUser = new YoutubeStreamUser(mediaGroup.getUploader());
 			}
@@ -165,17 +165,21 @@ public class YoutubeItem extends Item {
 	
 	}
 	
-	public YoutubeItem(VideoEntry videoEntry, YoutubeStreamUser user,Feed itemFeed) {
+	public YoutubeItem(VideoEntry videoEntry, YoutubeStreamUser user, Feed itemFeed) {
 		
 		this(videoEntry);
 		
 		//User that posted the post
 		streamUser = user;
 		uid = streamUser.getId();
+		
 		//Feed that retrieved the post
 		feed = itemFeed;
 		feedType = itemFeed.getFeedtype().toString();
 	
+		for(MediaItem mItem : this.mediaItems) {
+			mItem.setUserId(uid);
+		}
 	}
 	
 	

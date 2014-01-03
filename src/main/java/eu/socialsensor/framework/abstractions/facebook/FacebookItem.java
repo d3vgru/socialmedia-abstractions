@@ -126,7 +126,6 @@ public class FacebookItem extends Item {
 							mediaItem.setPublicationTime(publicationTime);
 							//Author
 							mediaItem.setUser(streamUser);
-							mediaItem.setUserId(uid);
 							//PageUrl
 							String pageUrl = post.getLink();
 							mediaItem.setPageUrl(pageUrl);
@@ -191,7 +190,6 @@ public class FacebookItem extends Item {
 						mediaItem.setPublicationTime(publicationTime);
 						//Author
 						mediaItem.setUser(streamUser);
-						mediaItem.setUserId(uid);
 						//PageUrl
 						String pageUrl = post.getLink();
 						mediaItem.setPageUrl(pageUrl);
@@ -249,7 +247,6 @@ public class FacebookItem extends Item {
 					mediaItem.setPublicationTime(publicationTime);
 					//Author
 					mediaItem.setUser(streamUser);
-					mediaItem.setUserId(uid);
 					//PageUrl
 					String pageUrl = post.getLink();
 					mediaItem.setPageUrl(pageUrl);
@@ -298,6 +295,9 @@ public class FacebookItem extends Item {
 		feed = itemFeed;
 		feedType = itemFeed.getFeedtype().toString();
 		
+		for(MediaItem mItem : mediaItems) {
+			mItem.setUserId(uid);
+		}
 	}
 	
 	public FacebookItem(Comment comment,Post post,User user) {

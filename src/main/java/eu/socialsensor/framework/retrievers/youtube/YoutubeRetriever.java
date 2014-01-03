@@ -1,13 +1,22 @@
 package eu.socialsensor.framework.retrievers.youtube;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 
+
+
+
+
+
+
+
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
@@ -15,14 +24,19 @@ import org.joda.time.DateTime;
 import com.google.gdata.client.youtube.YouTubeQuery;
 import com.google.gdata.client.youtube.YouTubeService;
 import com.google.gdata.data.Link;
+import com.google.gdata.data.Person;
 import com.google.gdata.data.youtube.VideoEntry;
 import com.google.gdata.data.youtube.VideoFeed;
+import com.google.gdata.data.youtube.UserProfileEntry;
+import com.google.gdata.util.ServiceException;
 
 import eu.socialsensor.framework.abstractions.youtube.YoutubeItem;
+import eu.socialsensor.framework.abstractions.youtube.YoutubeStreamUser;
 import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.Keyword;
 import eu.socialsensor.framework.common.domain.Source;
+import eu.socialsensor.framework.common.domain.StreamUser;
 import eu.socialsensor.framework.common.domain.feeds.KeywordsFeed;
 import eu.socialsensor.framework.common.domain.feeds.LocationFeed;
 import eu.socialsensor.framework.common.domain.feeds.SourceFeed;
@@ -33,7 +47,7 @@ import eu.socialsensor.framework.retrievers.Retriever;
  * @email  ailiakop@iti.gr
  */
 public class YoutubeRetriever implements Retriever {
-
+	
 	private final String activityFeedUserUrlPrefix = "http://gdata.youtube.com/feeds/api/users/";
 	private final String activityFeedVideoUrlPrefix = "http://gdata.youtube.com/feeds/api/videos";
 	private final String uploadsActivityFeedUrlSuffix = "/uploads";
@@ -52,7 +66,7 @@ public class YoutubeRetriever implements Retriever {
 		this.request_threshold = maxRequests;
 	}
 
-	public List<Item> retrieveUserFeeds(SourceFeed feed){
+	public List<Item> retrieveUserFeeds(SourceFeed feed) {
 		List<Item> items = new ArrayList<Item>();
 		Date lastItemDate = feed.getLastItemDate();
 		
@@ -69,6 +83,16 @@ public class YoutubeRetriever implements Retriever {
 		}
 				
 		logger.info("#YouTube : Retrieving User Feed : "+uName);
+		
+		YoutubeStreamUser user = null;
+		UserProfileEntry userProfile;
+		try {
+			userProfile = retrieveUser(uName);
+			user = new YoutubeStreamUser(userProfile);
+		} catch (Exception e) {
+			logger.error("#YouTube Exception : " + e);
+		}
+		
 		
 		URL channelUrl = null;
 		try {
@@ -91,10 +115,11 @@ public class YoutubeRetriever implements Retriever {
 					DateTime publishedDateTime = new DateTime(publishedTime.toString());
 					Date publicationDate = publishedDateTime.toDate();
 					
-					if(publicationDate.after(lastItemDate) && (video != null && video.getId() != null)){
-						YoutubeItem videoItem = new YoutubeItem(video,feed);
-						
-						items.add(videoItem);
+					if(publicationDate.after(lastItemDate) && (video != null && video.getId() != null)) {
+						if(user != null) {
+							YoutubeItem videoItem = new YoutubeItem(video, user, feed);
+							items.add(videoItem);
+						}
 					}
 					
 					if(items.size()>results_threshold || numberOfRequests > request_threshold){
@@ -180,7 +205,8 @@ public class YoutubeRetriever implements Retriever {
 		
 		VideoFeed videoFeed = new VideoFeed();
 		
-		while(true){
+		Map<String, YoutubeStreamUser> usersMap = new HashMap<String, YoutubeStreamUser>();
+		while(true) {
 		
 			try{
 				query.setStartIndex(startIndex);
@@ -197,8 +223,19 @@ public class YoutubeRetriever implements Retriever {
 					Date publicationDate = publishedDateTime.toDate();
 					
 					if(publicationDate.after(lastItemDate) && (video != null && video.getId() != null)){
-						YoutubeItem videoItem = new YoutubeItem(video,feed);
-						items.add(videoItem);
+						
+						try {
+							String uploader = video.getMediaGroup().getUploader();
+							YoutubeStreamUser user = usersMap.get(uploader);
+							if(user == null) {
+								UserProfileEntry userProfile = retrieveUser(uploader);
+								user = new YoutubeStreamUser(userProfile);
+							}
+							YoutubeItem videoItem = new YoutubeItem(video, user, feed);
+							items.add(videoItem);
+						} catch (Exception e) {
+							logger.error("#YouTube Exception : " + e);
+						}
 					}
 					
 					if(items.size()>results_threshold || numberOfRequests >= request_threshold){
@@ -318,11 +355,12 @@ public class YoutubeRetriever implements Retriever {
 		return null;
 	}
 
-	public void stop(){
-		if(service != null){
+	public void stop() {
+		if(service != null) {
 			service = null;
 		}
 	}
+	
 	private URL getChannelUrl(String channel) throws MalformedURLException {
 		StringBuffer urlStr = new StringBuffer(activityFeedUserUrlPrefix);
 		urlStr.append(channel).append(uploadsActivityFeedUrlSuffix);
@@ -330,5 +368,21 @@ public class YoutubeRetriever implements Retriever {
 		return new URL(urlStr.toString());
 	}
 		
+	public UserProfileEntry retrieveUser(String channel) throws Exception {
+		URL profileUrl = new URL(activityFeedUserUrlPrefix + channel);
+		UserProfileEntry userProfile = service.getEntry(profileUrl , UserProfileEntry.class);
+		
+		return userProfile;
+	}
 
+	public static void main(String...args) throws Exception {
+		YoutubeRetriever retriever = new YoutubeRetriever("manosetro", 
+				"AI39si6DMfJRhrIFvJRv0qFubHHQypIwjkD-W7tsjLJArVKn9iR-QoT8t-UijtITl4TuyHzK-cxqDDCkCBoJB-seakq1gbt1iQ", 10, 10);
+		
+		UserProfileEntry userProfile = retriever.retrieveUser("VitalyzdTv");
+		StreamUser user = new YoutubeStreamUser(userProfile);
+		
+		System.out.println(user.toJSONString());
+
+	}
 }
