@@ -11,9 +11,9 @@ import com.sun.syndication.feed.synd.SyndEntry;
 import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.NewsFeedSource;
 
-public class RSSDocument extends Item{
+public class RSSItem extends Item{
 	
-	public RSSDocument(SyndEntry rssEntry) {
+	public RSSItem(SyndEntry rssEntry) {
 		super(NewsFeedSource.RSS.toString(), Operation.NEW);
 		
 		if(rssEntry == null)

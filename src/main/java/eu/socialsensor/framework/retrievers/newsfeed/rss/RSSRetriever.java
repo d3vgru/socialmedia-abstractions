@@ -18,7 +18,7 @@ import com.sun.syndication.io.FeedException;
 import com.sun.syndication.io.SyndFeedInput;
 import com.sun.syndication.io.XmlReader;
 
-import eu.socialsensor.framework.abstractions.newsfeed.rss.RSSDocument;
+import eu.socialsensor.framework.abstractions.newsfeed.rss.RSSItem;
 import eu.socialsensor.framework.retrievers.newsfeed.NewsFeedRetriever;
 import eu.socialsensor.framework.streams.newsfeed.rss.RSSStream;
 
@@ -71,7 +71,7 @@ public class RSSRetriever implements NewsFeedRetriever{
 			
 			for (SyndEntry rss:rssEntries){
 				if(rss.getPublishedDate().after(dateToRetrieve)){
-					RSSDocument rssDocument = new RSSDocument(rss);
+					RSSItem rssItem = new RSSItem(rss);
 					
 				}
 				
