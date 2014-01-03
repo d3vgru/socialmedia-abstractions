@@ -34,12 +34,10 @@ public class RSSRetriever implements NewsFeedRetriever{
 	
 	private RSSStream rssStream;
 	
-	public RSSRetriever(Date date,RSSStream rssStream) throws Exception{
+	public RSSRetriever(Date date,RSSStream rssStream){
 		
-		if(date == null)
-			throw new Exception("No specified date to retrieve from");
-		else
-			dateToRetrieve = date;
+		
+		dateToRetrieve = date;
 		
 		this.rssStream = rssStream;
 		

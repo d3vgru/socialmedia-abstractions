@@ -23,6 +23,17 @@ public class RSSStream extends Stream{
 		
 		String date = config.getParameter(RSSStream.DATE);
 		
+		if(date == null){
+			try {
+				throw new Exception("No specified date to retrieve from");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return;
+		}
+		
+		
 		try {
 			dateToRetrieve = (Date) formatter.parse(date);
 			
@@ -30,13 +41,9 @@ public class RSSStream extends Stream{
 			System.err.println("ParseException : "+e);
 		}
 		
-		try {
-			nfRetriever = new RSSRetriever(dateToRetrieve,this);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return;
-		}
+		
+		nfRetriever = new RSSRetriever(dateToRetrieve,this);
+	
 		
 	}
 	
