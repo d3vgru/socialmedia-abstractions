@@ -20,12 +20,14 @@ public interface StreamHandler {
 	 */
 	public void update(Item update);
 	
+
 	/**
 	 * Deliver a batch of updates to handler
 	 * @param updates
 	 *         Stream updates
 	 */
 	public void updates(Item[] updates);
+	
 	
 	/**
 	 * Deliver a single update deletion to handler
@@ -34,6 +36,7 @@ public interface StreamHandler {
 	 */
 	public void delete(Item update);
 	
+
 	/**
 	 * Deliver error to handler
 	 * @param err

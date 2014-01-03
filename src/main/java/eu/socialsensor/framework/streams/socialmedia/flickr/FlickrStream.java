@@ -3,7 +3,7 @@ package eu.socialsensor.framework.streams.socialmedia.flickr;
 import org.apache.log4j.Logger;
 
 import eu.socialsensor.framework.common.domain.SocialNetworkSource;
-import eu.socialsensor.framework.retrievers.flickr.FlickrRetriever;
+import eu.socialsensor.framework.retrievers.socialmedia.flickr.FlickrRetriever;
 import eu.socialsensor.framework.streams.Stream;
 import eu.socialsensor.framework.streams.StreamConfiguration;
 import eu.socialsensor.framework.streams.StreamException;
@@ -45,7 +45,7 @@ public class FlickrStream extends Stream {
 			throw new StreamException("Stream requires authentication.");
 		}
 		
-		this.retriever = new FlickrRetriever(key, secret,Integer.parseInt(maxResults),Integer.parseInt(maxRequests));
+		smRetriever = new FlickrRetriever(key, secret,Integer.parseInt(maxResults),Integer.parseInt(maxRequests));
 		
 	}
 	

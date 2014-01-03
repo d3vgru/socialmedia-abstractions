@@ -7,7 +7,7 @@ import com.restfb.DefaultFacebookClient;
 import com.restfb.FacebookClient;
 
 import eu.socialsensor.framework.common.domain.SocialNetworkSource;
-import eu.socialsensor.framework.retrievers.facebook.FacebookRetriever;
+import eu.socialsensor.framework.retrievers.socialmedia.facebook.FacebookRetriever;
 import eu.socialsensor.framework.streams.Stream;
 import eu.socialsensor.framework.streams.StreamConfiguration;
 import eu.socialsensor.framework.streams.StreamException;
@@ -52,7 +52,7 @@ public class FacebookStream extends Stream {
 		}
 		
 		facebookClient = new DefaultFacebookClient(access_token);
-		retriever = new FacebookRetriever(facebookClient, maxRequests, minInterval,maxResults);	
+		smRetriever = new FacebookRetriever(facebookClient, maxRequests, minInterval,maxResults);	
 
 	}
 

@@ -3,7 +3,7 @@ package eu.socialsensor.framework.streams.socialmedia.youtube;
 import org.apache.log4j.Logger;
 
 import eu.socialsensor.framework.common.domain.SocialNetworkSource;
-import eu.socialsensor.framework.retrievers.youtube.YoutubeRetriever;
+import eu.socialsensor.framework.retrievers.socialmedia.youtube.YoutubeRetriever;
 import eu.socialsensor.framework.streams.Stream;
 import eu.socialsensor.framework.streams.StreamConfiguration;
 import eu.socialsensor.framework.streams.StreamException;
@@ -52,7 +52,7 @@ public class YoutubeStream extends Stream {
 			throw new StreamException("Stream requires authentication");
 		}
 
-		this.retriever = new YoutubeRetriever(clientId, developerKey,Integer.parseInt(maxResults),Integer.parseInt(maxRequests));
+		smRetriever = new YoutubeRetriever(clientId, developerKey,Integer.parseInt(maxResults),Integer.parseInt(maxRequests));
 
 	}
 }

@@ -9,7 +9,7 @@ import eu.socialsensor.framework.common.domain.MediaItem;
  * @email  manosetro@iti.gr
  *
  */
-public interface MediaRetriever {
+public interface MediaRetriever{
 
 	public MediaItem getMediaItem(String id);
 

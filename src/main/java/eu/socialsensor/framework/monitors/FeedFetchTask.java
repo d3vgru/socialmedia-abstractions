@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Item;
-import eu.socialsensor.framework.retrievers.Retriever;
+import eu.socialsensor.framework.retrievers.socialmedia.SocialMediaRetriever;
 
 /**
  * A feed task that supports a retrieval process for one input feed. 
@@ -20,7 +20,7 @@ import eu.socialsensor.framework.retrievers.Retriever;
 public class FeedFetchTask implements Runnable {
 
 	private ScheduledFuture<?> taskHandle;
-	private Retriever retriever;
+	private SocialMediaRetriever retriever;
 	
 	public TimeUnit timeUnit = MILLISECONDS;
 	private long rate = 30 * 60 * 1000; 			// Request rate: 30 minutes by default  
@@ -37,7 +37,7 @@ public class FeedFetchTask implements Runnable {
 	private boolean completed = false;
 	private boolean needToPause = false;
 
-	public FeedFetchTask(Feed feed, Retriever retriever) {
+	public FeedFetchTask(Feed feed, SocialMediaRetriever retriever) {
 		
 		this.feed = feed;
 		this.retriever = retriever;

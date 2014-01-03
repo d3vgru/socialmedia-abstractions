@@ -1,5 +1,3 @@
-
-
 package eu.socialsensor.framework.streams;
 
 import java.util.ArrayList;
@@ -15,8 +13,9 @@ import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.StreamUser.Category;
 import eu.socialsensor.framework.monitors.FeedsMonitor;
-import eu.socialsensor.framework.retrievers.Retriever;
-import eu.socialsensor.framework.subscribers.Subscriber;
+import eu.socialsensor.framework.retrievers.newsfeed.NewsFeedRetriever;
+import eu.socialsensor.framework.retrievers.socialmedia.SocialMediaRetriever;
+import eu.socialsensor.framework.subscribers.socialmedia.Subscriber;
 
 
 
@@ -42,7 +41,8 @@ public abstract class Stream implements Runnable {
 	
 	protected FeedsMonitor monitor;
 	protected BlockingQueue<Feed> feedsQueue;
-	protected Retriever retriever = null;
+	protected SocialMediaRetriever smRetriever = null;
+	protected NewsFeedRetriever nfRetriever = null;
 	protected Subscriber subscriber = null;
 	protected StreamHandler handler;
 	
@@ -70,10 +70,12 @@ public abstract class Stream implements Runnable {
 	public void close() throws StreamException{
 		if(monitor != null)
 			monitor.stopMonitor();
-		if(retriever !=null)
-			retriever.stop();
+		if(smRetriever !=null)
+			smRetriever.stop();
 		if(subscriber != null)
 			subscriber.stop();
+		if(nfRetriever != null)
+			nfRetriever.stop();
 		
 		logger.info("Close Stream  : "+this.getClass().getName());
 	}
@@ -93,10 +95,10 @@ public abstract class Stream implements Runnable {
 	 * @return
 	 */
 	public boolean setMonitor(){
-		if(retriever == null)
+		if(smRetriever == null)
 			return false;
 		
-		monitor = new FeedsMonitor(retriever);
+		monitor = new FeedsMonitor(smRetriever);
 		return true;
 	}
 	
@@ -130,14 +132,14 @@ public abstract class Stream implements Runnable {
 	public Integer poll(List<Feed> feeds) throws StreamException {
 		List<Item> items = new ArrayList<Item>();
 		
-		if(retriever != null) {
+		if(smRetriever != null) {
 		
 			if(feeds == null)
 				return null ;
 				
 			for(Feed feed : feeds){
 				
-				List<Item> retrievedItems = retriever.retrieve(feed);
+				List<Item> retrievedItems = smRetriever.retrieve(feed);
 				items.addAll(retrievedItems);
 				
 			}

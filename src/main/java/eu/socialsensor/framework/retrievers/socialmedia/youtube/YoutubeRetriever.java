@@ -55,7 +55,7 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 
 	public List<Item> retrieveUserFeeds(SourceFeed feed){
 		List<Item> items = new ArrayList<Item>();
-		Date lastItemDate = feed.getLastItemDate();
+		Date lastItemDate = feed.getDateToRetrieve();
 		
 		boolean isFinished = false;
 		
@@ -128,7 +128,7 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 	public List<Item> retrieveKeywordsFeeds(KeywordsFeed feed){
 		List<Item> items = new ArrayList<Item>();
 		
-		Date lastItemDate = feed.getLastItemDate();
+		Date lastItemDate = feed.getDateToRetrieve();
 		
 		int startIndex = 1;
 		int maxResults = 25;

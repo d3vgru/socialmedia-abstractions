@@ -4,7 +4,7 @@ package eu.socialsensor.framework.streams.socialmedia.tumblr;
 import org.apache.log4j.Logger;
 
 import eu.socialsensor.framework.common.domain.SocialNetworkSource;
-import eu.socialsensor.framework.retrievers.tumblr.TumblrRetriever;
+import eu.socialsensor.framework.retrievers.socialmedia.tumblr.TumblrRetriever;
 import eu.socialsensor.framework.streams.Stream;
 import eu.socialsensor.framework.streams.StreamConfiguration;
 import eu.socialsensor.framework.streams.StreamException;
@@ -45,7 +45,7 @@ public class TumblrStream extends Stream {
 			throw new StreamException("Stream requires authentication.");
 		}
 		
-		retriever = new TumblrRetriever(consumerKey,consumerSecret,Integer.parseInt(maxResults),Integer.parseInt(maxRequests));
+		smRetriever = new TumblrRetriever(consumerKey,consumerSecret,Integer.parseInt(maxResults),Integer.parseInt(maxRequests));
 		
 	}
 

@@ -3,7 +3,7 @@ package eu.socialsensor.framework.streams.socialmedia.instagram;
 import org.apache.log4j.Logger;
 
 import eu.socialsensor.framework.common.domain.SocialNetworkSource;
-import eu.socialsensor.framework.retrievers.instagram.InstagramRetriever;
+import eu.socialsensor.framework.retrievers.socialmedia.instagram.InstagramRetriever;
 import eu.socialsensor.framework.streams.Stream;
 import eu.socialsensor.framework.streams.StreamConfiguration;
 import eu.socialsensor.framework.streams.StreamException;
@@ -41,7 +41,7 @@ public class InstagramStream extends Stream {
 			throw new StreamException("Stream requires authentication.");
 		}
 		
-		retriever = new InstagramRetriever(secret, token,Integer.parseInt(maxResults),Integer.parseInt(maxRequests));
+		smRetriever = new InstagramRetriever(secret, token,Integer.parseInt(maxResults),Integer.parseInt(maxRequests));
 	
 	}
 	

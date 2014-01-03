@@ -3,7 +3,7 @@ package eu.socialsensor.framework.streams.socialmedia.gplus;
 import org.apache.log4j.Logger;
 
 import eu.socialsensor.framework.common.domain.SocialNetworkSource;
-import eu.socialsensor.framework.retrievers.gplus.GooglePlusRetriever;
+import eu.socialsensor.framework.retrievers.socialmedia.gplus.GooglePlusRetriever;
 import eu.socialsensor.framework.streams.Stream;
 import eu.socialsensor.framework.streams.StreamConfiguration;
 import eu.socialsensor.framework.streams.StreamException;
@@ -40,7 +40,7 @@ public class GooglePlusStream extends Stream {
 			throw new StreamException("Stream requires authentication.");
 		}
 		
-		this.retriever = new GooglePlusRetriever(key,Integer.parseInt(maxResults),Integer.parseInt(maxRequests));
+		smRetriever = new GooglePlusRetriever(key,Integer.parseInt(maxResults),Integer.parseInt(maxRequests));
 		
 	}
 	

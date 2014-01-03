@@ -58,7 +58,7 @@ public class FacebookRetriever implements SocialMediaRetriever {
 	public List<Item> retrieveUserFeeds(SourceFeed feed){
 		List<Item> items = new ArrayList<Item>();
 		
-		Date lastItemDate = feed.getLastItemDate();
+		Date lastItemDate = feed.getDateToRetrieve();
 		
 		boolean isFinished = false;
 		
@@ -112,7 +112,7 @@ public class FacebookRetriever implements SocialMediaRetriever {
 	public List<Item> retrieveKeywordsFeeds(KeywordsFeed feed){
 		List<Item> items = new ArrayList<Item>();
 		
-		Date lastItemDate = feed.getLastItemDate();
+		Date lastItemDate = feed.getDateToRetrieve();
 		
 		
 		

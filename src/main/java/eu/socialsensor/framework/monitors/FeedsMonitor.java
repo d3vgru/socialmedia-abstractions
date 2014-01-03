@@ -10,7 +10,7 @@ import java.util.concurrent.ScheduledFuture;
 
 import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Item;
-import eu.socialsensor.framework.retrievers.Retriever;
+import eu.socialsensor.framework.retrievers.socialmedia.SocialMediaRetriever;
 
 /**
  * @author manosetro
@@ -23,9 +23,9 @@ public class FeedsMonitor {
 	
 	private Map<String, FeedFetchTask> feedFetchTasks;
 	private ScheduledExecutorService scheduler;
-	private Retriever retriever;
+	private SocialMediaRetriever retriever;
 	
-	public FeedsMonitor(Retriever retriever) {
+	public FeedsMonitor(SocialMediaRetriever retriever) {
 		feedFetchTasks = new HashMap<String, FeedFetchTask>();
 		
 		this.retriever = retriever;

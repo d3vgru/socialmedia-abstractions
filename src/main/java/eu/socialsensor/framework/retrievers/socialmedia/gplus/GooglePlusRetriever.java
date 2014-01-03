@@ -75,7 +75,7 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 		List<Item> items = new ArrayList<Item>();
 		
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
-		Date lastItemDate = feed.getLastItemDate();
+		Date lastItemDate = feed.getDateToRetrieve();
 		
 		int numberOfRequests = 0;
 		
@@ -185,7 +185,7 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 		List<Item> items = new ArrayList<Item>();
 		
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
-		Date lastItemDate = feed.getLastItemDate();
+		Date lastItemDate = feed.getDateToRetrieve();
 		
 		int totalRequests = 0;
 		

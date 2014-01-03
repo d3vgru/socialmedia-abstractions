@@ -61,7 +61,7 @@ public class InstagramRetriever implements SocialMediaRetriever {
 	public List<Item> retrieveUserFeeds(SourceFeed feed) {
 		List<Item> items = new ArrayList<Item>();
 		
-		Date lastItemDate = feed.getLastItemDate();
+		Date lastItemDate = feed.getDateToRetrieve();
 		
 		int numberOfRequests = 0;
 		
@@ -136,7 +136,7 @@ public class InstagramRetriever implements SocialMediaRetriever {
 	public List<Item> retrieveKeywordsFeeds(KeywordsFeed feed){
 		List<Item> items = new ArrayList<Item>();
 		
-		Date lastItemDate = feed.getLastItemDate();
+		Date lastItemDate = feed.getDateToRetrieve();
 		
 		boolean isFinished = false;
 		
@@ -265,7 +265,7 @@ public class InstagramRetriever implements SocialMediaRetriever {
 	public List<Item> retrieveLocationFeeds(LocationFeed feed){
 		List<Item> items = new ArrayList<Item>();
 		
-		Date lastItemDate = feed.getLastItemDate();
+		Date lastItemDate = feed.getDateToRetrieve();
 		Date currentDate = new Date(System.currentTimeMillis());
 		DateUtil dateUtil = new DateUtil();
 		

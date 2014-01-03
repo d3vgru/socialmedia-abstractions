@@ -95,7 +95,7 @@ public class FlickrRetriever implements SocialMediaRetriever {
 	public List<Item> retrieveUserFeeds(SourceFeed feed){
 		List<Item> items = new ArrayList<Item>();
 		
-		Date lastItemDate = feed.getLastItemDate();
+		Date dateToRetrieve = feed.getDateToRetrieve();
 		
 		int page=1, pages=1; //pagination
 		int numberOfRequests = 0;
@@ -116,7 +116,7 @@ public class FlickrRetriever implements SocialMediaRetriever {
 		Response response = null;
 		
 		while(true){
-			List<Parameter> parameters = getParameters(lastItemDate);
+			List<Parameter> parameters = getParameters(dateToRetrieve);
 			parameters.add(new Parameter("user_id", userID));
 			parameters.add(new Parameter("page", page));
 			String signature = AuthUtilities.getSignature(flickrSecret, parameters);
@@ -173,7 +173,7 @@ public class FlickrRetriever implements SocialMediaRetriever {
 	@Override
 	public List<Item> retrieveKeywordsFeeds(KeywordsFeed feed){
 		List<Item> items = new ArrayList<Item>();
-		Date lastItemDate = feed.getLastItemDate();
+		Date dateToRetrieve = feed.getDateToRetrieve();
 		
 		int page=1, pages=1;
 		int numberOfRequests = 0;
@@ -218,7 +218,7 @@ public class FlickrRetriever implements SocialMediaRetriever {
 		Response response = null;
 		
 		while(true){
-			List<Parameter> parameters = getParameters(lastItemDate);
+			List<Parameter> parameters = getParameters(dateToRetrieve);
 			parameters.add(new Parameter("page", page));	
 			if(!tags.isEmpty())
 				parameters.add(new Parameter("tags", tags));
@@ -278,7 +278,7 @@ public class FlickrRetriever implements SocialMediaRetriever {
 	public List<Item> retrieveLocationFeeds(LocationFeed feed){
 		List<Item> items = new ArrayList<Item>();
 		
-		Date lastItemDate = feed.getLastItemDate();
+		Date dateToRetrieve = feed.getDateToRetrieve();
 		
 		Double[][] bbox = feed.getLocation().getbbox();
 		
@@ -291,7 +291,7 @@ public class FlickrRetriever implements SocialMediaRetriever {
 		Response response = null;
 		
 		while(true){
-			List<Parameter> parameters = getParameters(lastItemDate);
+			List<Parameter> parameters = getParameters(dateToRetrieve);
 			parameters.add(new Parameter("bbox", bbox));
 			parameters.add(new Parameter("page", page));	
 			String signature = AuthUtilities.getSignature(flickrSecret, parameters);
@@ -339,7 +339,7 @@ public class FlickrRetriever implements SocialMediaRetriever {
 		
 		//logger.info("#Flickr : Done retrieving for this session");
 		logger.info("#Flickr : Handler fetched " + items.size() + " photos "+ 
-				" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
+				" [ " + dateToRetrieve + " - " + new Date(System.currentTimeMillis()) + " ]");
 		
 		return items;
     }

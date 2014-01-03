@@ -7,11 +7,11 @@ import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 
 import eu.socialsensor.framework.common.domain.SocialNetworkSource;
-import eu.socialsensor.framework.retrievers.twitter.TwitterRetriever;
+import eu.socialsensor.framework.retrievers.socialmedia.twitter.TwitterRetriever;
 import eu.socialsensor.framework.streams.Stream;
 import eu.socialsensor.framework.streams.StreamConfiguration;
 import eu.socialsensor.framework.streams.StreamException;
-import eu.socialsensor.framework.subscribers.twitter.TwitterSubscriber;
+import eu.socialsensor.framework.subscribers.socialmedia.twitter.TwitterSubscriber;
 
 /**
  * The stream that handles the configuration of the twitter wrapper
@@ -57,7 +57,7 @@ public class TwitterStream extends Stream {
 			subscriber = new TwitterSubscriber(conf,this);
 		}
 		else{
-			retriever = new TwitterRetriever(conf);
+			smRetriever = new TwitterRetriever(conf);
 		}
 			
 

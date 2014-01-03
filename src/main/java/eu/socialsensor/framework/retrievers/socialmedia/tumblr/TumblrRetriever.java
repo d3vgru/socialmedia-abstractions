@@ -58,7 +58,7 @@ public class TumblrRetriever implements SocialMediaRetriever{
 		List<Item> items = new ArrayList<Item>();
 		
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
-		Date lastItemDate = feed.getLastItemDate();
+		Date lastItemDate = feed.getDateToRetrieve();
 		
 		int numberOfRequests = 0;
 		
@@ -150,7 +150,7 @@ public class TumblrRetriever implements SocialMediaRetriever{
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
 		Date currentDate = new Date(System.currentTimeMillis());
 		Date indexDate = currentDate;
-		Date lastItemDate = feed.getLastItemDate();
+		Date lastItemDate = feed.getDateToRetrieve();
 		DateUtil dateUtil = new DateUtil();
 		
 		int numberOfRequests=0;
