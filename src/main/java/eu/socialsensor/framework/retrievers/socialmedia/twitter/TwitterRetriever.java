@@ -87,11 +87,11 @@ public class TwitterRetriever implements SocialMediaRetriever{
 		while(true) {
 			try {
 				QueryResult response = twitter.search(query);
-				System.out.println(response.toString());
+			
 				numberOfRequests++;
 				
 				List<Status> statuses = response.getTweets();
-				System.out.println("number of tweets : "+statuses.size());
+				
 				for(Status status : statuses) {
 					if(status != null){
 						TwitterItem item = new TwitterItem(status);
