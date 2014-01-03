@@ -4,10 +4,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
 
-import com.aetrion.flickr.people.User;
-import com.aetrion.flickr.photos.GeoData;
-import com.aetrion.flickr.photos.Photo;
-import com.aetrion.flickr.tags.Tag;
+import com.flickr4java.flickr.people.User;
+import com.flickr4java.flickr.photos.GeoData;
+import com.flickr4java.flickr.photos.Photo;
+import com.flickr4java.flickr.tags.Tag;
 
 import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Item;
@@ -115,6 +115,7 @@ public class FlickrItem extends Item {
 				mediaItem.setPublicationTime(publicationTime);
 				//Author
 				mediaItem.setUser(streamUser);
+				mediaItem.setUserId(uid);
 				//PageUrl
 				mediaItem.setPageUrl(photo.getUrl());
 				//Thumbnail
@@ -142,7 +143,23 @@ public class FlickrItem extends Item {
 		}
 	}
 	
-	public FlickrItem(Photo photo,Feed itemFeed) {
+	public FlickrItem(Photo photo, FlickrStreamUser streamUser, Feed itemFeed) {
+		this(photo);
+
+		//User that posted the photo
+		this.streamUser = streamUser;
+		uid = streamUser.getId();
+		//Feed that retrieved the post
+		feed = itemFeed;
+		feedType = itemFeed.getFeedtype().toString();
+				
+		for(MediaItem mItem : mediaItems) {
+			mItem.setUserId(uid);
+		}
+
+	}
+	
+	public FlickrItem(Photo photo, Feed itemFeed) {
 		this(photo);
 
 		feed = itemFeed;

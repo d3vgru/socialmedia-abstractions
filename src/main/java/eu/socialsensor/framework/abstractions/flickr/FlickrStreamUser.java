@@ -1,6 +1,6 @@
 package eu.socialsensor.framework.abstractions.flickr;
 
-import com.aetrion.flickr.people.User;
+import com.flickr4java.flickr.people.User;
 
 import eu.socialsensor.framework.common.domain.SocialNetworkSource;
 import eu.socialsensor.framework.common.domain.Source;
@@ -29,6 +29,10 @@ public class FlickrStreamUser extends StreamUser {
 		streamId = SocialNetworkSource.Flickr.toString();
 		//Profile picture of the user
 		profileImage = user.getBuddyIconUrl();
+		items = user.getPhotosCount();
+		
+		pageUrl = user.getProfileurl();
+		
 		//Location
 		location = user.getLocation();
 	}
