@@ -87,7 +87,7 @@ public class FacebookRetriever implements SocialMediaRetriever {
 				Date publicationDate = post.getCreatedTime();
 				
 				if(publicationDate.after(lastItemDate) && post!=null && post.getId()!=null){
-					FacebookItem facebookUpdate = new FacebookItem(post,facebookUser,feed);
+					FacebookItem facebookUpdate = new FacebookItem(post,facebookUser);
 				    items.add(facebookUpdate);	
 				}
 				
@@ -170,7 +170,7 @@ public class FacebookRetriever implements SocialMediaRetriever {
 					User user = facebookClient.fetchObject(c_user.getId(), User.class);
 					FacebookStreamUser facebookUser = new FacebookStreamUser(user);
 					
-					FacebookItem facebookUpdate = new FacebookItem(post,facebookUser,feed);
+					FacebookItem facebookUpdate = new FacebookItem(post,facebookUser);
 					items.add(facebookUpdate);
 				  
 				}

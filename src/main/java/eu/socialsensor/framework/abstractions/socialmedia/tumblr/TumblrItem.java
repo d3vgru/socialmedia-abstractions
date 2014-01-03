@@ -15,7 +15,6 @@ import com.tumblr.jumblr.types.Post;
 import com.tumblr.jumblr.types.Video;
 import com.tumblr.jumblr.types.VideoPost;
 
-import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.MediaItem;
 import eu.socialsensor.framework.common.domain.SocialNetworkSource;
@@ -214,22 +213,12 @@ public class TumblrItem extends Item{
 	
 	}
 	
-	public TumblrItem(Post post,Feed itemFeed) throws MalformedURLException{
-		this(post);
-		
-		feed = itemFeed;
-		feedType = itemFeed.getFeedtype().toString();
-		
-	}
-	public TumblrItem(Post post,TumblrStreamUser user,Feed itemFeed) throws MalformedURLException{
+	public TumblrItem(Post post,TumblrStreamUser user) throws MalformedURLException{
 		this(post);
 		
 		//User that posted the post
 		streamUser = user;
 		uid = streamUser.getId();
-		//Feed that retrieved the post
-		feed = itemFeed;
-		feedType = itemFeed.getFeedtype().toString();
-		
+	
 	}
 }

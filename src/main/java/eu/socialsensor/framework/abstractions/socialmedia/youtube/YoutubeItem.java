@@ -16,7 +16,6 @@ import com.google.gdata.data.youtube.YouTubeMediaContent;
 import com.google.gdata.data.youtube.YouTubeMediaGroup;
 import com.google.gdata.data.youtube.YtStatistics;
 
-import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.MediaItem;
 import eu.socialsensor.framework.common.domain.SocialNetworkSource;
@@ -153,27 +152,14 @@ public class YoutubeItem extends Item {
 
 	}
 	
-	
-	public YoutubeItem(VideoEntry videoEntry, Feed itemFeed) {
-		
-		this(videoEntry);
-		
-		feed = itemFeed;
-		feedType = itemFeed.getFeedtype().toString();
-	
-	}
-	
-	public YoutubeItem(VideoEntry videoEntry, YoutubeStreamUser user,Feed itemFeed) {
+	public YoutubeItem(VideoEntry videoEntry, YoutubeStreamUser user) {
 		
 		this(videoEntry);
 		
 		//User that posted the post
 		streamUser = user;
 		uid = streamUser.getId();
-		//Feed that retrieved the post
-		feed = itemFeed;
-		feedType = itemFeed.getFeedtype().toString();
-	
+		
 	}
 	
 	

@@ -1,6 +1,5 @@
 package eu.socialsensor.framework.abstractions.socialmedia.twitter;
 
-import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.Location;
 import eu.socialsensor.framework.common.domain.MediaItem;
@@ -235,11 +234,5 @@ public class TwitterItem extends Item {
 		}
 	
 	}
-	
-	public TwitterItem(Status status,Feed itemFeed){
-		this(status);
-		
-		feed = itemFeed;
-		feedType = itemFeed.getFeedtype().toString();
-	}
+
 }

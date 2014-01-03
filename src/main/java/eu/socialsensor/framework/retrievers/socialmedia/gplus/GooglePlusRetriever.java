@@ -144,7 +144,7 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 					}
 					
 					if(publicationDate.after(lastItemDate) && activity != null && activity.getId() != null){
-						GooglePlusItem googlePlusUpdate = new GooglePlusItem(activity,feed);
+						GooglePlusItem googlePlusUpdate = new GooglePlusItem(activity);
 						
 						items.add(googlePlusUpdate);
 					}
@@ -255,7 +255,7 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 					}
 					
 					if(publicationDate.after(lastItemDate) && activity != null && activity.getId() != null){
-						GooglePlusItem googlePlusUpdate = new GooglePlusItem(activity,feed);
+						GooglePlusItem googlePlusUpdate = new GooglePlusItem(activity);
 						items.add(googlePlusUpdate);
 						
 					}

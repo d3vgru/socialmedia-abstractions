@@ -9,7 +9,6 @@ import com.aetrion.flickr.photos.GeoData;
 import com.aetrion.flickr.photos.Photo;
 import com.aetrion.flickr.tags.Tag;
 
-import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.Location;
 import eu.socialsensor.framework.common.domain.MediaItem;
@@ -139,14 +138,6 @@ public class FlickrItem extends Item {
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
-	}
-	
-	public FlickrItem(Photo photo,Feed itemFeed) {
-		this(photo);
-
-		feed = itemFeed;
-		feedType = itemFeed.getFeedtype().toString();
-
 	}
 
 }

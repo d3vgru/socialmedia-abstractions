@@ -12,7 +12,6 @@ import com.restfb.types.Post;
 import com.restfb.types.Post.Likes;
 import com.restfb.types.User;
 
-import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.Location;
 import eu.socialsensor.framework.common.domain.MediaItem;
@@ -275,25 +274,15 @@ public class FacebookItem extends Item {
 	
 	}
     
-	public FacebookItem(Post post, Feed itemFeed) {
-		
-		this(post);
-
-		feed = itemFeed;
-		feedType = itemFeed.getFeedtype().toString();
-
-	}
 	
-	public FacebookItem(Post post, FacebookStreamUser user,Feed itemFeed) {
+	public FacebookItem(Post post, FacebookStreamUser user) {
 		
 		this(post);
 		
 		//User that posted the post
 		streamUser = user;
 		uid = streamUser.getId();
-		//Feed that retrieved the post
-		feed = itemFeed;
-		feedType = itemFeed.getFeedtype().toString();
+		
 		
 	}
 	

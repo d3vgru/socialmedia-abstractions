@@ -9,7 +9,6 @@ import org.jinstagram.entity.common.ImageData;
 import org.jinstagram.entity.common.Images;
 import org.jinstagram.entity.users.feed.MediaFeedData;
 
-import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.Location;
 import eu.socialsensor.framework.common.domain.MediaItem;
@@ -134,23 +133,12 @@ public class InstagramItem extends Item {
 
 	}
 	
-	public InstagramItem(MediaFeedData image,Feed itemFeed) throws MalformedURLException {
-		this(image);
-		
-		feed = itemFeed;
-		feedType = itemFeed.getFeedtype().toString();
-	
-	}
-	
-	public InstagramItem(MediaFeedData image,InstagramStreamUser user,Feed itemFeed) throws MalformedURLException {
+	public InstagramItem(MediaFeedData image,InstagramStreamUser user) throws MalformedURLException {
 		this(image);
 		
 		//User that posted the post
 		streamUser = user;
 		uid = streamUser.getId();
-		//Feed that retrieved the post
-		feed = itemFeed;
-		feedType = itemFeed.getFeedtype().toString();
 	
 	}
 	

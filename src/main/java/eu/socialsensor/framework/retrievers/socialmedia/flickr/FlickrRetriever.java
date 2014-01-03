@@ -145,7 +145,7 @@ public class FlickrRetriever implements SocialMediaRetriever {
 				Photo photo = PhotoUtils.createPhoto(photoElement);
 				
 				if (photo != null &&  photo.getId() != null){
-					FlickrItem flickrUpdate = new FlickrItem(photo,feed);
+					FlickrItem flickrUpdate = new FlickrItem(photo);
 				
 					items.add(flickrUpdate);
 				}
@@ -250,7 +250,7 @@ public class FlickrRetriever implements SocialMediaRetriever {
 				Element photoElement = (Element) photoNodes.item(i);
 				Photo photo = PhotoUtils.createPhoto(photoElement);
 			
-				FlickrItem flickrUpdate = new FlickrItem(photo,feed);
+				FlickrItem flickrUpdate = new FlickrItem(photo);
 				items.add(flickrUpdate);
 				
 				if(items.size()>maxResults || numberOfRequests >= maxRequests){
@@ -318,7 +318,7 @@ public class FlickrRetriever implements SocialMediaRetriever {
 				Element photoElement = (Element) photoNodes.item(i);
 				Photo photo = PhotoUtils.createPhoto(photoElement);
 			
-				FlickrItem flickrUpdate = new FlickrItem(photo,feed);
+				FlickrItem flickrUpdate = new FlickrItem(photo);
 				
 				items.add(flickrUpdate);
 				

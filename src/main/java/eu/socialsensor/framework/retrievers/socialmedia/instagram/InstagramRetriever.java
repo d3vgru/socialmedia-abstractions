@@ -106,7 +106,7 @@ public class InstagramRetriever implements SocialMediaRetriever {
 							break;
     					}
 						if(mfeed != null && mfeed.getId() != null){
-							InstagramItem instagramUpdate = new InstagramItem(mfeed,feed);
+							InstagramItem instagramUpdate = new InstagramItem(mfeed);
 							
 							items.add(instagramUpdate);	
 						}
@@ -196,7 +196,7 @@ public class InstagramRetriever implements SocialMediaRetriever {
 				if(mfeed != null && mfeed.getId() != null){
 					InstagramItem instagramItem;
 					try {
-						instagramItem = new InstagramItem(mfeed,feed);
+						instagramItem = new InstagramItem(mfeed);
 					} catch (MalformedURLException e) {
 						
 						return items;
@@ -231,7 +231,7 @@ public class InstagramRetriever implements SocialMediaRetriever {
 								}
 								
 								if(mfeed != null && mfeed.getId() != null){
-									InstagramItem instagramItem = new InstagramItem(mfeed,feed);
+									InstagramItem instagramItem = new InstagramItem(mfeed);
 									items.add(instagramItem);
 								}
 	
@@ -323,7 +323,7 @@ public class InstagramRetriever implements SocialMediaRetriever {
         					}
         					
         					if((mfeed != null && mfeed.getId() != null)){
-        						InstagramItem instagramUpdate = new InstagramItem(mfeed,feed);
+        						InstagramItem instagramUpdate = new InstagramItem(mfeed);
         						items.add(instagramUpdate);
         					}
         					

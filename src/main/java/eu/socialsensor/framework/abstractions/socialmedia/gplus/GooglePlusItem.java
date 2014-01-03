@@ -13,7 +13,6 @@ import com.google.api.services.plus.model.Activity.PlusObject.Attachments.Image;
 import com.google.api.services.plus.model.Activity.PlusObject.Attachments.Thumbnails;
 import com.google.api.services.plus.model.Comment;
 
-import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.Location;
 import eu.socialsensor.framework.common.domain.MediaItem;
@@ -265,24 +264,12 @@ public class GooglePlusItem extends Item {
 
 	}
 	
-	public GooglePlusItem(Activity activity, Feed itemFeed) {
-		this(activity);
-		
-		feed = itemFeed;
-		feedType = itemFeed.getFeedtype().toString();
-		
-		
-	}
-	
-	public GooglePlusItem(Activity activity,GooglePlusStreamUser user, Feed itemFeed) {
+	public GooglePlusItem(Activity activity,GooglePlusStreamUser user) {
 		this(activity);
 		
 		//User that posted the post
 		streamUser = user;
 		uid = streamUser.getId();
-		//Feed that retrieved the post
-		feed = itemFeed;
-		feedType = itemFeed.getFeedtype().toString();
 		
 		
 	}

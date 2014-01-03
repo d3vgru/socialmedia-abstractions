@@ -113,7 +113,7 @@ public class TumblrRetriever implements SocialMediaRetriever{
 						
 						TumblrItem tumblrItem = null;
 						try {
-							tumblrItem = new TumblrItem(post,tumblrStreamUser,feed);
+							tumblrItem = new TumblrItem(post,tumblrStreamUser);
 						} catch (MalformedURLException e) {
 							// TODO Auto-generated catch block
 							logger.error("#Tumblr Exception: "+e);
@@ -232,7 +232,7 @@ public class TumblrRetriever implements SocialMediaRetriever{
 						
 						TumblrItem tumblrItem = null;
 						try {
-							tumblrItem = new TumblrItem(post,tumblrStreamUser,feed);
+							tumblrItem = new TumblrItem(post,tumblrStreamUser);
 						} catch (MalformedURLException e) {
 							// TODO Auto-generated catch block
 							logger.error("#Tumblr Exception: "+e);

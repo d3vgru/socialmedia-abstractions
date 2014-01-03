@@ -93,7 +93,7 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 					Date publicationDate = publishedDateTime.toDate();
 					
 					if(publicationDate.after(lastItemDate) && (video != null && video.getId() != null)){
-						YoutubeItem videoItem = new YoutubeItem(video,feed);
+						YoutubeItem videoItem = new YoutubeItem(video);
 						
 						items.add(videoItem);
 					}
@@ -198,7 +198,7 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 					Date publicationDate = publishedDateTime.toDate();
 					
 					if(publicationDate.after(lastItemDate) && (video != null && video.getId() != null)){
-						YoutubeItem videoItem = new YoutubeItem(video,feed);
+						YoutubeItem videoItem = new YoutubeItem(video);
 						items.add(videoItem);
 					}
 					
