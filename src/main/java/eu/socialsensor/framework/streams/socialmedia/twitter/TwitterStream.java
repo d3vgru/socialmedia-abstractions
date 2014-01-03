@@ -57,7 +57,7 @@ public class TwitterStream extends Stream {
 			subscriber = new TwitterSubscriber(conf,this);
 		}
 		else{
-			smRetriever = new TwitterRetriever(conf);
+			retriever = new TwitterRetriever(conf);
 		}
 			
 

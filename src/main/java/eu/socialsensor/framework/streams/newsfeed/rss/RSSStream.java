@@ -1,6 +1,5 @@
 package eu.socialsensor.framework.streams.newsfeed.rss;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -13,30 +12,11 @@ import eu.socialsensor.framework.streams.StreamConfiguration;
 public class RSSStream extends Stream{
 	
 	public static NewsFeedSource SOURCE = NewsFeedSource.RSS;
-	private static final String DATE = "date";
-	
-	private Date dateToRetrieve = null;
-	
-	private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
-	
+
 	public void open(StreamConfiguration config){
+
+		retriever = new RSSRetriever(this);
 		
-		String date = config.getParameter(RSSStream.DATE);
-		
-		try {
-			dateToRetrieve = (Date) formatter.parse(date);
-			
-		} catch (ParseException e) {
-			System.err.println("ParseException : "+e);
-		}
-		
-		try {
-			nfRetriever = new RSSRetriever(dateToRetrieve,this);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return;
-		}
 		
 	}
 	

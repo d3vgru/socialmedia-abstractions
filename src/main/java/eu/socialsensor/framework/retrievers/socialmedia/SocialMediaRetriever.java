@@ -2,25 +2,20 @@ package eu.socialsensor.framework.retrievers.socialmedia;
 
 import java.util.List;
 
-import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.feeds.KeywordsFeed;
 import eu.socialsensor.framework.common.domain.feeds.LocationFeed;
 import eu.socialsensor.framework.common.domain.feeds.SourceFeed;
+import eu.socialsensor.framework.retrievers.Retriever;
 
 /**
  * The interface that represents the retriever for all wrappers
  * @author manosetro
  * @email  manosetro@iti.gr
  */
-public interface SocialMediaRetriever{
+public interface SocialMediaRetriever extends Retriever{
 	
-	/**
-	 * Retrieve a general feed that is inserted into the system
-	 * @param feed
-	 * @return
-	 */
-	public List<Item> retrieve(Feed feed);
+	
 	
 	/**
 	 * Retrieves a keywords feed that contains certain keywords

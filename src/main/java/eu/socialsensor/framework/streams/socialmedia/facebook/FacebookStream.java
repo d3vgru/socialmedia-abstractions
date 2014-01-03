@@ -52,7 +52,7 @@ public class FacebookStream extends Stream {
 		}
 		
 		facebookClient = new DefaultFacebookClient(access_token);
-		smRetriever = new FacebookRetriever(facebookClient, maxRequests, minInterval,maxResults);	
+		retriever = new FacebookRetriever(facebookClient, maxRequests, minInterval,maxResults);	
 
 	}
 

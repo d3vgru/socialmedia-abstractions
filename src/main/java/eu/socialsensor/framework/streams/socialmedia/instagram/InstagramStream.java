@@ -41,7 +41,7 @@ public class InstagramStream extends Stream {
 			throw new StreamException("Stream requires authentication.");
 		}
 		
-		smRetriever = new InstagramRetriever(secret, token,Integer.parseInt(maxResults),Integer.parseInt(maxRequests));
+		retriever = new InstagramRetriever(secret, token,Integer.parseInt(maxResults),Integer.parseInt(maxRequests));
 	
 	}
 	

@@ -45,7 +45,7 @@ public class TumblrStream extends Stream {
 			throw new StreamException("Stream requires authentication.");
 		}
 		
-		smRetriever = new TumblrRetriever(consumerKey,consumerSecret,Integer.parseInt(maxResults),Integer.parseInt(maxRequests));
+		retriever = new TumblrRetriever(consumerKey,consumerSecret,Integer.parseInt(maxResults),Integer.parseInt(maxRequests));
 		
 	}
 

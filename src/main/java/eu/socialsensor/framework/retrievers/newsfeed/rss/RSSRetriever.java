@@ -3,7 +3,6 @@ package eu.socialsensor.framework.retrievers.newsfeed.rss;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Date;
 import java.util.List;
 
 import org.rometools.fetcher.FetcherEvent;
@@ -18,28 +17,22 @@ import com.sun.syndication.io.FeedException;
 import com.sun.syndication.io.SyndFeedInput;
 import com.sun.syndication.io.XmlReader;
 
-import eu.socialsensor.framework.abstractions.newsfeed.rss.RSSItem;
-import eu.socialsensor.framework.retrievers.newsfeed.NewsFeedRetriever;
+import eu.socialsensor.framework.common.domain.Feed;
+import eu.socialsensor.framework.common.domain.Item;
+import eu.socialsensor.framework.retrievers.Retriever;
 import eu.socialsensor.framework.streams.newsfeed.rss.RSSStream;
 
 
-public class RSSRetriever implements NewsFeedRetriever{
+public class RSSRetriever implements Retriever{
 	
 	private FeedFetcherCache rssFeedsCache;
 	private FetcherEventListenerImpl listener;
 	private HttpURLFeedFetcher fetcher;
 	private XmlReader reader = null;
 	
-	private Date dateToRetrieve = null;
-	
 	private RSSStream rssStream;
 	
-	public RSSRetriever(Date date,RSSStream rssStream) throws Exception{
-		
-		if(date == null)
-			throw new Exception("No specified date to retrieve from");
-		else
-			dateToRetrieve = date;
+	public RSSRetriever(RSSStream rssStream){
 		
 		this.rssStream = rssStream;
 		
@@ -53,41 +46,43 @@ public class RSSRetriever implements NewsFeedRetriever{
 	}
 	
 	@Override
-	public void retrieve(String url){
+	public List<Item> retrieve(Feed feed){
 		
-		URL feedURL = null;
-		try {
-			feedURL = new URL(url);
-		} catch (MalformedURLException e1) {
+//		URL feedURL = null;
+//		try {
+//			feedURL = new URL(url);
+//		} catch (MalformedURLException e1) {
+//			
+//		}
+//		
+//		try {
+//			reader = new XmlReader(feedURL);
+//			SyndFeed rssData = new SyndFeedInput().build(reader);
+//			
+//			@SuppressWarnings("unchecked")
+//			List<SyndEntry> rssEntries = rssData.getEntries();
+//			
+//			for (SyndEntry rss:rssEntries){
+//				if(rss.getPublishedDate().after(dateToRetrieve)){
+//					RSSItem rssItem = new RSSItem(rss);
+//					
+//				}
+//				
+//			}
+//			
 			
-		}
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//		
+//		} catch (IllegalArgumentException e) {
+//			// TODO Auto-generated catch block
+//			
+//		} catch (FeedException e) {
+//			// TODO Auto-generated catch block
+//			
+//		}
 		
-		try {
-			reader = new XmlReader(feedURL);
-			SyndFeed rssData = new SyndFeedInput().build(reader);
-			
-			@SuppressWarnings("unchecked")
-			List<SyndEntry> rssEntries = rssData.getEntries();
-			
-			for (SyndEntry rss:rssEntries){
-				if(rss.getPublishedDate().after(dateToRetrieve)){
-					RSSItem rssItem = new RSSItem(rss);
-					
-				}
-				
-			}
-			
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-		
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			
-		} catch (FeedException e) {
-			// TODO Auto-generated catch block
-			
-		}
+		return null;
 	}
 
 	
