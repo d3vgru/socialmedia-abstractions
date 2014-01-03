@@ -10,8 +10,8 @@ import eu.socialsensor.framework.retrievers.Retriever;
 
 /**
  * The interface that represents the retriever for all wrappers
- * @author manosetro
- * @email  manosetro@iti.gr
+ * @author ailiakop
+ * @email  ailiakop@iti.gr
  */
 public interface SocialMediaRetriever extends Retriever{
 	
