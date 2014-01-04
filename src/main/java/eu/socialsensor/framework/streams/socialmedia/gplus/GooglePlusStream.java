@@ -40,7 +40,7 @@ public class GooglePlusStream extends Stream {
 			throw new StreamException("Stream requires authentication.");
 		}
 		
-		retriever = new GooglePlusRetriever(key,Integer.parseInt(maxResults),Integer.parseInt(maxRequests));
+		retriever = new GooglePlusRetriever(key,Integer.parseInt(maxResults),Integer.parseInt(maxRequests),this);
 		
 	}
 	

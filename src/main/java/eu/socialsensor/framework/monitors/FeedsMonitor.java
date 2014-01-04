@@ -9,9 +9,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 
 import eu.socialsensor.framework.common.domain.Feed;
-import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.retrievers.Retriever;
-import eu.socialsensor.framework.retrievers.socialmedia.SocialMediaRetriever;
 
 /**
  * @author manosetro
@@ -56,15 +54,15 @@ public class FeedsMonitor {
 		feedFetchTasks.remove(feedId);
 	}
 	
-	public List<Item> collectRetrievedItems(){
-		List<Item> allItems = new ArrayList<Item>();
+	public Integer collectRetrievedItems(){
+		Integer totalRetrievedItems = 0;
 		
 		for(FeedFetchTask  feedFetcherTask : feedFetchTasks.values()) {
-			if(feedFetcherTask.getRetrievedItems() != null && !feedFetcherTask.getRetrievedItems().isEmpty())
-				allItems.addAll(feedFetcherTask.getRetrievedItems());
+			if(feedFetcherTask.getRetrievedItems() != null && feedFetcherTask.getRetrievedItems()!=0)
+				totalRetrievedItems += feedFetcherTask.getRetrievedItems();
 		}
 		
-		return allItems;
+		return totalRetrievedItems;
 	}
 	
 	public void resetMonitor(){

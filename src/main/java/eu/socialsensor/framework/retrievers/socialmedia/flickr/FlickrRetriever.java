@@ -22,13 +22,13 @@ import com.aetrion.flickr.photos.PhotoUtils;
 
 import eu.socialsensor.framework.abstractions.socialmedia.flickr.FlickrItem;
 import eu.socialsensor.framework.common.domain.Feed;
-import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.Keyword;
 import eu.socialsensor.framework.common.domain.Source;
 import eu.socialsensor.framework.common.domain.feeds.KeywordsFeed;
 import eu.socialsensor.framework.common.domain.feeds.LocationFeed;
 import eu.socialsensor.framework.common.domain.feeds.SourceFeed;
 import eu.socialsensor.framework.retrievers.socialmedia.SocialMediaRetriever;
+import eu.socialsensor.framework.streams.socialmedia.flickr.FlickrStream;
 
 /**
  * The retriever that implements the Flickr wrapper
@@ -49,6 +49,8 @@ public class FlickrRetriever implements SocialMediaRetriever {
 	private String flickrKey;
 	private String flickrSecret;
 	
+	private FlickrStream flStream;
+	
 	private int maxResults;
 	private int maxRequests;
 	
@@ -63,7 +65,8 @@ public class FlickrRetriever implements SocialMediaRetriever {
 		return flickrSecret;
 	}
 
-	public FlickrRetriever(String flickrKey, String flickrSecret,Integer maxResults,Integer maxRequests) {
+	public FlickrRetriever(String flickrKey, String flickrSecret,Integer maxResults,Integer maxRequests,FlickrStream flStream) {
+		this.flStream = flStream;
 		
 		this.flickrKey = flickrKey;
 		this.flickrSecret = flickrSecret;
@@ -92,8 +95,8 @@ public class FlickrRetriever implements SocialMediaRetriever {
 	}
 	
 	@Override
-	public List<Item> retrieveUserFeeds(SourceFeed feed){
-		List<Item> items = new ArrayList<Item>();
+	public Integer retrieveUserFeeds(SourceFeed feed){
+		Integer totalRetrievedItems = 0;
 		
 		Date dateToRetrieve = feed.getDateToRetrieve();
 		
@@ -108,7 +111,7 @@ public class FlickrRetriever implements SocialMediaRetriever {
 		
 		if(userID == null){
 			logger.info("#Flickr : No source feed");
-			return null;
+			return totalRetrievedItems;
 		}
 		
 		//logger.info("#Flickr : Retrieving User Feed : "+userID);
@@ -127,12 +130,12 @@ public class FlickrRetriever implements SocialMediaRetriever {
 				numberOfRequests++;
 			} catch (Exception e) {
 				logger.error("#Flickr Exception: "+e);
-				return items;
+				return totalRetrievedItems;
 			}
 			
 			if (response.isError()){
 				logger.error("#Flickr : Wrong response "+response.getErrorCode());
-				return items;
+				return totalRetrievedItems;
 			}
 				
 			Element photosElement = response.getPayload();
@@ -147,9 +150,10 @@ public class FlickrRetriever implements SocialMediaRetriever {
 				if (photo != null &&  photo.getId() != null){
 					FlickrItem flickrUpdate = new FlickrItem(photo);
 				
-					items.add(flickrUpdate);
+					flStream.store(flickrUpdate);
+					totalRetrievedItems++;
 				}
-				if(items.size()>maxResults || numberOfRequests > maxRequests){
+				if(totalRetrievedItems>maxResults || numberOfRequests > maxRequests){
 					isFinished = true;
 					break;
 				}
@@ -168,11 +172,11 @@ public class FlickrRetriever implements SocialMediaRetriever {
 //		logger.info("#Flickr : Handler fetched " + items.size() + " photos from " + userID + 
 //				" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
 		
-		return items;
+		return totalRetrievedItems;
 	}
 	@Override
-	public List<Item> retrieveKeywordsFeeds(KeywordsFeed feed){
-		List<Item> items = new ArrayList<Item>();
+	public Integer retrieveKeywordsFeeds(KeywordsFeed feed){
+		Integer totalRetrievedItems = 0;
 		Date dateToRetrieve = feed.getDateToRetrieve();
 		
 		int page=1, pages=1;
@@ -185,7 +189,7 @@ public class FlickrRetriever implements SocialMediaRetriever {
 		
 		if(keywords == null && keyword == null){
 			logger.info("#Flickr : No keywords feed");
-			return items;
+			return totalRetrievedItems;
 		}
 		
 		List<String> tags = new ArrayList<String>();
@@ -211,7 +215,7 @@ public class FlickrRetriever implements SocialMediaRetriever {
 			}
 		}
 		if(tags.equals(""))
-			return items;
+			return totalRetrievedItems;
 		
 //		logger.info("#Flickr : Retrieving Keywords Feed : "+text);
 		
@@ -234,11 +238,11 @@ public class FlickrRetriever implements SocialMediaRetriever {
 				numberOfRequests++;
 			} catch (Exception e) {
 				logger.error("#Flickr Exception: "+e);
-				return items;
+				return totalRetrievedItems;
 			}
 			if (response.isError()) {
 				logger.error("#Flickr : Wrong response "+response.getErrorCode());
-				return items;
+				return totalRetrievedItems;
 			}
 			
 			Element photosElement = response.getPayload();
@@ -251,9 +255,9 @@ public class FlickrRetriever implements SocialMediaRetriever {
 				Photo photo = PhotoUtils.createPhoto(photoElement);
 			
 				FlickrItem flickrUpdate = new FlickrItem(photo);
-				items.add(flickrUpdate);
-				
-				if(items.size()>maxResults || numberOfRequests >= maxRequests){
+				flStream.store(flickrUpdate);
+				totalRetrievedItems++;
+				if(totalRetrievedItems>maxResults || numberOfRequests >= maxRequests){
 					isFinished = true;
 					break;
 				}
@@ -272,11 +276,11 @@ public class FlickrRetriever implements SocialMediaRetriever {
 //		logger.info("#Flickr : Handler fetched " + items.size() + " photos from " + text + 
 //				" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
 		
-		return items;
+		return totalRetrievedItems;
 	}
 	@Override
-	public List<Item> retrieveLocationFeeds(LocationFeed feed){
-		List<Item> items = new ArrayList<Item>();
+	public Integer retrieveLocationFeeds(LocationFeed feed){
+		Integer totalRetrievedItems = 0;
 		
 		Date dateToRetrieve = feed.getDateToRetrieve();
 		
@@ -302,11 +306,11 @@ public class FlickrRetriever implements SocialMediaRetriever {
 				
 			} catch (Exception e) {
 				logger.error("#Flickr Exception: "+e);
-				return items;
+				return totalRetrievedItems;
 			}
 			if (response.isError()) {
 				logger.error("#Flickr : Wrong response "+response.getErrorCode());
-				return items;
+				return totalRetrievedItems;
 			}
 			
 			Element photosElement = response.getPayload();
@@ -320,9 +324,10 @@ public class FlickrRetriever implements SocialMediaRetriever {
 			
 				FlickrItem flickrUpdate = new FlickrItem(photo);
 				
-				items.add(flickrUpdate);
+				flStream.store(flickrUpdate);
+				totalRetrievedItems++;
 				
-				if(items.size()>maxResults){
+				if(totalRetrievedItems>maxResults){
 					isFinished = true;
 					break;
 				}
@@ -338,14 +343,14 @@ public class FlickrRetriever implements SocialMediaRetriever {
 		}
 		
 		//logger.info("#Flickr : Done retrieving for this session");
-		logger.info("#Flickr : Handler fetched " + items.size() + " photos "+ 
+		logger.info("#Flickr : Handler fetched " + totalRetrievedItems + " photos "+ 
 				" [ " + dateToRetrieve + " - " + new Date(System.currentTimeMillis()) + " ]");
 		
-		return items;
+		return totalRetrievedItems;
     }
 	
 	@Override
-	public List<Item> retrieve (Feed feed) {
+	public Integer retrieve (Feed feed) {
 		
 		switch(feed.getFeedtype()) {
 			case SOURCE:
@@ -366,7 +371,7 @@ public class FlickrRetriever implements SocialMediaRetriever {
 			
 		}
 	
-		return null;
+		return 0;
 	}
 	
 	@Override

@@ -45,7 +45,7 @@ public class FlickrStream extends Stream {
 			throw new StreamException("Stream requires authentication.");
 		}
 		
-		retriever = new FlickrRetriever(key, secret,Integer.parseInt(maxResults),Integer.parseInt(maxRequests));
+		retriever = new FlickrRetriever(key, secret,Integer.parseInt(maxResults),Integer.parseInt(maxRequests),this);
 		
 	}
 	

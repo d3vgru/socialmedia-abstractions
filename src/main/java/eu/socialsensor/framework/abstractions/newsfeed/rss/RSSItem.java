@@ -1,7 +1,5 @@
 package eu.socialsensor.framework.abstractions.newsfeed.rss;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.UUID;
 
 import org.jsoup.Jsoup;
@@ -25,21 +23,14 @@ public class RSSItem extends Item{
 		//Document's title
 		title = rssEntry.getTitle();
 		//Document's content - Extract text content from html structure
-		description = extractDocumentContent(rssEntry.getDescription().getValue());
+		if(rssEntry.getDescription()!=null)
+			description = extractDocumentContent(rssEntry.getDescription().getValue());
 		//Document's time of publication
-		publicationTime = rssEntry.getPublishedDate().getTime();
+		if( rssEntry.getPublishedDate() != null)
+			publicationTime = rssEntry.getPublishedDate().getTime();
 		//The url where the document can be found
-		URL url = null;
-		try {
-			url = new URL(rssEntry.getLink());
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		if(url != null){
-			links = new URL[1];
-			links[0] = url;
-		}
+		reference = rssEntry.getLink();
+		
 
 	}
 	

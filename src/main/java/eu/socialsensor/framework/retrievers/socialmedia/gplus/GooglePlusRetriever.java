@@ -3,7 +3,6 @@ package eu.socialsensor.framework.retrievers.socialmedia.gplus;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -24,13 +23,13 @@ import com.google.api.services.plus.model.Person;
 
 import eu.socialsensor.framework.abstractions.socialmedia.gplus.GooglePlusItem;
 import eu.socialsensor.framework.common.domain.Feed;
-import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.Keyword;
 import eu.socialsensor.framework.common.domain.Source;
 import eu.socialsensor.framework.common.domain.feeds.KeywordsFeed;
 import eu.socialsensor.framework.common.domain.feeds.LocationFeed;
 import eu.socialsensor.framework.common.domain.feeds.SourceFeed;
 import eu.socialsensor.framework.retrievers.socialmedia.SocialMediaRetriever;
+import eu.socialsensor.framework.streams.socialmedia.gplus.GooglePlusStream;
 
 /**
  * The retriever that implements the Google Plus wrapper
@@ -47,6 +46,8 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 	private String userPrefix = "https://plus.google.com/+";
 	private String GooglePlusKey;
 	
+	private GooglePlusStream gpStream;
+	
 	private int pageLimit = 10;
 	private int maxResults;
 	private int maxRequests;
@@ -58,7 +59,7 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 		return null;
 	}
 
-	public GooglePlusRetriever(String key,Integer maxResults,Integer maxRequests) {
+	public GooglePlusRetriever(String key,Integer maxResults,Integer maxRequests,GooglePlusStream gpStream) {
 		GooglePlusKey = key;
 		GoogleCredential credential = new GoogleCredential();
 		plusSrv = new Plus.Builder(transport, jsonFactory, credential)
@@ -66,13 +67,15 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 						.setHttpRequestInitializer(credential)
 						.setPlusRequestInitializer(new PlusRequestInitializer(GooglePlusKey)).build();
 		
+		this.gpStream = gpStream;
+		
 		this.maxResults = maxResults;
 		this.maxRequests = maxRequests;
 	}
 
 	@Override
-	public List<Item> retrieveUserFeeds(SourceFeed feed){
-		List<Item> items = new ArrayList<Item>();
+	public Integer retrieveUserFeeds(SourceFeed feed){
+		Integer totalRetrievedItems = 0;
 		
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
 		Date lastItemDate = feed.getDateToRetrieve();
@@ -86,7 +89,7 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 		
 		if(uName == null){
 			logger.info("#GooglePlus : No source feed");
-			return null;
+			return totalRetrievedItems;
 		}
 				
 		//logger.info("#GooglePlus : Retrieving User Feed : "+uName);
@@ -121,7 +124,7 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
-			return items;
+			return totalRetrievedItems;
 		}
 		
 		while(pageOfActivities != null && !pageOfActivities.isEmpty()){
@@ -140,16 +143,17 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 						
 					} catch (ParseException e) {
 						logger.error("#GooglePlus - ParseException: "+e);
-						return items;
+						return totalRetrievedItems;
 					}
 					
 					if(publicationDate.after(lastItemDate) && activity != null && activity.getId() != null){
 						GooglePlusItem googlePlusUpdate = new GooglePlusItem(activity);
 						
-						items.add(googlePlusUpdate);
+						gpStream.store(googlePlusUpdate);
+						totalRetrievedItems++;
 					}
 					
-					if(items.size()>maxResults){
+					if(totalRetrievedItems>maxResults){
 						isFinished = true;
 						break;
 					}
@@ -166,7 +170,7 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 				
 			} catch (IOException e) {
 				logger.error("#GooglePlus Exception : "+e);
-				return items;
+				return totalRetrievedItems;
 			}
 			
 			if(isFinished){
@@ -178,11 +182,11 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 //		logger.info("#GooglePlus : Handler fetched " + items.size() + " posts from " + uName + 
 //				" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
 //		
-		return items;
+		return totalRetrievedItems;
 	}
 	@Override
-	public List<Item> retrieveKeywordsFeeds(KeywordsFeed feed){
-		List<Item> items = new ArrayList<Item>();
+	public Integer retrieveKeywordsFeeds(KeywordsFeed feed){
+		Integer totalRetrievedItems = 0;
 		
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
 		Date lastItemDate = feed.getDateToRetrieve();
@@ -196,7 +200,7 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 		
 		if(keywords == null && keyword == null){
 			logger.info("#GooglePlus : No keywords feed");
-			return items;
+			return totalRetrievedItems;
 		}
 		
 		String tags = "";
@@ -215,7 +219,7 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 		}
 		
 		if(tags.equals(""))
-			return items;
+			return totalRetrievedItems;
 		
 		//logger.info("#GooglePlus : Retrieving Keywords Feed :"+tags);
 		
@@ -232,7 +236,7 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
-			return items;
+			return totalRetrievedItems;
 		}
 		
 		while(pageOfActivities != null && !pageOfActivities.isEmpty()){
@@ -251,16 +255,16 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 						
 					} catch (ParseException e) {
 						logger.error("#GooglePlus - ParseException: "+e);
-						return items;
+						return totalRetrievedItems;
 					}
 					
 					if(publicationDate.after(lastItemDate) && activity != null && activity.getId() != null){
 						GooglePlusItem googlePlusUpdate = new GooglePlusItem(activity);
-						items.add(googlePlusUpdate);
-						
+						gpStream.store(googlePlusUpdate);
+						totalRetrievedItems++;
 					}
 					
-					if(items.size()>maxResults){
+					if(totalRetrievedItems>maxResults){
 						isFinished = true;
 						break;
 					}
@@ -288,18 +292,18 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 //		logger.info("#GooglePlus : Handler fetched " + items.size() + " posts from " + tags + 
 //				" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
 		
-		return items;
+		return totalRetrievedItems;
 		
 	}
 	@Override
-	public List<Item> retrieveLocationFeeds(LocationFeed feed){
+	public Integer retrieveLocationFeeds(LocationFeed feed){
 		
-		return null;
+		return 0;
     }
 	
 	
 	@Override
-	public List<Item> retrieve (Feed feed) {
+	public Integer retrieve (Feed feed) {
 		
 		switch(feed.getFeedtype()){
 			case SOURCE:

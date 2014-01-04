@@ -27,6 +27,7 @@ import eu.socialsensor.framework.common.domain.feeds.KeywordsFeed;
 import eu.socialsensor.framework.common.domain.feeds.LocationFeed;
 import eu.socialsensor.framework.common.domain.feeds.SourceFeed;
 import eu.socialsensor.framework.retrievers.socialmedia.SocialMediaRetriever;
+import eu.socialsensor.framework.streams.socialmedia.youtube.YoutubeStream;
 
 /**
  * The retriever that implements the Youtube wrapper
@@ -42,19 +43,21 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 	private Logger logger = Logger.getLogger(YoutubeRetriever.class);
 	
 	private YouTubeService service;
+	private YoutubeStream ytStream;
 	
 	private int results_threshold;
 	private int request_threshold;
 	
-	public YoutubeRetriever(String clientId, String developerKey,Integer maxResults,Integer maxRequests) {	
+	public YoutubeRetriever(String clientId, String developerKey,Integer maxResults,Integer maxRequests,YoutubeStream ytStream) {	
 	
 		this.service = new YouTubeService(clientId, developerKey);
 		this.results_threshold = maxResults;
 		this.request_threshold = maxRequests;
+		this.ytStream = ytStream;
 	}
 
-	public List<Item> retrieveUserFeeds(SourceFeed feed){
-		List<Item> items = new ArrayList<Item>();
+	public Integer retrieveUserFeeds(SourceFeed feed){
+		Integer totalRetrievedItems = 0;
 		Date lastItemDate = feed.getDateToRetrieve();
 		
 		boolean isFinished = false;
@@ -66,7 +69,7 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 		
 		if(uName == null){
 			logger.info("#YouTube : No source feed");
-			return null;
+			return totalRetrievedItems;
 		}
 				
 		logger.info("#YouTube : Retrieving User Feed : "+uName);
@@ -76,7 +79,7 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 			channelUrl = getChannelUrl(uName);
 		} catch (MalformedURLException e) {
 			logger.error("#YouTube Exception : "+e);
-			return null;
+			return totalRetrievedItems;
 		}
 		
 		while(channelUrl != null) {
@@ -95,10 +98,10 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 					if(publicationDate.after(lastItemDate) && (video != null && video.getId() != null)){
 						YoutubeItem videoItem = new YoutubeItem(video);
 						
-						items.add(videoItem);
+						ytStream.store(videoItem);
 					}
 					
-					if(items.size()>results_threshold || numberOfRequests > request_threshold){
+					if(totalRetrievedItems>results_threshold || numberOfRequests > request_threshold){
 						isFinished = true;
 						break;
 					}
@@ -113,20 +116,20 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 				
 			} catch (Exception e) {
 				logger.error("#YouTube Exception : "+e);
-				return items;
+				return totalRetrievedItems;
 			} 
 		
 		}
 		
 		//logger.info("#YouTube : Done retrieving for this session");
-		logger.info("#YouTube : Handler fetched " + items.size() + " videos from " + uName + 
+		logger.info("#YouTube : Handler fetched " + totalRetrievedItems + " videos from " + uName + 
 				" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
 		
-		return items;
+		return totalRetrievedItems;
 	}
 	
-	public List<Item> retrieveKeywordsFeeds(KeywordsFeed feed){
-		List<Item> items = new ArrayList<Item>();
+	public Integer retrieveKeywordsFeeds(KeywordsFeed feed){
+		Integer totalRetrievedItems = 0;
 		
 		Date lastItemDate = feed.getDateToRetrieve();
 		
@@ -142,7 +145,7 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 		
 		if(keywords == null && keyword != null){
 			logger.info("#YouTube : No keywords feed");
-			return items;
+			return totalRetrievedItems;
 		}
 	
 		String tags = "";
@@ -162,7 +165,7 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 		}
 		//one call - 25 results
 		if(tags.equals(""))
-			return items;
+			return totalRetrievedItems;
 		//logger.info("#YouTube : Retrieving Keywords Feed : "+tags);
 		YouTubeQuery query;
 		try {
@@ -171,7 +174,7 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 			// TODO Auto-generated catch block
 			logger.error("#YouTube Exception : "+e1);
 			e1.printStackTrace();
-			return items;
+			return totalRetrievedItems;
 		}
 		
 		query.setOrderBy(YouTubeQuery.OrderBy.PUBLISHED);
@@ -199,10 +202,10 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 					
 					if(publicationDate.after(lastItemDate) && (video != null && video.getId() != null)){
 						YoutubeItem videoItem = new YoutubeItem(video);
-						items.add(videoItem);
+						ytStream.store(videoItem);
 					}
 					
-					if(items.size()>results_threshold || numberOfRequests >= request_threshold){
+					if(totalRetrievedItems>results_threshold || numberOfRequests >= request_threshold){
 						isFinished = true;
 						break;
 					}
@@ -211,7 +214,7 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 			}
 			catch(Exception e){
 				logger.error("#YouTube Exception : "+e);
-				return items;
+				return totalRetrievedItems;
 			}
 			
 			if(maxResults>currResults || isFinished)	
@@ -222,12 +225,12 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 //		logger.info("#YouTube : Done retrieving for this session");
 //		logger.info("#YouTube : Handler fetched " + items.size() + " videos from " + tags + 
 //				" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
-		feed.setTotalNumberOfItems(items.size());
-		return items;
+		
+		return totalRetrievedItems;
 	}
 	
 
-	public List<Item> retrieveLocationFeeds(LocationFeed feed){
+	public Integer retrieveLocationFeeds(LocationFeed feed){
 		//DOES NOT WORK WITH LOCATION
 		/*Date lastItemDate = feed.getLastItemDate();
 		Date minDate = lastItemDate;
@@ -297,7 +300,7 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 	
 
 	@Override
-	public List<Item> retrieve (Feed feed) {
+	public Integer retrieve (Feed feed) {
 		
 		switch(feed.getFeedtype()){
 			case SOURCE:

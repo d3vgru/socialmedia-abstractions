@@ -1,6 +1,5 @@
 package eu.socialsensor.framework.streams;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -127,29 +126,23 @@ public abstract class Stream implements Runnable {
 	 * @throws StreamException
 	 */
 	public Integer poll(List<Feed> feeds) throws StreamException {
-		List<Item> items = new ArrayList<Item>();
+		Integer totalRetrievedItems = 0;
 		
 		if(retriever != null) {
 		
 			if(feeds == null)
-				return null ;
+				return totalRetrievedItems;
 				
 			for(Feed feed : feeds){
 				
-				List<Item> retrievedItems = retriever.retrieve(feed);
-				items.addAll(retrievedItems);
+				totalRetrievedItems += retriever.retrieve(feed);
 				
 			}
 			
-			if(items != null){
-				store(items);
-			}	
 			
-			logger.info("Retrieved items for "+this.getClass().getName()+ " are : "+items.size());
+			logger.info("Retrieved items for "+this.getClass().getName()+ " are : "+totalRetrievedItems);
 		}
-		
-		return items.size();
-	
+		return totalRetrievedItems;
 	}
 	
 	

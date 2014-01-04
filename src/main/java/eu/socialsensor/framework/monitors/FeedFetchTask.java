@@ -2,14 +2,11 @@ package eu.socialsensor.framework.monitors;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 
 import eu.socialsensor.framework.common.domain.Feed;
-import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.retrievers.Retriever;
 
 /**
@@ -32,7 +29,7 @@ public class FeedFetchTask implements Runnable {
 //	private long lastUpdateTime = 0;
 //	private long lastRequestTime = 0;
 	private Feed feed;
-	private List<Item> retrievedItems = new ArrayList<Item>();
+	private Integer retrievedItems;
 	
 	private boolean completed = false;
 	private boolean needToPause = false;
@@ -52,7 +49,7 @@ public class FeedFetchTask implements Runnable {
 		
 	}
 	
-	public List<Item> getRetrievedItems(){
+	public Integer getRetrievedItems(){
 		return retrievedItems;
 	}
 	

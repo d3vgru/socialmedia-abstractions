@@ -4,7 +4,6 @@ package eu.socialsensor.framework.retrievers.socialmedia.tumblr;
 import java.net.MalformedURLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -22,13 +21,13 @@ import com.tumblr.jumblr.types.Post;
 import eu.socialsensor.framework.abstractions.socialmedia.tumblr.TumblrItem;
 import eu.socialsensor.framework.abstractions.socialmedia.tumblr.TumblrStreamUser;
 import eu.socialsensor.framework.common.domain.Feed;
-import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.Keyword;
 import eu.socialsensor.framework.common.domain.Source;
 import eu.socialsensor.framework.common.domain.feeds.KeywordsFeed;
 import eu.socialsensor.framework.common.domain.feeds.LocationFeed;
 import eu.socialsensor.framework.common.domain.feeds.SourceFeed;
 import eu.socialsensor.framework.retrievers.socialmedia.SocialMediaRetriever;
+import eu.socialsensor.framework.streams.socialmedia.tumblr.TumblrStream;
 
 /**
  * The retriever that implements the Tumblr wrapper
@@ -39,23 +38,27 @@ public class TumblrRetriever implements SocialMediaRetriever{
 	private Logger logger = Logger.getLogger(TumblrRetriever.class);
 	
 	private JumblrClient client;
+	
+	private TumblrStream tlStream;
 
 	private int maxResults;
 	private int maxRequests;
 	
 
-	public TumblrRetriever(String consumerKey, String consumerSecret,Integer maxResults,Integer maxRequests) {
+	public TumblrRetriever(String consumerKey, String consumerSecret,Integer maxResults,Integer maxRequests,TumblrStream tlStream) {
 		
 		this.maxResults = maxResults;
 		this.maxRequests = maxRequests;
+		
+		this.tlStream = tlStream;
 		
 		client = new JumblrClient(consumerKey,consumerSecret);
 	}
 
 	
 	@Override
-	public List<Item> retrieveUserFeeds(SourceFeed feed){
-		List<Item> items = new ArrayList<Item>();
+	public Integer retrieveUserFeeds(SourceFeed feed){
+		Integer totalRetrievedItems = 0;
 		
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
 		Date lastItemDate = feed.getDateToRetrieve();
@@ -118,15 +121,16 @@ public class TumblrRetriever implements SocialMediaRetriever{
 							// TODO Auto-generated catch block
 							logger.error("#Tumblr Exception: "+e);
 							e.printStackTrace();
-							return items;
+							return totalRetrievedItems;
 						}
 						
-						items.add(tumblrItem);
+						tlStream.store(tumblrItem);
+						totalRetrievedItems++;
 						
 					}
 				
 				}
-				if(items.size()>maxResults || numberOfRequests>maxRequests){
+				if(totalRetrievedItems>maxResults || numberOfRequests>maxRequests){
 					isFinished = true;
 					break;
 				}
@@ -138,14 +142,14 @@ public class TumblrRetriever implements SocialMediaRetriever{
 		}
 
 		//logger.info("#Tumblr : Done retrieving for this session");
-		logger.info("#Tumblr : Handler fetched " + items.size() + " posts from " + uName + 
+		logger.info("#Tumblr : Handler fetched " +totalRetrievedItems + " posts from " + uName + 
 				" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
 		
-		return items;
+		return totalRetrievedItems;
 	}
 	@Override
-	public List<Item> retrieveKeywordsFeeds(KeywordsFeed feed){
-		List<Item> items = new ArrayList<Item>();
+	public Integer retrieveKeywordsFeeds(KeywordsFeed feed){
+		Integer totalRetrievedItems = 0;
 		
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
 		Date currentDate = new Date(System.currentTimeMillis());
@@ -162,7 +166,7 @@ public class TumblrRetriever implements SocialMediaRetriever{
 		
 		if(keywords == null && keyword == null){
 			logger.info("#Tumblr : No keywords feed");
-			return items;
+			return totalRetrievedItems;
 		}
 		
 		int it=0;
@@ -186,7 +190,7 @@ public class TumblrRetriever implements SocialMediaRetriever{
 		
 		//logger.info("#Tumblr : Retrieving Keywords Feed : "+tags);
 		if(tags.equals(""))
-			return items;
+			return totalRetrievedItems;
 		
 		while(indexDate.after(lastItemDate) || indexDate.equals(lastItemDate)){
 			
@@ -198,7 +202,7 @@ public class TumblrRetriever implements SocialMediaRetriever{
 			try{
 				posts = client.tagged(tags);
 			}catch(JumblrException e){
-				return items;
+				return totalRetrievedItems;
 			}
 			
 			it++;
@@ -221,7 +225,7 @@ public class TumblrRetriever implements SocialMediaRetriever{
 						
 					} catch (ParseException e) {
 						logger.error("#Tumblr - ParseException: "+e);
-						return items;
+						return totalRetrievedItems;
 					}
 					
 					if(publicationDate.after(lastItemDate) && post != null && post.getId() != null){
@@ -237,14 +241,14 @@ public class TumblrRetriever implements SocialMediaRetriever{
 							// TODO Auto-generated catch block
 							logger.error("#Tumblr Exception: "+e);
 							e.printStackTrace();
-							return items;
+							return totalRetrievedItems;
 						}
-						items.add(tumblrItem);
+						tlStream.store(tumblrItem);
 						
 					}
 				
 				}
-				if(items.size()>maxResults || numberOfRequests>=maxRequests){
+				if(totalRetrievedItems>maxResults || numberOfRequests>=maxRequests){
 					isFinished = true;
 					break;
 				}
@@ -261,17 +265,17 @@ public class TumblrRetriever implements SocialMediaRetriever{
 //		logger.info("#Tumblr : Handler fetched " + items.size() + " posts from " + tags + 
 //				" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
 		
-		return items;
+		return totalRetrievedItems;
 		
 	}
 	@Override
-	public List<Item> retrieveLocationFeeds(LocationFeed feed) throws JumblrException {
-		logger.info("Retrieving Location Feed");
-		return null;
+	public Integer retrieveLocationFeeds(LocationFeed feed) throws JumblrException {
+		
+		return 0;
     }
 
 	@Override
-	public List<Item> retrieve (Feed feed) {
+	public Integer retrieve (Feed feed) {
 	
 		switch(feed.getFeedtype()){
 			case SOURCE:
@@ -288,10 +292,10 @@ public class TumblrRetriever implements SocialMediaRetriever{
 			case LOCATION:
 				logger.error("#Tumblr : Location Feed cannot be retreived from Tumblr");
 				
-				return null;
+				return 0;
 		}
 	
-		return null;
+		return 0;
 	}
 	@Override
 	public void stop(){

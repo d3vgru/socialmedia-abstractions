@@ -52,7 +52,7 @@ public class YoutubeStream extends Stream {
 			throw new StreamException("Stream requires authentication");
 		}
 
-		retriever = new YoutubeRetriever(clientId, developerKey,Integer.parseInt(maxResults),Integer.parseInt(maxRequests));
+		retriever = new YoutubeRetriever(clientId, developerKey,Integer.parseInt(maxResults),Integer.parseInt(maxRequests),this);
 
 	}
 }

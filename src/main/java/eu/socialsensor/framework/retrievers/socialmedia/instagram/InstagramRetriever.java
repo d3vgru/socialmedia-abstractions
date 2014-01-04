@@ -1,7 +1,6 @@
 package eu.socialsensor.framework.retrievers.socialmedia.instagram;
 
 import java.net.MalformedURLException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -21,7 +20,6 @@ import org.jinstagram.auth.model.Token;
 
 import eu.socialsensor.framework.abstractions.socialmedia.instagram.InstagramItem;
 import eu.socialsensor.framework.common.domain.Feed;
-import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.Keyword;
 import eu.socialsensor.framework.common.domain.Location;
 import eu.socialsensor.framework.common.domain.Source;
@@ -30,6 +28,7 @@ import eu.socialsensor.framework.common.domain.feeds.LocationFeed;
 import eu.socialsensor.framework.common.domain.feeds.SourceFeed;
 import eu.socialsensor.framework.retrievers.socialmedia.SocialMediaRetriever;
 import eu.socialsensor.framework.streams.StreamConfiguration;
+import eu.socialsensor.framework.streams.socialmedia.instagram.InstagramStream;
 
 /**
  * The retriever that implements the Instagram wrapper
@@ -43,6 +42,7 @@ public class InstagramRetriever implements SocialMediaRetriever {
 	StreamConfiguration instagramConfStorage;
 	
 	private Instagram instagram = null;
+	private InstagramStream igStream;
 
 	private int maxResults;
 	private int maxRequests;
@@ -50,16 +50,18 @@ public class InstagramRetriever implements SocialMediaRetriever {
 	private MediaFeed mediaFeed = new MediaFeed();
 	private TagMediaFeed tagFeed = new TagMediaFeed();
 	
-	public InstagramRetriever(String secret, String token, int maxResults,int maxRequests) {
+	public InstagramRetriever(String secret, String token, int maxResults,int maxRequests,InstagramStream igStream) {
 		Token instagramToken = new Token(token,secret); 
 		this.instagram = new Instagram(instagramToken);
 		this.maxResults = maxResults;
 		this.maxRequests = maxRequests;
+		
+		this.igStream = igStream;
 	}
 	
 	@Override
-	public List<Item> retrieveUserFeeds(SourceFeed feed) {
-		List<Item> items = new ArrayList<Item>();
+	public Integer retrieveUserFeeds(SourceFeed feed) {
+		Integer totalRetrievedItems = 0;
 		
 		Date lastItemDate = feed.getDateToRetrieve();
 		
@@ -72,7 +74,7 @@ public class InstagramRetriever implements SocialMediaRetriever {
 		
 		if(uName == null){
 			logger.info("#Instagram : No source feed");
-			return null;
+			return totalRetrievedItems;
 		}
 			
 		logger.info("#Instagram : Retrieving User Feed : "+uName);
@@ -84,7 +86,7 @@ public class InstagramRetriever implements SocialMediaRetriever {
 		}
 		catch(InstagramException e){
 			logger.error("#Instagram Exception : "+e);
-			return items;
+			return totalRetrievedItems;
 		}
 		
 		//logger.info("#Instagram : "+revUsers.size()+" relevant users found");
@@ -100,7 +102,7 @@ public class InstagramRetriever implements SocialMediaRetriever {
 						int createdTime = Integer.parseInt(mfeed.getCreatedTime());
 						Date publicationDate = new Date((long) createdTime * 1000);
 						
-						if(lastItemDate.after(publicationDate) || items.size()>maxResults 
+						if(lastItemDate.after(publicationDate) || totalRetrievedItems>maxResults 
 								|| numberOfRequests>maxRequests){
     						isFinished = true;
 							break;
@@ -108,7 +110,8 @@ public class InstagramRetriever implements SocialMediaRetriever {
 						if(mfeed != null && mfeed.getId() != null){
 							InstagramItem instagramUpdate = new InstagramItem(mfeed);
 							
-							items.add(instagramUpdate);	
+							igStream.store(instagramUpdate);
+							totalRetrievedItems++;
 						}
 						
 					}
@@ -117,24 +120,24 @@ public class InstagramRetriever implements SocialMediaRetriever {
 			}
 			catch(InstagramException e){
 				logger.error("#Instagram Exception : "+e);
-				return items;
+				return totalRetrievedItems;
 			} catch (MalformedURLException e1) {
 				// TODO Auto-generated catch block
 				logger.error("#Instagram Exception : "+e1);
 				e1.printStackTrace();
-				return items;
+				return totalRetrievedItems;
 			}
 		}	
 		
 		//logger.info("#Instagram : Done retrieving for this session");
-		logger.info("#Instagram : Handler fetched " + items.size() + " photos from " + uName + 
+		logger.info("#Instagram : Handler fetched " + totalRetrievedItems + " photos from " + uName + 
 				" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
 		
-		return items;
+		return totalRetrievedItems;
 	}
 	@Override
-	public List<Item> retrieveKeywordsFeeds(KeywordsFeed feed){
-		List<Item> items = new ArrayList<Item>();
+	public Integer retrieveKeywordsFeeds(KeywordsFeed feed){
+		Integer totalRetrievedItems = 0;
 		
 		Date lastItemDate = feed.getDateToRetrieve();
 		
@@ -147,7 +150,7 @@ public class InstagramRetriever implements SocialMediaRetriever {
 		
 		if(keywords == null && keywords == null){
 			logger.info("#Instagram : No keywords feed");
-			return items;
+			return totalRetrievedItems;
 		}
 		
 		String tags = "";
@@ -168,7 +171,7 @@ public class InstagramRetriever implements SocialMediaRetriever {
 		//logger.info("#Instagram : Retrieving Keywords Feed : "+tags);
 		
 		if(tags.equals(""))
-			return items;
+			return totalRetrievedItems;
 		
 		//retrieve first page
 		try{
@@ -178,7 +181,7 @@ public class InstagramRetriever implements SocialMediaRetriever {
 		catch(InstagramException e){
 			/*logger.error("#First Instagram Exception : "+e);*/
 			
-			return items;
+			return totalRetrievedItems;
 		}
 		
 		Pagination pagination = tagFeed.getPagination();
@@ -188,7 +191,7 @@ public class InstagramRetriever implements SocialMediaRetriever {
 				int createdTime = Integer.parseInt(mfeed.getCreatedTime());
 				Date publicationDate = new Date((long) createdTime * 1000);
 				
-				if(publicationDate.before(lastItemDate) || items.size()>maxResults || numberOfRequests>maxRequests){
+				if(publicationDate.before(lastItemDate) || totalRetrievedItems>maxResults || numberOfRequests>maxRequests){
 					isFinished = true;
 					break;
 				}
@@ -199,10 +202,11 @@ public class InstagramRetriever implements SocialMediaRetriever {
 						instagramItem = new InstagramItem(mfeed);
 					} catch (MalformedURLException e) {
 						
-						return items;
+						return totalRetrievedItems;
 					}
 
-					items.add(instagramItem);
+					igStream.store(instagramItem);
+					totalRetrievedItems++;
 					
 				}
 		
@@ -224,7 +228,7 @@ public class InstagramRetriever implements SocialMediaRetriever {
 							for(MediaFeedData mfeed : tagFeed.getData()) {
 								int createdTime = Integer.parseInt(mfeed.getCreatedTime());
 								Date publicationDate = new Date((long) createdTime * 1000);
-								if(publicationDate.before(lastItemDate) || items.size()>maxResults
+								if(publicationDate.before(lastItemDate) || totalRetrievedItems>maxResults
 										|| numberOfRequests>maxRequests){
 									isFinished = true;
 									break;
@@ -232,7 +236,8 @@ public class InstagramRetriever implements SocialMediaRetriever {
 								
 								if(mfeed != null && mfeed.getId() != null){
 									InstagramItem instagramItem = new InstagramItem(mfeed);
-									items.add(instagramItem);
+									igStream.store(instagramItem);
+									totalRetrievedItems++;
 								}
 	
 							}
@@ -242,12 +247,12 @@ public class InstagramRetriever implements SocialMediaRetriever {
 					}catch(InstagramException e){
 						
 						logger.error("#Second Instagram Exception : "+e);
-						return items;
+						return totalRetrievedItems;
 					} catch (MalformedURLException e1) {
 						// TODO Auto-generated catch block
 						/*logger.error("#Second Instagram Exception : "+e1);
 						e1.printStackTrace();*/
-						return items;
+						return totalRetrievedItems;
 					}
 
 				}
@@ -259,11 +264,11 @@ public class InstagramRetriever implements SocialMediaRetriever {
 //		logger.info("#Instagram : Handler fetched " + items.size() + " posts from " + tags + 
 //				" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
 		
-		return items;
+		return totalRetrievedItems;
 	}
 	@Override
-	public List<Item> retrieveLocationFeeds(LocationFeed feed){
-		List<Item> items = new ArrayList<Item>();
+	public Integer retrieveLocationFeeds(LocationFeed feed){
+		Integer totalRetrievedItems = 0;
 		
 		Date lastItemDate = feed.getDateToRetrieve();
 		Date currentDate = new Date(System.currentTimeMillis());
@@ -278,7 +283,7 @@ public class InstagramRetriever implements SocialMediaRetriever {
 		
     	if(loc == null){ 
     		logger.info("#Instagram : No Location feed");
-    		return null;
+    		return totalRetrievedItems;
     	}
 		
 		List<org.jinstagram.entity.common.Location> locations = null;
@@ -294,7 +299,7 @@ public class InstagramRetriever implements SocialMediaRetriever {
     	}
     	catch(InstagramException e){
     		logger.error("#Instagram Exception : "+e);
-    		return items;
+    		return totalRetrievedItems;
     	}
     	
     	for (org.jinstagram.entity.common.Location location : locations){
@@ -316,7 +321,7 @@ public class InstagramRetriever implements SocialMediaRetriever {
                 		for(MediaFeedData mfeed : mediaFeed.getData()){
         					int createdTime = Integer.parseInt(mfeed.getCreatedTime());
         					Date publicationDate = new Date((long) createdTime * 1000);
-        					if(lastItemDate.after(publicationDate) || items.size()>maxResults 
+        					if(lastItemDate.after(publicationDate) || totalRetrievedItems>maxResults 
         							|| numberOfRequests>maxRequests){
         						isFinished = true;
 								break;
@@ -324,7 +329,8 @@ public class InstagramRetriever implements SocialMediaRetriever {
         					
         					if((mfeed != null && mfeed.getId() != null)){
         						InstagramItem instagramUpdate = new InstagramItem(mfeed);
-        						items.add(instagramUpdate);
+        						igStream.store(instagramUpdate);
+        						totalRetrievedItems++;
         					}
         					
         				}
@@ -332,7 +338,7 @@ public class InstagramRetriever implements SocialMediaRetriever {
         		}
         		catch(InstagramException e){
         			logger.error("#Instagram Exception : "+e);
-        			return items;
+        			return totalRetrievedItems;
         		} catch (MalformedURLException e1) {
 					// TODO Auto-generated catch block
         			logger.error("#Instagram Exception : "+e1);
@@ -352,10 +358,10 @@ public class InstagramRetriever implements SocialMediaRetriever {
 //		logger.info("#Instagram : Handler fetched " + items.size() + " posts from (" + latitude+","+longtitude+")" + 
 //				" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
 		
-    	return items;
+    	return totalRetrievedItems;
     }
 	@Override
-	public List<Item> retrieve (Feed feed) {
+	public Integer retrieve (Feed feed) {
 	
 		switch(feed.getFeedtype()){
 			case SOURCE:
@@ -375,7 +381,7 @@ public class InstagramRetriever implements SocialMediaRetriever {
 				
 		}
 		 
-		return null;
+		return 0;
 	}
 	
 	@Override
