@@ -41,6 +41,11 @@ public class FacebookStreamUser extends StreamUser {
 		description = user.getAbout();
 		//The link to the user's profile
 		linkToProfile = user.getLink(); 
+		
+		profileImage = "https://graph.facebook.com/" + userid + "/picture";
+		
+		verified = user.getVerified();
+		
 		//Last time user's profile was updated
 		if(user.getUpdatedTime() != null)
 			lastUpdated = user.getUpdatedTime().getTime();
@@ -73,6 +78,9 @@ public class FacebookStreamUser extends StreamUser {
 		//Avatar of the page
 		//TO DO : MISSING FROM THE API
 		profileImage = page.getPicture();
+		if(profileImage == null) {
+			profileImage = "https://graph.facebook.com/" + userid + "/picture";
+		}
 		//Likes of the page
 		//likes = page.getLikes();
 		//Number of people talking about the page
