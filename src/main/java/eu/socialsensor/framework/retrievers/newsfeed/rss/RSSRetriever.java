@@ -45,11 +45,16 @@ public class RSSRetriever implements Retriever{
 			List<SyndEntry> rssEntries = rssData.getEntries();
 			
 			for (SyndEntry rss:rssEntries){
-				RSSItem rssItem = new RSSItem(rss);
 				
-				rssStream.store(rssItem);
+				if(rss.getLink() != null){
+					RSSItem rssItem = new RSSItem(rss);
 				
-				totalRetrievedItems++;
+					rssStream.store(rssItem);
+					
+					totalRetrievedItems++;
+				}
+				
+				
 			}
 		 
 	      

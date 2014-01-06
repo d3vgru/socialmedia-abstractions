@@ -125,7 +125,7 @@ public abstract class Stream implements Runnable {
 	 * @return the total number of retrieved items for the stream
 	 * @throws StreamException
 	 */
-	public Integer poll(List<Feed> feeds) throws StreamException {
+	public synchronized Integer poll(List<Feed> feeds) throws StreamException {
 		Integer totalRetrievedItems = 0;
 		
 		if(retriever != null) {

@@ -14,12 +14,10 @@ public class RSSItem extends Item{
 	public RSSItem(SyndEntry rssEntry) {
 		super(NewsFeedSource.RSS.toString(), Operation.NEW);
 		
-		if(rssEntry == null)
+		if(rssEntry == null || rssEntry.getLink() == null)
 			return;
 		//Id
-		id = UUID.randomUUID().toString();
-		//The source that the document was retrieved from
-		streamId = rssEntry.getAuthor();
+		id = rssEntry.getLink();
 		//Document's title
 		title = rssEntry.getTitle();
 		//Document's content - Extract text content from html structure
@@ -29,7 +27,7 @@ public class RSSItem extends Item{
 		if( rssEntry.getPublishedDate() != null)
 			publicationTime = rssEntry.getPublishedDate().getTime();
 		//The url where the document can be found
-		reference = rssEntry.getLink();
+		url = rssEntry.getLink();
 		
 
 	}
