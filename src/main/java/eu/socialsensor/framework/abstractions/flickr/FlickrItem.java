@@ -7,6 +7,7 @@ import java.util.Collection;
 import com.flickr4java.flickr.people.User;
 import com.flickr4java.flickr.photos.GeoData;
 import com.flickr4java.flickr.photos.Photo;
+import com.flickr4java.flickr.stats.Stats;
 import com.flickr4java.flickr.tags.Tag;
 
 import eu.socialsensor.framework.common.domain.Feed;
@@ -97,7 +98,7 @@ public class FlickrItem extends Item {
 				mediaUrl = new URL(url);
 			}
 			
-			if(mediaUrl!=null){
+			if(mediaUrl!=null) {
 				//url
 				MediaItem mediaItem = new MediaItem(mediaUrl);
 				
@@ -126,11 +127,19 @@ public class FlickrItem extends Item {
 				mediaItem.setDescription(description);
 				//Tags
 				mediaItem.setTags(tags);
-				//Popularity
-				mediaItem.setComments(new Long(photo.getComments()));
-				mediaItem.setViews(new Long(photo.getViews()));
 				//Location
 				mediaItem.setLocation(location);
+				//Popularity
+				Stats statistics = photo.getStats();
+				if(statistics != null) {
+					mediaItem.setViews((long) statistics.getViews());
+					mediaItem.setLikes((long) statistics.getFavorites());
+					mediaItem.setComments((long) statistics.getComments());
+				}
+				else{
+					mediaItem.setComments(new Long(photo.getComments()));
+					mediaItem.setViews(new Long(photo.getViews()));
+				}
 				
 				//Store mediaItems and their ids 
 				mediaItems.add(mediaItem);
