@@ -133,32 +133,28 @@
 			<artifactId>rome-modules</artifactId>
 			<version>1.0</version>
 		</dependency>  
-				<dependency>
-            <!-- Required at build time and to use HTTPClientFetcher //rometools-->
+	<!--			<dependency>
+             Required at build time and to use HTTPClientFetcher //rometools
             <groupId>commons-httpclient</groupId>
             <artifactId>commons-httpclient</artifactId>
             <version>3.0.1</version>
             <optional />
         </dependency>
 		<dependency>
-            <!-- Required at build time and to use HTTPClientFetcher //rometools-->
+            Required at build time and to use HTTPClientFetcher //rometools
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
             <version>1.0.4</version>
             <optional/>
         </dependency>
         <dependency>
-            <!-- Required at build time and to use HTTPClientFetcher //rometools-->
+            Required at build time and to use HTTPClientFetcher //rometools
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging-api</artifactId>
             <version>1.0.4</version>
             <optional />
-        </dependency>
-         <dependency>
-        	<groupId>net.java.dev.rome</groupId>
-        	<artifactId>rome-fetcher</artifactId>
-        	<version>1.0.0</version>
-        </dependency>
+        </dependency> -->
+        
          <!-- <dependency>
 			<groupId>org.rometools</groupId>
 			<artifactId>rome-fetcher</artifactId>
