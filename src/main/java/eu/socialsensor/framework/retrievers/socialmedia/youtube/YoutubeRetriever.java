@@ -3,7 +3,6 @@ package eu.socialsensor.framework.retrievers.socialmedia.youtube;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -20,7 +19,6 @@ import com.google.gdata.data.youtube.VideoFeed;
 
 import eu.socialsensor.framework.abstractions.socialmedia.youtube.YoutubeItem;
 import eu.socialsensor.framework.common.domain.Feed;
-import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.Keyword;
 import eu.socialsensor.framework.common.domain.Source;
 import eu.socialsensor.framework.common.domain.feeds.KeywordsFeed;
@@ -99,6 +97,7 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 						YoutubeItem videoItem = new YoutubeItem(video);
 						
 						ytStream.store(videoItem);
+						totalRetrievedItems++;
 					}
 					
 					if(totalRetrievedItems>results_threshold || numberOfRequests > request_threshold){
@@ -203,6 +202,7 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 					if(publicationDate.after(lastItemDate) && (video != null && video.getId() != null)){
 						YoutubeItem videoItem = new YoutubeItem(video);
 						ytStream.store(videoItem);
+						totalRetrievedItems++;
 					}
 					
 					if(totalRetrievedItems>results_threshold || numberOfRequests >= request_threshold){
