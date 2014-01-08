@@ -1,16 +1,22 @@
 package eu.socialsensor.framework.subscribers.twitter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 
 import twitter4j.FilterQuery;
+import twitter4j.ResponseList;
 import twitter4j.StallWarning;
 import twitter4j.Status;
 import twitter4j.StatusDeletionNotice;
 import twitter4j.StatusListener;
+import twitter4j.Twitter;
+import twitter4j.TwitterException;
+import twitter4j.TwitterFactory;
 import twitter4j.TwitterStreamFactory;
+import twitter4j.User;
 import twitter4j.conf.Configuration;
 
 import eu.socialsensor.framework.abstractions.twitter.TwitterItem;
@@ -68,9 +74,9 @@ public class TwitterSubscriber implements Subscriber{
 	private AccessLevel accessLevel = AccessLevel.PUBLIC;
 	private StatusListener listener = null;
 	private twitter4j.TwitterStream twitterStream  = null;
+	private Twitter twitterApi;
 	
-	
-	public TwitterSubscriber(Configuration conf,TwitterStream twitStream){
+	public TwitterSubscriber(Configuration conf,TwitterStream twitStream) {
 		
 		if (twitterStream != null) {
 			logger.error("#Twitter : Stream is already opened");
@@ -88,6 +94,7 @@ public class TwitterSubscriber implements Subscriber{
 		twitterStream = new TwitterStreamFactory(conf).getInstance();	
 		twitterStream.addListener(listener);	
 		
+		twitterApi = new TwitterFactory(conf).getInstance();
 	}
 	
 	@Override
@@ -115,7 +122,7 @@ public class TwitterSubscriber implements Subscriber{
 				}
 				else if(feed.getFeedtype().equals(FeedType.SOURCE)) {
 					Source source = ((SourceFeed) feed).getSource();					
-					users.add(source.getId());
+					users.add(source.getName());
 				}
 				else if(feed.getFeedtype().equals(FeedType.LOCATION)){
 					double[] location = new double[2];
@@ -126,14 +133,13 @@ public class TwitterSubscriber implements Subscriber{
 				}
 			}
 			String[] keywords = new String[keys.size()];
-			long[] follows = new long[users.size()];
+			long[] follows = getUserIds(users);
+			System.out.print(Arrays.toString(follows));
+			
 			double[][] locations = new double[locs.size()][2];
 			
 			for(int i=0;i<keys.size();i++)
 				keywords[i] = keys.get(i);
-			
-			for(int i=0;i<users.size();i++)
-				follows[i] = Long.parseLong(users.get(i));
 			
 			for(int i=0;i<locs.size();i++)
 				locations[i] = locs.get(i);
@@ -164,6 +170,31 @@ public class TwitterSubscriber implements Subscriber{
 			}
 		}
 		
+	}
+	
+	private long[] getUserIds(List<String> usernames) {
+		List<Long> userids = new ArrayList<Long>();
+		int pages = usernames.size()/100 + 1;
+		for(int page=0; page < pages; page++) {
+			int startIndex = page * 100;
+			int toIndex = Math.min(startIndex + 100, usernames.size());
+			List<String> sub = usernames.subList(startIndex, toIndex);
+			ResponseList<User> users;
+			try {
+				users = twitterApi.lookupUsers(sub.toArray(new String[sub.size()]));
+				for(User user : users) {
+					userids.add(user.getId());
+				}
+			} catch (TwitterException e) {
+				e.printStackTrace();
+				continue;
+			}
+		}
+		
+		long[] ids = new long[userids.size()];
+		for(int i=0;i<ids.length;i++)
+			ids[i] = userids.get(i);
+		return ids;
 	}
 	
 	@Override
