@@ -2,7 +2,10 @@ package eu.socialsensor.framework.subscribers.twitter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -107,7 +110,8 @@ public class TwitterSubscriber implements Subscriber{
 		else {
 			
 			List<String> keys = new ArrayList<String>();
-			List<String> users = new ArrayList<String>();
+			List<String> userids = new ArrayList<String>();
+			List<String> usernames = new ArrayList<String>();
 			List<double[]> locs = new ArrayList<double[]>();
 			
 			for(Feed feed : feeds){
@@ -121,8 +125,14 @@ public class TwitterSubscriber implements Subscriber{
 						
 				}
 				else if(feed.getFeedtype().equals(FeedType.SOURCE)) {
-					Source source = ((SourceFeed) feed).getSource();					
-					users.add(source.getName());
+					Source source = ((SourceFeed) feed).getSource();	
+					if(source.getId() != null) {
+						userids.add(source.getId());
+					}
+					else if(source.getName() != null) {
+						usernames.add(source.getName());
+					}
+					
 				}
 				else if(feed.getFeedtype().equals(FeedType.LOCATION)){
 					double[] location = new double[2];
@@ -133,7 +143,7 @@ public class TwitterSubscriber implements Subscriber{
 				}
 			}
 			String[] keywords = new String[keys.size()];
-			long[] follows = getUserIds(users);
+			long[] follows = getUserIds(userids, usernames);
 			System.out.print(Arrays.toString(follows));
 			
 			double[][] locations = new double[locs.size()][2];
@@ -172,13 +182,27 @@ public class TwitterSubscriber implements Subscriber{
 		
 	}
 	
-	private long[] getUserIds(List<String> usernames) {
-		List<Long> userids = new ArrayList<Long>();
+	private long[] getUserIds(List<String> ids, List<String> usernames) {
+		Set<Long> userids = new HashSet<Long>();
+		
+		for(String id : ids) {
+			try {
+				Long userid = Long.parseLong(id);
+				userids.add(userid);
+			}
+			catch(Exception e) {
+				continue;
+			}
+		}
+		
 		int pages = usernames.size()/100 + 1;
 		for(int page=0; page < pages; page++) {
 			int startIndex = page * 100;
 			int toIndex = Math.min(startIndex + 100, usernames.size());
 			List<String> sub = usernames.subList(startIndex, toIndex);
+			if(sub.size()==0)
+				continue;
+			
 			ResponseList<User> users;
 			try {
 				users = twitterApi.lookupUsers(sub.toArray(new String[sub.size()]));
@@ -186,15 +210,18 @@ public class TwitterSubscriber implements Subscriber{
 					userids.add(user.getId());
 				}
 			} catch (TwitterException e) {
-				e.printStackTrace();
+				System.out.println(e.getMessage());
 				continue;
 			}
 		}
 		
-		long[] ids = new long[userids.size()];
-		for(int i=0;i<ids.length;i++)
-			ids[i] = userids.get(i);
-		return ids;
+		long[] follows = new long[userids.size()];
+		int i = 0;
+		Iterator<Long> it = userids.iterator();
+		while(it.hasNext()) {
+			follows[i++] = it.next();
+		}
+		return follows;
 	}
 	
 	@Override
