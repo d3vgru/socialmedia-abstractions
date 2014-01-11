@@ -56,7 +56,7 @@ public class YtMediaRetriever implements MediaRetriever {
 					
 					Long publicationTime = entry.getPublished().getValue();
 					
-					String mediaId = "Youtube::" + mediaGroup.getVideoId();
+					String mediaId = "Youtube#" + mediaGroup.getVideoId();
 					URL url = new URL(videoURL);
 				
 					String title = mediaGroup.getTitle().getPlainTextContent();
@@ -89,6 +89,8 @@ public class YtMediaRetriever implements MediaRetriever {
 					}
 					//Title
 					mediaItem.setTitle(title);
+					mediaItem.setDescription(description);
+					
 					//Popularity
 					if(statistics!=null){
 						mediaItem.setLikes(statistics.getFavoriteCount());
@@ -99,9 +101,10 @@ public class YtMediaRetriever implements MediaRetriever {
 						mediaItem.setRatings(rating.getAverage());
 					}
 					//Size
-					if(thumb!=null)
+					if(thumb!=null) {
+						mediaItem.setThumbnail(thumb.getUrl());
 						mediaItem.setSize(thumb.getWidth(), thumb.getHeight());
-					
+					}
 					
 					return mediaItem;
 				}
