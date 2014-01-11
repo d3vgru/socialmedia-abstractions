@@ -62,7 +62,7 @@ public class InstagramMediaRetriever  implements MediaRetriever {
 				ImageData thumb = images.getThumbnail();
 				String thumbnail = thumb.getImageUrl();
 				
-				String mediaId = "Instagram::" + mediaData.getId();
+				String mediaId = "Instagram#" + mediaData.getId();
 				List<String> tags = mediaData.getTags();
 				
 				Caption caption = mediaData.getCaption();

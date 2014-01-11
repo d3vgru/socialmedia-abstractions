@@ -19,7 +19,7 @@ public class VimeoMediaItem extends MediaItem {
 		super(new URL("http://vimeo.com/moogaloop.swf?clip_id="+video.id));
 		
 		//Id
-		this.setId("Vimeo::"+video.id);
+		this.setId("Vimeo#"+video.id);
 		//SocialNetwork Name
 		this.setStreamId("Vimeo");
 		//Type 

@@ -23,7 +23,7 @@ public class TwitPicMediaItem extends MediaItem {
 		super(new URL(urlBase + image.id + "." + image.type));
 		
 		//Id
-		this.setId("Twitpic::"+image.id);
+		this.setId("Twitpic#"+image.id);
 		//SocialNetwork Name
 		this.setStreamId("Twitpic");
 		//Type 

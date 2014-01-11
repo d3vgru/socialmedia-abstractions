@@ -17,7 +17,7 @@ public class DailyMotionMediaItem extends MediaItem {
 		super(new URL(video.embed_url));
 		
 		//id
-		this.setId("Dailymotion::" + video.id);
+		this.setId("Dailymotion#" + video.id);
 		//SocialNetwork Name
 		this.setStreamId("Dailymotion");
 		//Type 
