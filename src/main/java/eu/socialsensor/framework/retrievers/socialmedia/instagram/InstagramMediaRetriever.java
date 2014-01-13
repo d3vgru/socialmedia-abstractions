@@ -68,7 +68,7 @@ public class InstagramMediaRetriever  implements MediaRetriever {
 				Caption caption = mediaData.getCaption();
 				String title = caption.getText();
 				
-				Long publicationTime = new Long(Long.parseLong(mediaData.getCreatedTime()));
+				Long publicationTime = new Long(1000*Long.parseLong(mediaData.getCreatedTime()));
 				
 				//id
 				mediaItem.setId(mediaId);
