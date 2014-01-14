@@ -12,7 +12,10 @@ import org.jinstagram.Instagram;
 import org.jinstagram.exceptions.InstagramException;
 import org.jinstagram.entity.common.Pagination;
 import org.jinstagram.entity.locations.LocationSearchFeed;
+import org.jinstagram.entity.media.MediaInfoFeed;
 import org.jinstagram.entity.tags.TagMediaFeed;
+import org.jinstagram.entity.users.basicinfo.UserInfo;
+import org.jinstagram.entity.users.basicinfo.UserInfoData;
 import org.jinstagram.entity.users.feed.MediaFeed;
 import org.jinstagram.entity.users.feed.MediaFeedData;
 import org.jinstagram.entity.users.feed.UserFeed;
@@ -378,6 +381,22 @@ public class InstagramRetriever implements Retriever {
 		return null;
 	}
 	
+	public MediaFeedData retrieveItem(String id) throws InstagramException {
+		
+		MediaInfoFeed mediaInfo = instagram.getMediaInfo(id);
+
+		MediaFeedData mediaInfoData = mediaInfo.getData();
+		return mediaInfoData;
+	}
+	
+	public UserInfoData retrieveUser(String userid) throws InstagramException {
+		long uid = Long.parseLong(userid);
+		UserInfo userInfo = instagram.getUserInfo(uid);
+
+		UserInfoData userInfoData = userInfo.getData();
+		return userInfoData;
+	}
+	
 	@Override
 	public void stop(){
 		if(instagram != null){
@@ -385,8 +404,7 @@ public class InstagramRetriever implements Retriever {
 		}
 	}
 
-	public class DateUtil
-	{
+	public class DateUtil {
 	    public Date addDays(Date date, int days)
 	    {
 	        Calendar cal = Calendar.getInstance();

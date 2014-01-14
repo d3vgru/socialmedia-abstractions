@@ -8,11 +8,13 @@ import com.google.gdata.data.extensions.Rating;
 import com.google.gdata.data.media.mediarss.MediaDescription;
 import com.google.gdata.data.media.mediarss.MediaPlayer;
 import com.google.gdata.data.media.mediarss.MediaThumbnail;
+import com.google.gdata.data.youtube.UserProfileEntry;
 import com.google.gdata.data.youtube.VideoEntry;
 import com.google.gdata.data.youtube.YouTubeMediaContent;
 import com.google.gdata.data.youtube.YouTubeMediaGroup;
 import com.google.gdata.data.youtube.YtStatistics;
 
+import eu.socialsensor.framework.abstractions.youtube.YoutubeStreamUser;
 import eu.socialsensor.framework.common.domain.MediaItem;
 import eu.socialsensor.framework.retrievers.MediaRetriever;
 
@@ -22,7 +24,7 @@ import eu.socialsensor.framework.retrievers.MediaRetriever;
  * @email  manosetro@iti.gr
  */
 public class YtMediaRetriever implements MediaRetriever {
-
+	private final String activityFeedUserUrlPrefix = "http://gdata.youtube.com/feeds/api/users/";
 	private static String entryUrlPrefix = "http://gdata.youtube.com/feeds/api/videos/";
 	
 	private YouTubeService service;
@@ -47,6 +49,10 @@ public class YtMediaRetriever implements MediaRetriever {
 						videoURL = content.getUrl();
 						break;
 					}
+				}
+				
+				if(videoURL == null) {
+					videoURL = "https://youtube.googleapis.com/v/"+id;
 				}
 				
 				if(videoURL != null) {
@@ -107,8 +113,18 @@ public class YtMediaRetriever implements MediaRetriever {
 						mediaItem.setThumbnail(thumbnail);
 					}
 					
+					String uploader = mediaGroup.getUploader();
+					UserProfileEntry userProfile = retrieveUser(uploader);
+					if(userProfile != null) {
+						YoutubeStreamUser user = new YoutubeStreamUser(userProfile);
+						mediaItem.setUser(user);
+						mediaItem.setUserId(user.getId());
+					}
 					return mediaItem;
 				}
+			}
+			else {
+				System.out.println("Extry is null");
 			}
 		} catch (Exception e) {
 			//e.printStackTrace();
@@ -122,4 +138,10 @@ public class YtMediaRetriever implements MediaRetriever {
 		return null;
 	}
 	
+	public UserProfileEntry retrieveUser(String channel) throws Exception {
+		URL profileUrl = new URL(activityFeedUserUrlPrefix + channel);
+		UserProfileEntry userProfile = service.getEntry(profileUrl , UserProfileEntry.class);
+		
+		return userProfile;
+	}
 }

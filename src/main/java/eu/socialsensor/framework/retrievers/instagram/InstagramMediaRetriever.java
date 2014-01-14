@@ -9,13 +9,16 @@ import org.jinstagram.auth.model.Token;
 import org.jinstagram.entity.common.Caption;
 import org.jinstagram.entity.common.ImageData;
 import org.jinstagram.entity.common.Images;
+import org.jinstagram.entity.common.User;
 import org.jinstagram.entity.media.MediaInfoFeed;
 import org.jinstagram.entity.oembed.OembedInformation;
 import org.jinstagram.entity.users.feed.MediaFeedData;
 import org.jinstagram.exceptions.InstagramException;
 
+import eu.socialsensor.framework.abstractions.instagram.InstagramStreamUser;
 import eu.socialsensor.framework.common.domain.Location;
 import eu.socialsensor.framework.common.domain.MediaItem;
+import eu.socialsensor.framework.common.domain.StreamUser;
 import eu.socialsensor.framework.retrievers.MediaRetriever;
 
 
@@ -62,13 +65,15 @@ public class InstagramMediaRetriever  implements MediaRetriever {
 				ImageData thumb = images.getThumbnail();
 				String thumbnail = thumb.getImageUrl();
 				
-				String mediaId = "Instagram::" + mediaData.getId();
+				String mediaId = "Instagram#" + mediaData.getId();
 				List<String> tags = mediaData.getTags();
 				
 				Caption caption = mediaData.getCaption();
 				String title = caption.getText();
 				
-				Long publicationTime = new Long(Long.parseLong(mediaData.getCreatedTime()));
+				User user = mediaData.getUser();
+				
+				Long publicationTime =  new Long(1000*Long.parseLong(mediaData.getCreatedTime()));
 				
 				//id
 				mediaItem.setId(mediaId);
@@ -109,6 +114,11 @@ public class InstagramMediaRetriever  implements MediaRetriever {
 					mediaItem.setSize(width, height);
 				}
 				
+				if(user != null) {
+					StreamUser streamUser = new InstagramStreamUser(user);
+					mediaItem.setUser(streamUser);
+					mediaItem.setUserId(streamUser.getId());
+				}
 				return mediaItem;
 			}
 		} catch (Exception e) {

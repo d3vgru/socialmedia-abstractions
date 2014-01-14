@@ -16,4 +16,8 @@ public class TwitPicImage {
 	public String timestamp;
 	@Key
 	public String user_id, location;
+	
+	@Key
+	public TwitPicUser user;
+	
 }
