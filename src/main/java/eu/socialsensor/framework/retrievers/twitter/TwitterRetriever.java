@@ -2,7 +2,9 @@ package eu.socialsensor.framework.retrievers.twitter;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -15,11 +17,11 @@ import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.User;
 import twitter4j.conf.Configuration;
-
 import eu.socialsensor.framework.abstractions.twitter.TwitterItem;
 import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.Keyword;
+import eu.socialsensor.framework.common.domain.StreamUser;
 import eu.socialsensor.framework.common.domain.feeds.KeywordsFeed;
 import eu.socialsensor.framework.common.domain.feeds.LocationFeed;
 import eu.socialsensor.framework.common.domain.feeds.SourceFeed;
@@ -43,6 +45,21 @@ public class TwitterRetriever implements Retriever{
 	@Override
 	public List<Item> retrieveUserFeeds(SourceFeed feed){
 		return null;
+	}
+	
+	public Map<String, String> retrieveUserPictures(long[] ids) throws TwitterException {
+		Map<String, String> map = new HashMap<String, String>();
+		ResponseList<User> users = twitter.lookupUsers(ids);
+		for(User user : users) {
+			String id = "Twitter#" + user.getId();
+			String pic = user.getProfileImageURL();
+			
+			map.put(id, pic);
+			
+		}
+		
+		return map;
+		
 	}
 	
 	@Override
