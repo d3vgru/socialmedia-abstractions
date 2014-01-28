@@ -229,7 +229,7 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 		try {
 			searchActivities = plusSrv.activities().search(tags);
 			searchActivities.setMaxResults(20L);
-			searchActivities.setOrderBy("best");
+			searchActivities.setOrderBy("recent");
 			activityFeed = searchActivities.execute();
 			pageOfActivities = activityFeed.getItems();
 			totalRequests++;
