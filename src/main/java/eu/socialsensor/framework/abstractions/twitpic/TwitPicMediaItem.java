@@ -13,6 +13,11 @@ import eu.socialsensor.framework.common.domain.MediaItem;
  */
 public class TwitPicMediaItem extends MediaItem {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4589410375806832418L;
+
 	private static SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	private static String urlBase = "http://d3j5vwomefv46c.cloudfront.net/photos/large/";

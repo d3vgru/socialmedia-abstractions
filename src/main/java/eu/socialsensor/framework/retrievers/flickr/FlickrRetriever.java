@@ -81,12 +81,12 @@ public class FlickrRetriever implements Retriever {
 	public List<Item> retrieveUserFeeds(SourceFeed feed){
 		List<Item> items = new ArrayList<Item>();
 		
-		Date lastItemDate = feed.getLastItemDate();
+		//Date lastItemDate = feed.getLastItemDate();
 		
-		int page=1, pages=1; //pagination
-		int numberOfRequests = 0;
+		//int page=1, pages=1; //pagination
+		//int numberOfRequests = 0;
 		
-		boolean isFinished = false;
+		//boolean isFinished = false;
 		
 		//Here we search the user by the userId given (NSID) - however we can get NSID via flickrAPI given user's username
 		Source source = feed.getSource();
@@ -96,12 +96,6 @@ public class FlickrRetriever implements Retriever {
 			logger.info("#Flickr : No source feed");
 			return null;
 		}
-		
-
-		
-		//logger.info("#Flickr : Done retrieving for this session");
-//		logger.info("#Flickr : Handler fetched " + items.size() + " photos from " + userID + 
-//				" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
 		
 		return items;
 	}

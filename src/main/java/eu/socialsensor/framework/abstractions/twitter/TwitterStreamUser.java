@@ -2,7 +2,6 @@ package eu.socialsensor.framework.abstractions.twitter;
 
 import java.util.Date;
 
-import twitter4j.URLEntity;
 import twitter4j.User;
 import eu.socialsensor.framework.common.domain.SocialNetworkSource;
 import eu.socialsensor.framework.common.domain.StreamUser;
@@ -13,6 +12,11 @@ import eu.socialsensor.framework.common.domain.StreamUser;
  * @email  manosetro@iti.gr
  */
 public class TwitterStreamUser extends StreamUser {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6485573747686458937L;
 
 	public TwitterStreamUser(User user) {
 		super(SocialNetworkSource.Twitter.toString(), Operation.NEW);

@@ -3,13 +3,10 @@ package eu.socialsensor.framework.streams.flickr;
 import org.apache.log4j.Logger;
 
 import eu.socialsensor.framework.common.domain.SocialNetworkSource;
-import eu.socialsensor.framework.monitors.FeedsMonitor;
 import eu.socialsensor.framework.retrievers.flickr.FlickrRetriever;
 import eu.socialsensor.framework.streams.Stream;
 import eu.socialsensor.framework.streams.StreamConfiguration;
 import eu.socialsensor.framework.streams.StreamException;
-
-
 
 /**
  * The stream that handles the configuration of the flickr wrapper

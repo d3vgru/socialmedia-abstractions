@@ -27,6 +27,11 @@ import eu.socialsensor.framework.common.domain.WebPage;
  */
 public class FacebookItem extends Item {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3349274876787290454L;
+
 	public FacebookItem(String id, Operation operation) {
 		super(SocialNetworkSource.Facebook.toString(), operation);
 		setId(SocialNetworkSource.Facebook+"#"+id);
@@ -55,7 +60,7 @@ public class FacebookItem extends Item {
 			}
 		}
 		//All the text inside the post
-		text = msg; 
+		text = msg==null ? "" : msg ; 
 		description = post.getDescription();
 		
 		//Location 

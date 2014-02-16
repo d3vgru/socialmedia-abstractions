@@ -12,6 +12,11 @@ import eu.socialsensor.framework.common.domain.StreamUser;
  */
 public class GooglePlusStreamUser extends StreamUser {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3005225996425289674L;
+
 	public GooglePlusStreamUser(Actor actor) {
 		super(SocialNetworkSource.GooglePlus.toString(), Operation.NEW);
 		if (actor == null) return;

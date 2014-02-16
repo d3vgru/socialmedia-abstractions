@@ -1,15 +1,3 @@
-///////////////////////////////////////////////////////////////////////////
-// 
-// IBM Confidential
-// OCO Source Materials
-// (c) Copyright IBM Corp. 2012
-// 
-// The source code for this program is not published or otherwise divested of 
-// its trade secrets, irrespective of what has been deposited with
-// the U.S. Copyright Office.
-// 
-///////////////////////////////////////////////////////////////////////////
-
 package eu.socialsensor.framework;
 
 import java.util.HashMap;
@@ -32,6 +20,11 @@ import eu.socialsensor.framework.common.domain.JSONable;
  */
 public class Configuration implements Iterable<String>, JSONable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7306607472830216113L;
+	
 	@Expose
 	@SerializedName(value = "parameters")
 	private Map<String,String> params = new HashMap<String,String>();

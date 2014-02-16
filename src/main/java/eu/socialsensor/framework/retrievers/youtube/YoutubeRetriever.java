@@ -1,20 +1,11 @@
 package eu.socialsensor.framework.retrievers.youtube;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-
-
-
-
-
-
-
-
 
 import java.util.Map;
 
@@ -24,11 +15,9 @@ import org.joda.time.DateTime;
 import com.google.gdata.client.youtube.YouTubeQuery;
 import com.google.gdata.client.youtube.YouTubeService;
 import com.google.gdata.data.Link;
-import com.google.gdata.data.Person;
 import com.google.gdata.data.youtube.VideoEntry;
 import com.google.gdata.data.youtube.VideoFeed;
 import com.google.gdata.data.youtube.UserProfileEntry;
-import com.google.gdata.util.ServiceException;
 
 import eu.socialsensor.framework.abstractions.youtube.YoutubeItem;
 import eu.socialsensor.framework.abstractions.youtube.YoutubeStreamUser;

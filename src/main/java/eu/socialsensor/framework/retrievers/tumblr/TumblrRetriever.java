@@ -164,8 +164,6 @@ public class TumblrRetriever implements Retriever{
 			return items;
 		}
 		
-		int it=0;
-		
 		String tags = "";
 		if(keyword != null){
 			for(String key : keyword.getName().split(" "))
@@ -199,9 +197,7 @@ public class TumblrRetriever implements Retriever{
 			}catch(JumblrException e){
 				return items;
 			}
-			
-			it++;
-			
+
 			if(posts == null || posts.isEmpty())
 				break;
 			

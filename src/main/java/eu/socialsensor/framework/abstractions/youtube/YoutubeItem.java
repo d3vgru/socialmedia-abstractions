@@ -20,7 +20,6 @@ import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.MediaItem;
 import eu.socialsensor.framework.common.domain.SocialNetworkSource;
-import eu.socialsensor.framework.common.domain.Source;
 
 /**
  * Class that holds the information regarding the youtube video
@@ -29,6 +28,10 @@ import eu.socialsensor.framework.common.domain.Source;
  */
 public class YoutubeItem extends Item {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Logger logger = Logger.getLogger(YoutubeItem.class);
 	
 	public YoutubeItem(String id, Operation operation) {

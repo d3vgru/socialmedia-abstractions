@@ -26,7 +26,14 @@ import eu.socialsensor.framework.common.domain.WebPage;
  * @author ailiakop
  * @email  ailiakop@iti.gr
  */
-public class TumblrItem extends Item{
+public class TumblrItem extends Item {
+	
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7619916371306977760L;
+	
 	private Logger logger = Logger.getLogger(TumblrItem.class);
 	
 	public TumblrItem(String id, Operation operation) {
@@ -122,7 +129,7 @@ public class TumblrItem extends Item{
 		
 			String postfix = "";
 			String prefix = "src=";
-			String compl = "";
+			//String compl = "";
 			String prefix_id = "embed/";
 			String postfix_id = "?";
 			

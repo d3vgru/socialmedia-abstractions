@@ -15,7 +15,6 @@ import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.Location;
 import eu.socialsensor.framework.common.domain.MediaItem;
 import eu.socialsensor.framework.common.domain.SocialNetworkSource;
-import eu.socialsensor.framework.common.domain.Source;
 
 /**
  * Class that holds the information regarding the flickr photo
@@ -23,6 +22,11 @@ import eu.socialsensor.framework.common.domain.Source;
  * @email  ailiakop@iti.gr
  */
 public class FlickrItem extends Item {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1200195286847838121L;
 
 	public FlickrItem(String id, Operation operation) {
 		super(SocialNetworkSource.Flickr.toString(), operation);
@@ -53,7 +57,7 @@ public class FlickrItem extends Item {
 		//Description of the photo
 		description = photo.getDescription();
 		//Tags of the photo
-		@SuppressWarnings("unchecked")
+
 		Collection<Tag> photoTags = photo.getTags();
 		if (photoTags != null) {
 			tags = new String[photoTags.size()];
@@ -138,7 +142,10 @@ public class FlickrItem extends Item {
 				}
 				else{
 					mediaItem.setComments(new Long(photo.getComments()));
-					mediaItem.setViews(new Long(photo.getViews()));
+					Stats stats = photo.getStats();
+					if(stats != null) {
+						mediaItem.setViews((long)stats.getViews());
+					}
 				}
 				
 				//Store mediaItems and their ids 

@@ -1,15 +1,12 @@
 package eu.socialsensor.framework.abstractions.youtube;
 
-import com.google.gdata.data.Content;
 import com.google.gdata.data.Link;
 import com.google.gdata.data.Person;
-import com.google.gdata.data.TextContent;
 import com.google.gdata.data.media.mediarss.MediaThumbnail;
 import com.google.gdata.data.youtube.UserProfileEntry;
 import com.google.gdata.data.youtube.YtUserProfileStatistics;
 
 import eu.socialsensor.framework.common.domain.SocialNetworkSource;
-import eu.socialsensor.framework.common.domain.Source;
 import eu.socialsensor.framework.common.domain.StreamUser;
 
 /**
@@ -18,6 +15,11 @@ import eu.socialsensor.framework.common.domain.StreamUser;
  * @email  ailiakop@iti.gr
  */
 public class YoutubeStreamUser extends StreamUser {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -177470006806562765L;
 
 	public YoutubeStreamUser(String user) {
 		super(SocialNetworkSource.Youtube.toString(), Operation.NEW);

@@ -14,8 +14,6 @@ import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.Location;
 import eu.socialsensor.framework.common.domain.MediaItem;
 import eu.socialsensor.framework.common.domain.SocialNetworkSource;
-import eu.socialsensor.framework.common.domain.Source;
-
 
 /**
  * Class that holds the information regarding the instagram image
@@ -23,6 +21,11 @@ import eu.socialsensor.framework.common.domain.Source;
  * @email  ailiakop@iti.gr
  */
 public class InstagramItem extends Item {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1286074461778840700L;
 
 	public InstagramItem(String id, Operation operation) {
 		super(SocialNetworkSource.Instagram.toString(), operation);

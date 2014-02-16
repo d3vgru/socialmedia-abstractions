@@ -5,17 +5,16 @@ package eu.socialsensor.framework.streams.youtube;
 import org.apache.log4j.Logger;
 
 import eu.socialsensor.framework.common.domain.SocialNetworkSource;
-import eu.socialsensor.framework.common.domain.Source;
 import eu.socialsensor.framework.retrievers.youtube.YoutubeRetriever;
 import eu.socialsensor.framework.streams.Stream;
 import eu.socialsensor.framework.streams.StreamConfiguration;
 import eu.socialsensor.framework.streams.StreamException;
+
 /**
  * The stream that handles the configuration of the youtube wrapper
  * @author ailiakop
  * @email  ailiakop@iti.gr
  */
-
 public class YoutubeStream extends Stream {
 
 	public static SocialNetworkSource SOURCE = SocialNetworkSource.Youtube;
@@ -24,7 +23,6 @@ public class YoutubeStream extends Stream {
 	
 	private String clientId;
 	private String developerKey;
-	private StreamConfiguration config;
 	
 	@Override
 	public void close() throws StreamException {
@@ -41,8 +39,6 @@ public class YoutubeStream extends Stream {
 			logger.error("#YouTube : Config file is null.");
 			return;
 		}
-		
-		this.config = config;
 		
 		this.clientId = config.getParameter(CLIENT_ID);
 		this.developerKey = config.getParameter(KEY);

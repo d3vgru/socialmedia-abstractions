@@ -41,7 +41,6 @@ public class FacebookRetriever implements Retriever {
 	private FacebookClient facebookClient;
 	
 	private int maxResults;
-	private int maxRequests;
 	
 	private Logger  logger = Logger.getLogger(FacebookRetriever.class);
 	
@@ -49,7 +48,6 @@ public class FacebookRetriever implements Retriever {
 		this.facebookClient = facebookClient;		
 		this.rateLimitsMonitor = new RateLimitsMonitor(maxRequests, minInterval);
 		this.maxResults = maxResults;
-		this.maxRequests = maxRequests;
 	}
 	
 	@Override

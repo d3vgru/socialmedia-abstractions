@@ -67,8 +67,6 @@ public class InstagramRetriever implements Retriever {
 		Date lastItemDate = feed.getLastItemDate();
 		
 		int numberOfRequests = 0;
-		
-		boolean isFinished = false;
 	
 		Source source = feed.getSource();
 		String uName = source.getName();
@@ -105,7 +103,6 @@ public class InstagramRetriever implements Retriever {
 						
 						if(lastItemDate.after(publicationDate) || items.size()>maxResults 
 								|| numberOfRequests>maxRequests){
-    						isFinished = true;
 							break;
     					}
 						if(mfeed != null && mfeed.getId() != null){

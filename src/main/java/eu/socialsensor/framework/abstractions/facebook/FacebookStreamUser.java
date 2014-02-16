@@ -5,7 +5,6 @@ import com.restfb.types.Page;
 import com.restfb.types.User;
 
 import eu.socialsensor.framework.common.domain.SocialNetworkSource;
-import eu.socialsensor.framework.common.domain.Source;
 import eu.socialsensor.framework.common.domain.StreamUser;
 
 /**
@@ -16,6 +15,11 @@ import eu.socialsensor.framework.common.domain.StreamUser;
 public class FacebookStreamUser extends StreamUser {
 
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 679347603742731674L;
+
 	public FacebookStreamUser(User user) {
 		super(SocialNetworkSource.Facebook.toString(), Operation.NEW);
 		
@@ -40,8 +44,10 @@ public class FacebookStreamUser extends StreamUser {
 		//The description of the user
 		description = user.getAbout();
 		//The link to the user's profile
-		linkToProfile = user.getLink(); 
-		
+		pageUrl = user.getLink(); 
+		if(pageUrl == null) {
+			pageUrl = username==null ? ("https://www.facebook.com/profile.php?id="+userid) : ("http://www.facebook.com/"+username);
+		}
 		profileImage = "https://graph.facebook.com/" + userid + "/picture";
 		
 		verified = user.getVerified();
@@ -74,7 +80,12 @@ public class FacebookStreamUser extends StreamUser {
 		//The description of the page
 		description = page.getAbout();
 		//Link to the page
-		linkToProfile = page.getLink();
+		pageUrl = page.getLink();
+		if(pageUrl == null) {
+			pageUrl = username==null ? ("https://www.facebook.com/profile.php?id="+userid) : ("http://www.facebook.com/"+username);
+		}
+		
+		
 		//Avatar of the page
 		//TO DO : MISSING FROM THE API
 		profileImage = page.getPicture();

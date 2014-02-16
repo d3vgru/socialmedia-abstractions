@@ -3,7 +3,6 @@ package eu.socialsensor.framework.abstractions.tumblr;
 import com.tumblr.jumblr.types.Blog;
 
 import eu.socialsensor.framework.common.domain.SocialNetworkSource;
-import eu.socialsensor.framework.common.domain.Source;
 import eu.socialsensor.framework.common.domain.StreamUser;
 
 /**
@@ -13,6 +12,11 @@ import eu.socialsensor.framework.common.domain.StreamUser;
  */
 public class TumblrStreamUser extends StreamUser{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2097707570740315050L;
+
 	public TumblrStreamUser(Blog blog) {
 		super(SocialNetworkSource.Tumblr.toString(), Operation.NEW);
 		

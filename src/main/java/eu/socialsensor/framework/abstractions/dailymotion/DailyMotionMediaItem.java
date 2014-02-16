@@ -13,6 +13,11 @@ import eu.socialsensor.framework.common.domain.MediaItem;
  */
 public class DailyMotionMediaItem extends MediaItem {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -9001200460138268083L;
+
 	public DailyMotionMediaItem(DailyMotionVideo video) throws Exception {
 		super(new URL(video.embed_url));
 		

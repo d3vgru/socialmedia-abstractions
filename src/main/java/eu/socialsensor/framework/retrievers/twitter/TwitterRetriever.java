@@ -21,7 +21,6 @@ import eu.socialsensor.framework.abstractions.twitter.TwitterItem;
 import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.Keyword;
-import eu.socialsensor.framework.common.domain.StreamUser;
 import eu.socialsensor.framework.common.domain.feeds.KeywordsFeed;
 import eu.socialsensor.framework.common.domain.feeds.LocationFeed;
 import eu.socialsensor.framework.common.domain.feeds.SourceFeed;
@@ -167,7 +166,7 @@ public class TwitterRetriever implements Retriever{
 		twitter=null;
 	}
 	
-	private long[] getUserIds(String[] followsUsernames) {
+	public long[] getUserIds(String[] followsUsernames) {
 		
 		List<Long> ids = new ArrayList<Long>();
 		List<String> usernames = new ArrayList<String>(followsUsernames.length);

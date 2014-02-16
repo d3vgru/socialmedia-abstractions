@@ -68,9 +68,11 @@ public class YtMediaRetriever implements MediaRetriever {
 		
 					MediaDescription desc = mediaGroup.getDescription();
 					String description = desc==null ? "" : desc.getPlainTextContent();
+					
 					//url
 					MediaItem mediaItem = new MediaItem(url);
-					
+					//description
+					mediaItem.setDescription(description);
 					//id
 					mediaItem.setId(mediaId);
 					//SocialNetwork Name

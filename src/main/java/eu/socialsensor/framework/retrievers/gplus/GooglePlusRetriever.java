@@ -47,7 +47,6 @@ public class GooglePlusRetriever implements Retriever{
 	private String userPrefix = "https://plus.google.com/+";
 	private String GooglePlusKey;
 	
-	private int pageLimit = 10;
 	private int maxResults;
 	private int maxRequests;
 	

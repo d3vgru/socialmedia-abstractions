@@ -12,16 +12,13 @@ import com.google.api.services.plus.model.Activity.PlusObject.Attachments.FullIm
 import com.google.api.services.plus.model.Activity.PlusObject.Attachments.Image;
 import com.google.api.services.plus.model.Activity.PlusObject.Attachments.Thumbnails;
 import com.google.api.services.plus.model.Comment;
-import com.google.gdata.data.extensions.Rating;
 
 import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.Location;
 import eu.socialsensor.framework.common.domain.MediaItem;
 import eu.socialsensor.framework.common.domain.SocialNetworkSource;
-import eu.socialsensor.framework.common.domain.Source;
 import eu.socialsensor.framework.common.domain.WebPage;
-import eu.socialsensor.framework.common.domain.Item.Operation;
 
 /**
  * Class that holds the information regarding the google plus activity
@@ -29,8 +26,12 @@ import eu.socialsensor.framework.common.domain.Item.Operation;
  * @email  ailiakop@iti.gr
  */
 public class GooglePlusItem extends Item {
-	//private Logger logger = Logger.getLogger(GooglePlusItem.class);
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3828909829645976714L;
+
 	public GooglePlusItem(String id, Operation operation) {
 		super(SocialNetworkSource.GooglePlus.toString(), operation);
 		setId(SocialNetworkSource.GooglePlus+"#"+id);

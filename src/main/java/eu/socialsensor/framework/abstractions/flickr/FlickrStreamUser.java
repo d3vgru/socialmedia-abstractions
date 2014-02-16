@@ -3,7 +3,6 @@ package eu.socialsensor.framework.abstractions.flickr;
 import com.flickr4java.flickr.people.User;
 
 import eu.socialsensor.framework.common.domain.SocialNetworkSource;
-import eu.socialsensor.framework.common.domain.Source;
 import eu.socialsensor.framework.common.domain.StreamUser;
 
 /**
@@ -12,6 +11,11 @@ import eu.socialsensor.framework.common.domain.StreamUser;
  * @email  ailiakop@iti.gr
  */
 public class FlickrStreamUser extends StreamUser {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 430556968941413645L;
 
 	public FlickrStreamUser(User user) {
 		super(SocialNetworkSource.Flickr.toString(), Operation.NEW);
