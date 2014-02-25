@@ -140,7 +140,9 @@ public class FacebookItem extends Item {
 							//Popularity
 							mediaItem.setLikes(likes);
 							mediaItem.setShares(shares);
-					
+							Integer commentsCount = post.getComments().getData().size();
+							mediaItem.setComments(commentsCount.longValue());
+							
 							//Store mediaItems and their ids 
 							mediaItems.add(mediaItem);
 							
