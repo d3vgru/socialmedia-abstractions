@@ -148,7 +148,7 @@ public class FacebookRetriever implements SocialMediaRetriever {
 		if(tags.equals(""))
 			return totalRetrievedItems;
 		
-		//logger.info("#Facebook : Retrieving Keywords Feed : "+tags);
+		logger.info("#Facebook : Retrieving Keywords Feed : "+tags);
 		Connection<Post> connection = null;
 		try{
 			connection = facebookClient.fetchConnection("search",Post.class,
@@ -165,16 +165,20 @@ public class FacebookRetriever implements SocialMediaRetriever {
 			for(Post post : connectionPage) {	
 				
 				Date publicationDate = post.getCreatedTime();
-				
-				if(publicationDate.after(lastItemDate) && post!=null && post.getId()!=null){
-					//Get the user of the post
-					CategorizedFacebookType c_user = post.getFrom();
-					User user = facebookClient.fetchObject(c_user.getId(), User.class);
-					FacebookStreamUser facebookUser = new FacebookStreamUser(user);
-					
-					FacebookItem facebookUpdate = new FacebookItem(post,facebookUser);
-					fbStream.store(facebookUpdate);
-					totalRetrievedItems++;
+				try{
+					if(publicationDate.after(lastItemDate) && post!=null && post.getId()!=null){
+						//Get the user of the post
+						CategorizedFacebookType c_user = post.getFrom();
+						User user = facebookClient.fetchObject(c_user.getId(), User.class);
+						FacebookStreamUser facebookUser = new FacebookStreamUser(user);
+						
+						FacebookItem facebookUpdate = new FacebookItem(post,facebookUser);
+						fbStream.store(facebookUpdate);
+						totalRetrievedItems++;
+					}
+				}
+				catch(Exception e){
+					continue;
 				}
 				
 				if(publicationDate.before(lastItemDate) || totalRetrievedItems>maxResults){
