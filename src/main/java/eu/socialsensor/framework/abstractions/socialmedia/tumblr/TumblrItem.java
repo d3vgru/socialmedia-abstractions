@@ -59,14 +59,14 @@ public class TumblrItem extends Item{
 		if(post.getType().equals("photo")){
 			PhotoPost phPost;
 			phPost = (PhotoPost) post;
-		
+			
 			List<Photo> photos = phPost.getPhotos();
 			if(photos == null)
 				return;
 			try{
 				for(Photo photo : photos){
 					number++;
-					
+				
 					List<PhotoSize> allSizes = photo.getSizes();
 					String photoUrl = allSizes.get(0).getUrl();
 					String thumbnail = allSizes.get(allSizes.size()-1).getUrl();
@@ -104,7 +104,7 @@ public class TumblrItem extends Item{
 					
 						mediaIds.add(mediaId);
 						mediaItems.add(mediaItem);
-					
+						
 					}
 				}
 			}catch (MalformedURLException e1) {

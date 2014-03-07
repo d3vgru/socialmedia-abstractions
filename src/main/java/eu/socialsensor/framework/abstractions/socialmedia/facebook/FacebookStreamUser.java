@@ -50,6 +50,7 @@ public class FacebookStreamUser extends StreamUser {
 		//Is the user a verified user
 		//isVerified = user.getVerified();
 		
+		
 	}
 
 	public FacebookStreamUser(Page page) {

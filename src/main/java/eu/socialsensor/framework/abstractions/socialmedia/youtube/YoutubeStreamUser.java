@@ -13,28 +13,28 @@ import eu.socialsensor.framework.common.domain.StreamUser;
 public class YoutubeStreamUser extends StreamUser {
 
 	public YoutubeStreamUser(String user) {
-		super(SocialNetworkSource.Youtube.toString(), Operation.NEW);
+		super(SocialNetworkSource.YouTube.toString(), Operation.NEW);
 		if (user == null) return;
 		//Id
-		id = SocialNetworkSource.Youtube+"#"+user;
+		id = SocialNetworkSource.YouTube+"#"+user;
 		//The name of the user
 		username = user;
 		//streamId
-		streamId = SocialNetworkSource.Youtube.toString();
+		streamId = SocialNetworkSource.YouTube.toString();
 	}
 
 	public YoutubeStreamUser(Person user) {
-		super(SocialNetworkSource.Youtube.toString(), Operation.NEW);
+		super(SocialNetworkSource.YouTube.toString(), Operation.NEW);
 		if (user == null) return;
 		
 		//Id
-		id = SocialNetworkSource.Youtube+"#"+user.getName();
+		id = SocialNetworkSource.YouTube+"#"+user.getName();
 		//The id of the user in the network
 		userid = user.getName();
 		//The name of the user
 		username = user.getName();
 		//streamId
-		streamId = SocialNetworkSource.Youtube.toString();
+		streamId = SocialNetworkSource.YouTube.toString();
 		//The link to the user's profile
 		linkToProfile = user.getUri();
 	}

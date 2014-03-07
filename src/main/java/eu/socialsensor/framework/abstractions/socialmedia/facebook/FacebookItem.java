@@ -45,14 +45,9 @@ public class FacebookItem extends Item {
 		publicationTime = post.getCreatedTime().getTime();
 		//Message that post contains
 		String msg = post.getMessage();
-		if(msg != null) {
-			if(msg.length()>100) {
-				title = msg.subSequence(0, 100)+"...";
-			}
-			else {
-				title = msg;
-			}
-		}
+		
+		title = msg;
+		
 		//All the text inside the post
 		text = msg; 
 		description = post.getDescription();
