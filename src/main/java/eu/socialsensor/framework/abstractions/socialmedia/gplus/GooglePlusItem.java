@@ -118,7 +118,7 @@ public class GooglePlusItem extends Item {
 						String thumbUrl = image.getUrl();
 						mediaItem.setThumbnail(thumbUrl);
 						//Title
-						mediaItem.setTitle(title);
+						mediaItem.setTitle(attachment.getDisplayName());
 						//Description
 						mediaItem.setDescription(attachment.getDisplayName());
 						//Tags
@@ -172,7 +172,7 @@ public class GooglePlusItem extends Item {
 						String thumnailUrl = thumbnail.getUrl();
 						mediaItem.setThumbnail(thumnailUrl);
 						//Title
-						mediaItem.setTitle(title);
+						mediaItem.setTitle(attachment.getDisplayName());
 						//Description
 						mediaItem.setDescription(attachment.getDisplayName());
 						//Tags
