@@ -32,8 +32,8 @@ public class TwitterRetriever implements SocialMediaRetriever{
 	
 	private TwitterStream twStream;
 	
-	private int maxResults = 1;
-	private int maxRequests = 1 ;
+	private int maxResults = 100000;
+	private int maxRequests = 20 ;
 	
 	public TwitterRetriever(Configuration conf,TwitterStream twStream){
 		
