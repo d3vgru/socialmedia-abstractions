@@ -229,6 +229,8 @@ public class FlickrRetriever implements SocialMediaRetriever {
 			if(!text.equals(""))
 				parameters.add(new Parameter("text", text));
 			
+			parameters.add(new Parameter("tag_mode","all"));
+			
 			String signature = AuthUtilities.getSignature(flickrSecret, parameters);
 			
 			parameters.add(new Parameter("api_sig",signature));
