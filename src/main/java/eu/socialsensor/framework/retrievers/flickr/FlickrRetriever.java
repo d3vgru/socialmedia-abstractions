@@ -1,15 +1,26 @@
 package eu.socialsensor.framework.retrievers.flickr;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Scanner;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.scribe.model.Token;
+import org.scribe.model.Verifier;
 
 import com.flickr4java.flickr.Flickr;
 import com.flickr4java.flickr.FlickrException;
 import com.flickr4java.flickr.REST;
+import com.flickr4java.flickr.RequestContext;
+import com.flickr4java.flickr.auth.Auth;
+import com.flickr4java.flickr.auth.AuthInterface;
+import com.flickr4java.flickr.auth.Permission;
 import com.flickr4java.flickr.people.PeopleInterface;
 import com.flickr4java.flickr.people.User;
 import com.flickr4java.flickr.photos.Photo;
@@ -17,6 +28,9 @@ import com.flickr4java.flickr.photos.PhotoList;
 import com.flickr4java.flickr.photos.PhotosInterface;
 import com.flickr4java.flickr.photos.SearchParameters;
 import com.flickr4java.flickr.photos.Extras;
+import com.flickr4java.flickr.stats.Stats;
+import com.flickr4java.flickr.stats.StatsInterface;
+import com.flickr4java.flickr.util.FileAuthStore;
 
 import eu.socialsensor.framework.abstractions.flickr.FlickrItem;
 import eu.socialsensor.framework.abstractions.flickr.FlickrStreamUser;
@@ -38,7 +52,7 @@ public class FlickrRetriever implements Retriever {
 
 	private Logger logger = Logger.getLogger(FlickrRetriever.class);
 
-	private static final int PER_PAGE = 50;
+	private static final int PER_PAGE = 150;
 	
 	private String flickrKey;
 	private String flickrSecret;
@@ -51,7 +65,9 @@ public class FlickrRetriever implements Retriever {
 	private HashMap<String, FlickrStreamUser> userMap;
 
 	private PeopleInterface peopleInteface;
+	private StatsInterface statsInterface;
 
+	private FileAuthStore authStore;
 
 
 	public String getKey() { 
@@ -72,10 +88,35 @@ public class FlickrRetriever implements Retriever {
 		userMap = new HashMap<String, FlickrStreamUser>();
 		
 		this.flickr = new Flickr(flickrKey, flickrSecret, new REST());
-		this.peopleInteface = flickr.getPeopleInterface();
+		try {
+			this.authStore = new FileAuthStore(new File("./"));
+
+		} catch (FlickrException e) {
+			e.printStackTrace();
+		}
 		
+		this.peopleInteface = flickr.getPeopleInterface();
+		this.statsInterface = flickr.getStatsInterface();	
 	}
 
+	public void authorize() throws FlickrException, IOException {
+        AuthInterface authInterface = flickr.getAuthInterface();
+        Token accessToken = authInterface.getRequestToken();
+
+        String url = authInterface.getAuthorizationUrl(accessToken, Permission.READ);
+        System.out.println("Follow this URL to authorise yourself on Flickr");
+        System.out.println(url);
+        System.out.println("Paste in the token it gives you:");
+        System.out.print(">>");
+
+        String tokenKey = new Scanner(System.in).nextLine();
+        Token requestToken = authInterface.getAccessToken(accessToken, new Verifier(tokenKey));
+
+        Auth auth = authInterface.checkToken(requestToken);
+        RequestContext.getRequestContext().setAuth(auth);
+        this.authStore.store(auth);
+        System.out.println("Thanks.  You probably will not have to do this every time.");
+    }
 	
 	@Override
 	public List<Item> retrieveUserFeeds(SourceFeed feed){
@@ -134,7 +175,7 @@ public class FlickrRetriever implements Retriever {
 			for(Keyword key : keywords){
 				String [] words = key.getName().split(" ");
 				for(String word : words)
-					if(!tags.contains(word) && word.length()>1){
+					if(!tags.contains(word) && word.length()>1) {
 						tags.add(word);
 						text+=word+" ";
 					}
@@ -148,10 +189,14 @@ public class FlickrRetriever implements Retriever {
 		SearchParameters params = new SearchParameters();
 		params.setText(text);
 		params.setMinUploadDate(lastItemDate);
-		params.setExtras(Extras.ALL_EXTRAS);
+		
+		Set<String> extras = new HashSet<String>(Extras.ALL_EXTRAS);
+		extras.remove(Extras.MACHINE_TAGS);
+		params.setExtras(extras);
+		
 		try {
 			while(page<=pages && numberOfRequests<=maxRequests && numberOfResults<=maxResults) {
-				
+				System.out.println(keyword.getName() + " => page: " + page);
 				PhotoList<Photo> photos = photosInteface.search(params , PER_PAGE, page++);
 				pages = photos.getPages();
 				numberOfResults += photos.size();
@@ -172,7 +217,6 @@ public class FlickrRetriever implements Retriever {
 					}
 					
 					FlickrItem flickrUpdate = new FlickrItem(photo, streamUser, feed);
-				
 					items.add(flickrUpdate);
 				}
 			}
@@ -256,6 +300,25 @@ public class FlickrRetriever implements Retriever {
 	
 	@Override
 	public List<Item> retrieve (Feed feed) {
+		/*
+		RequestContext rc = RequestContext.getRequestContext();
+        if (this.authStore != null) {
+            Auth[] auth = this.authStore.retrieveAll();
+            if (auth == null || auth.length==0) {
+                try {
+					authorize();
+				} catch (FlickrException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+            } else {
+                rc.setAuth(auth[0]);
+            }
+        }
+        */
 		
 		switch(feed.getFeedtype()) {
 			case SOURCE:
@@ -293,5 +356,14 @@ public class FlickrRetriever implements Retriever {
 		}
 		return user;
 	}
+	
+	public Stats retrievePhotoStats(String photoId) {
+		try {
+			Stats stats = statsInterface.getPhotoStats(photoId, new Date());
+			return stats;
+		} catch (FlickrException e) { }
+		return null;
+	}
+
 	
 }

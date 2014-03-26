@@ -96,6 +96,7 @@ public class InstagramMediaRetriever  implements MediaRetriever {
 				//Popularity
 				mediaItem.setLikes(new Long(mediaData.getLikes().getCount()));
 				mediaItem.setComments(new Long(mediaData.getComments().getCount()));
+				
 				//Location
 				org.jinstagram.entity.common.Location geoLocation = mediaData.getLocation();
 				if(geoLocation != null) {

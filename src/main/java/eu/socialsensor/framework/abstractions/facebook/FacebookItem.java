@@ -4,12 +4,14 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.restfb.types.Comment;
 import com.restfb.types.NamedFacebookType;
 import com.restfb.types.Place;
 import com.restfb.types.Post;
 import com.restfb.types.Post.Likes;
+import com.restfb.types.Post.MessageTag;
 import com.restfb.types.User;
 
 import eu.socialsensor.framework.common.domain.Feed;
@@ -37,11 +39,13 @@ public class FacebookItem extends Item {
 		setId(SocialNetworkSource.Facebook+"#"+id);
 	}
 	
+	
 	public FacebookItem(Post post) {
 		
 		super(SocialNetworkSource.Facebook.toString(), Operation.NEW);
-		
-		if (post == null || post.getId() == null) return;
+	
+		if (post == null || post.getId() == null) 
+			return;
 		
 		//Id
 		id = SocialNetworkSource.Facebook+"#"+post.getId();
@@ -49,6 +53,8 @@ public class FacebookItem extends Item {
 		streamId = SocialNetworkSource.Facebook.toString();
 		//Timestamp of the creation of the post
 		publicationTime = post.getCreatedTime().getTime();
+		
+		description = post.getDescription();
 		//Message that post contains
 		String msg = post.getMessage();
 		if(msg != null) {
@@ -59,10 +65,44 @@ public class FacebookItem extends Item {
 				title = msg;
 			}
 		}
-		//All the text inside the post
-		text = msg==null ? "" : msg ; 
-		description = post.getDescription();
+		else {
+			if(post.getCaption() != null) {
+				title = post.getCaption();
+			}
+			else if(post.getName() != null) {
+				title = post.getName();
+			}
+			else if(description != null) {
+				if(description.length()>100)
+					title = description.subSequence(0, 100)+"...";
+				else 
+					title = msg;
+			}
+			else {
+				title = "";
+			}	
+		}
 		
+		if(msg != null) {
+			text = msg;
+		}
+		else if(description != null) {
+			text = description;
+		}
+		else {
+			text = "";
+		}
+		
+		Map<String, List<MessageTag>> messageTags = post.getMessageTags();
+		if(messageTags != null) {
+			ArrayList<String> tagsList = new ArrayList<String>();
+			for(List<MessageTag> messageTagsList : messageTags.values()) {
+				for(MessageTag mTag : messageTagsList) {
+				tagsList.add(mTag.getName());
+				}
+			}
+			tags = tagsList.toArray(new String[tagsList.size()]);
+		}
 		//Location 
 		Place place = post.getPlace();
 		if(place != null) {
@@ -75,6 +115,7 @@ public class FacebookItem extends Item {
 				location = new Location(latitude, longitude, placeName);
 			}
 		}
+		
 		//Popularity of the post
 		if(post.getLikesCount() != null)
 			likes = post.getLikesCount();
@@ -113,7 +154,7 @@ public class FacebookItem extends Item {
 						picture = picture.replaceAll("_s.", "_n.");
 						p_url = new URL(picture);
 					
-						if(p_url != null){
+						if(p_url != null) {
 							
 							String mediaId = SocialNetworkSource.Facebook+"#"+post.getId();
 							//url
