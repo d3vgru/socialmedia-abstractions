@@ -202,15 +202,21 @@ public abstract class Stream implements Runnable {
 		}
 		
 		String refUserId = item.getReferencedUserId();
-		userLists = usersToLists.get(refUserId);
-		if(userLists != null) {
-			lists.addAll(userLists);
+		if(refUserId != null) {
+			userLists = usersToLists.get(refUserId);
+			if(userLists != null) {
+				lists.addAll(userLists);
+			}
 		}
 		
-		if(lists.size() > 0)
+		if(lists.size() > 0) {
+			logger.info(lists.size() + " associated lists found for " + item.getId());
 			return lists.toArray(new String[lists.size()]);
-		else
+		}
+		else {
+			logger.info("any associated list found for " + item.getId());
 			return null;
+		}
 		
 	}
 	
