@@ -217,11 +217,11 @@ public abstract class Stream implements Runnable {
 		}
 		
 		if(lists.size() > 0) {
-			logger.info(item.getId() + " is associated with " + lists);
+			//logger.info(item.getId() + " is associated with " + lists);
 			return lists.toArray(new String[lists.size()]);
 		}
 		else {
-			logger.info("Any list found for " + item.getId());
+			//logger.info("Any list found for " + item.getId());
 			return null;
 		}
 		
