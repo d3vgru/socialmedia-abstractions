@@ -346,7 +346,7 @@ public class FacebookItem extends Item {
 		}
 	}
 	
-	public FacebookItem(Comment comment,Post post,User user) {
+	public FacebookItem(Comment comment, Post post, User user) {
 		super(SocialNetworkSource.Facebook.toString(), Operation.NEW);
 		
 		if (comment == null) return;
@@ -361,21 +361,26 @@ public class FacebookItem extends Item {
 		publicationTime = comment.getCreatedTime().getTime();
 		//Message that post contains
 		String msg = comment.getMessage();
-		if(msg!=null) {
+		if(msg != null) {
 			if(msg.length()>100){
 				title = msg.subSequence(0, 100)+"...";
 			}
 			else{
 				title = msg;
 			}
-			
 			description = "Comment";
 		}
+		
 		//All the text inside the comment
 		text = msg; 
+		
 		//User that posted the post
-		streamUser = new FacebookStreamUser(user);
-		uid = streamUser.getId();
+		if(user != null) {
+			streamUser = new FacebookStreamUser(user);
+			uid = streamUser.getId();
+		}
+		
+		original = false;
 		
 		//Popularity of the post
 		if(comment.getLikeCount() != null)

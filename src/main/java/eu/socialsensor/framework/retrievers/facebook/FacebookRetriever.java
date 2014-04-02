@@ -11,8 +11,10 @@ import com.restfb.FacebookClient;
 import com.restfb.Parameter;
 import com.restfb.exception.FacebookResponseStatusException;
 import com.restfb.types.CategorizedFacebookType;
+import com.restfb.types.Comment;
 import com.restfb.types.Page;
 import com.restfb.types.Post;
+import com.restfb.types.Post.Comments;
 import com.restfb.types.User;
 
 import eu.socialsensor.framework.abstractions.facebook.FacebookItem;
@@ -82,12 +84,24 @@ public class FacebookRetriever implements Retriever {
 				
 				Date publicationDate = post.getCreatedTime();
 				
-				if(publicationDate.after(lastItemDate) && post!=null && post.getId()!=null){
-					FacebookItem facebookUpdate = new FacebookItem(post,facebookUser,feed);
+				if(publicationDate.after(lastItemDate) && post != null && post.getId() != null) {
+					FacebookItem facebookUpdate = new FacebookItem(post, facebookUser, feed);
 				    items.add(facebookUpdate);	
+				    
+				    Comments comments = post.getComments();
+				    if(comments == null)
+				    	continue;
+				    
+				    for(Comment comment : comments.getData()) {
+				    	CategorizedFacebookType from = comment.getFrom();
+				    	System.out.println(from.toString());
+				    	FacebookItem facebookComment = new FacebookItem(comment, post, null);
+				    	items.add(facebookComment);
+				    }
+				    
 				}
 				
-				if(publicationDate.before(lastItemDate) || items.size()>maxResults){
+				if(publicationDate.before(lastItemDate) || items.size()>maxResults) {
 					isFinished = true;
 					break;
 				}
