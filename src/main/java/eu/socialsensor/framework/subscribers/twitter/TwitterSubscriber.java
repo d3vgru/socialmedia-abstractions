@@ -7,9 +7,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import twitter4j.FilterQuery;
+import twitter4j.Paging;
+import twitter4j.Query;
+import twitter4j.QueryResult;
 import twitter4j.ResponseList;
 import twitter4j.StallWarning;
 import twitter4j.Status;
@@ -21,7 +25,6 @@ import twitter4j.TwitterFactory;
 import twitter4j.TwitterStreamFactory;
 import twitter4j.User;
 import twitter4j.conf.Configuration;
-
 import eu.socialsensor.framework.abstractions.twitter.TwitterItem;
 import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Keyword;
@@ -35,7 +38,7 @@ import eu.socialsensor.framework.streams.StreamException;
 import eu.socialsensor.framework.streams.twitter.TwitterStream;
 import eu.socialsensor.framework.subscribers.Subscriber;
 
-public class TwitterSubscriber implements Subscriber{
+public class TwitterSubscriber implements Subscriber {
 	private Logger  logger = Logger.getLogger(TwitterSubscriber.class);
 	
 	public static long FILTER_EDIT_WAIT_TIME = 10000;
@@ -161,6 +164,9 @@ public class TwitterSubscriber implements Subscriber{
 
 			FilterQuery fq = getFilterQuery(keywords, follows, locations);
 			if (fq != null) {
+				
+				//getPastTweets(null, follows);
+				
 				if (System.currentTimeMillis() - lastFilterInitTime < FILTER_EDIT_WAIT_TIME){
                      try {
                     	 logger.info("Wait for " + FILTER_EDIT_WAIT_TIME + " msecs to edit filter");
@@ -224,6 +230,56 @@ public class TwitterSubscriber implements Subscriber{
 		return follows;
 	}
 	
+	public void getPastTweets(String[] keywords, long[] userids) {
+		
+		List<Status> tweets = new ArrayList<Status>();
+		if(keywords != null && keywords.length>0) {
+			Query query = new Query();
+			query.setQuery(StringUtils.join(keywords, " OR "));
+			query.setCount(100);
+			do {
+				System.out.println(query.toString());
+				QueryResult resp;
+				try {
+					resp = twitterApi.search(query);
+					tweets.addAll(resp.getTweets());
+					query = resp.nextQuery();
+				} catch (TwitterException e) { 
+					e.printStackTrace();
+					break;
+				}
+				
+			} while(query!=null);
+		}
+
+		if(userids != null) {
+			for(long userid : userids) {
+				try {
+					int page = 1, count = 100;
+					Paging paging = new Paging(page, count);
+					while(true) {
+						
+						ResponseList<Status> timeline = twitterApi.getUserTimeline(userid, paging);
+						tweets.addAll(timeline);
+					
+						System.out.println(paging.toString() + " => " + tweets.size());
+						if(timeline.size()<count)
+							break;
+						
+						paging.setPage(++page);
+					
+					}
+				
+				} catch (TwitterException e) {
+					e.printStackTrace();
+				}
+			}
+			for(Status status : tweets) {
+				listener.onStatus(status);
+			}
+		}
+	}
+	
 	@Override
 	public void stop(){
 		if (listener != null) {
@@ -243,14 +299,25 @@ public class TwitterSubscriber implements Subscriber{
 				synchronized(this) {
 					if(status != null){
 						
+						System.out.println(status);
 						// Update original tweet in case of retweets
 						Status retweetedStatus = status.getRetweetedStatus();
 						if(retweetedStatus != null) {
-							twitStream.store(new TwitterItem(retweetedStatus));
+							try {
+								twitStream.store(new TwitterItem(retweetedStatus));
+							}
+							catch(Exception e) {
+								e.printStackTrace();
+							}
 						}
 						
 						// store
-						twitStream.store(new TwitterItem(status));
+						try {
+							twitStream.store(new TwitterItem(status));
+						}	
+						catch(Exception e) {
+							e.printStackTrace();
+						}
 					
 					}
 				}
@@ -261,6 +328,7 @@ public class TwitterSubscriber implements Subscriber{
 				
 					String id = Long.toString(statusDeletionNotice.getStatusId());
 					TwitterItem update = new TwitterItem(id, Operation.DELETED);
+					System.out.println(update.toJSONString());
 					twitStream.delete(update);
 				
 			}
@@ -320,7 +388,8 @@ public class TwitterSubscriber implements Subscriber{
 		
 		if (empty) 
 			return null;
-		else 
+		else {
 			return query;
+		}
 	}
 }
