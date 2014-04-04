@@ -16,7 +16,7 @@ import eu.socialsensor.framework.streams.StreamException;
 
 public class YoutubeStream extends Stream {
 
-	public static SocialNetworkSource SOURCE = SocialNetworkSource.YouTube;
+	public static SocialNetworkSource SOURCE = SocialNetworkSource.Youtube;
 	
 	private Logger logger = Logger.getLogger(YoutubeStream.class);
 	
