@@ -134,7 +134,7 @@ public abstract class Stream implements Runnable {
 				return totalRetrievedItems;
 				
 			for(Feed feed : feeds){
-				
+			
 				totalRetrievedItems += retriever.retrieve(feed);
 				
 			}
