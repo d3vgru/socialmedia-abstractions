@@ -87,8 +87,9 @@ public class TwitterRetriever implements SocialMediaRetriever{
 		Query query = new Query(tags);
 	
 		query.count(count);
-		query.setResultType(resultType);//do not set last item date-causes problems!
-		
+		//query.setResultType(resultType);//do not set last item date-causes problems!
+		query.setSince("2014-01-10");
+		query.setUntil("2014-03-20");
 		while(true) {
 			try {
 				QueryResult response = twitter.search(query);
@@ -105,10 +106,15 @@ public class TwitterRetriever implements SocialMediaRetriever{
 					}
 				}
 				
-				if(!response.hasNext())
-					break;
+				//if(!response.hasNext())
+					//break;
 				
 				query = response.nextQuery();
+				if(query == null)
+					break;
+				query.count(count);
+				query.setSince("2014-01-10");
+				query.setUntil("2014-03-20");
 				
 			} catch (TwitterException e) {
 				// TODO Auto-generated catch block

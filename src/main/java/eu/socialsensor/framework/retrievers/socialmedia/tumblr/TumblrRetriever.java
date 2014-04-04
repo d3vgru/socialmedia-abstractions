@@ -175,18 +175,18 @@ public class TumblrRetriever implements SocialMediaRetriever{
 		if(keyword != null){
 			for(String key : keyword.getName().split(" "))
 				if(key.length()>1)
-					tags+=key.toLowerCase();
+					tags+=key.toLowerCase()+" ";
 		}
 		else if(keywords != null){
 			for(Keyword key : keywords){
 				String [] words = key.getName().split(" ");
 				for(String word : words)
 					if(!tags.contains(word) && word.length()>1)
-						tags += word.toLowerCase();
+						tags += word.toLowerCase()+" ";
 			}
 		}
 		
-		tags.replaceAll(" ", "");
+		//tags.replaceAll(" ", "");
 		
 		//logger.info("#Tumblr : Retrieving Keywords Feed : "+tags);
 		if(tags.equals(""))
@@ -237,14 +237,18 @@ public class TumblrRetriever implements SocialMediaRetriever{
 						TumblrItem tumblrItem = null;
 						try {
 							tumblrItem = new TumblrItem(post,tumblrStreamUser);
+							
+							
 						} catch (MalformedURLException e) {
 							// TODO Auto-generated catch block
 							logger.error("#Tumblr Exception: "+e);
 							e.printStackTrace();
 							return totalRetrievedItems;
 						}
-						tlStream.store(tumblrItem);
-						
+						if(tumblrItem != null){
+							tlStream.store(tumblrItem);
+							totalRetrievedItems++;
+						}
 					}
 				
 				}

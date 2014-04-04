@@ -1,5 +1,6 @@
 package eu.socialsensor.framework.retrievers.socialmedia.facebook;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -42,6 +43,8 @@ public class FacebookRetriever implements SocialMediaRetriever {
 	private FacebookClient facebookClient;
 	private FacebookStream fbStream;
 	
+	private List<String> retrievedPages = new ArrayList<String>();
+	
 	private int maxResults;
 	private int maxRequests;
 	
@@ -53,6 +56,10 @@ public class FacebookRetriever implements SocialMediaRetriever {
 		this.rateLimitsMonitor = new RateLimitsMonitor(maxRequests, minInterval);
 		this.maxResults = maxResults;
 		this.maxRequests = maxRequests;
+	}
+	
+	public List<String> getRetrivedFbPages(){
+		return retrievedPages;
 	}
 	
 	@Override
@@ -154,6 +161,14 @@ public class FacebookRetriever implements SocialMediaRetriever {
 			connection = facebookClient.fetchConnection("search",Post.class,
 					Parameter.with("q",tags),Parameter.with("type","post"));
 			
+			Connection<Page> page_connection = facebookClient.fetchConnection("search",Page.class,
+					Parameter.with("q",tags),Parameter.with("type","page"));
+			
+			/*for(List<Page> pageConnection : page_connection)
+				for(Page page : pageConnection){
+					System.out.println("page : "+page.getName());
+					retrievedPages.add(page.getName());
+				}*/
 		}catch(FacebookResponseStatusException e1){
 			
 			return totalRetrievedItems;
@@ -178,7 +193,7 @@ public class FacebookRetriever implements SocialMediaRetriever {
 					}
 				}
 				catch(Exception e){
-					continue;
+					break;
 				}
 				
 				if(publicationDate.before(lastItemDate) || totalRetrievedItems>maxResults){
@@ -203,6 +218,51 @@ public class FacebookRetriever implements SocialMediaRetriever {
 	
 	public Integer retrieveLocationFeeds(LocationFeed feed){
 		return 0;
+	}
+	
+	public void retrieveFromRetrievedPages(Date date){
+		Integer totalRetrievedItems = 0;
+		boolean isFinished = true;
+		
+		for(String page : retrievedPages){
+			Connection<Post> connection = facebookClient.fetchConnection(page+"/posts" , Post.class);
+			
+			for(List<Post> connectionPage : connection) {
+				
+				//logger.info("#Facebook : Retrieving page "+it+" that contains "+connectionPage.size()+" posts");
+				
+				for(Post post : connectionPage) {	
+					
+					Date publicationDate = post.getCreatedTime();
+					try{
+						if(publicationDate.after(date) && post!=null && post.getId()!=null){
+							//Get the user of the post
+							CategorizedFacebookType c_user = post.getFrom();
+							User user = facebookClient.fetchObject(c_user.getId(), User.class);
+							FacebookStreamUser facebookUser = new FacebookStreamUser(user);
+							
+							FacebookItem facebookUpdate = new FacebookItem(post,facebookUser);
+							fbStream.store(facebookUpdate);
+							System.out.println("Page item : "+facebookUpdate.toJSONString());
+							totalRetrievedItems++;
+						}
+					}
+					catch(Exception e){
+						break;
+					}
+					
+					if(publicationDate.before(date) || totalRetrievedItems>maxResults){
+						isFinished = true;
+						break;
+					}
+					
+				}
+				if(isFinished)
+					break;
+				
+			}
+			
+		}
 	}
 	
 	@Override

@@ -30,21 +30,21 @@ public class YoutubeItem extends Item {
 	private Logger logger = Logger.getLogger(YoutubeItem.class);
 	
 	public YoutubeItem(String id, Operation operation) {
-		super(SocialNetworkSource.YouTube.toString(), operation);
-		setId(SocialNetworkSource.YouTube+"#"+id);
+		super(SocialNetworkSource.Youtube.toString(), operation);
+		setId(SocialNetworkSource.Youtube+"#"+id);
 	}
 	
 	public YoutubeItem(VideoEntry videoEntry) {
-		super(SocialNetworkSource.YouTube.toString(), Operation.NEW);
+		super(SocialNetworkSource.Youtube.toString(), Operation.NEW);
 		
 		if (videoEntry == null || videoEntry.getId() == null) 
 			return;
 		
 		YouTubeMediaGroup mediaGroup = videoEntry.getMediaGroup();
 		//Id
-		id = SocialNetworkSource.YouTube+"#"+mediaGroup.getVideoId();
+		id = SocialNetworkSource.Youtube+"#"+mediaGroup.getVideoId();
 		//SocialNetwork Name
-		streamId = SocialNetworkSource.YouTube.toString();
+		streamId = SocialNetworkSource.Youtube.toString();
 		//Timestamp of the creation of the video
 		publicationTime = mediaGroup.getUploaded().getValue();
 		//Title of the video
@@ -108,7 +108,7 @@ public class YoutubeItem extends Item {
 			//url
 			MediaItem mediaItem = new MediaItem(url);
 			
-			String mediaId = SocialNetworkSource.YouTube + "#"+videoID; 
+			String mediaId = SocialNetworkSource.Youtube + "#"+videoID; 
 			
 			//id
 			mediaItem.setId(mediaId);
