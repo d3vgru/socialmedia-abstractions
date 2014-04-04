@@ -325,6 +325,9 @@ public class FacebookItem extends Item {
 			}
 			
 		}
+		else {
+			pageUrl = "https://www.facebook.com/" + post.getId();
+		}
 	
 	}
     
@@ -378,6 +381,8 @@ public class FacebookItem extends Item {
 			}
 			description = "Comment";
 		}
+		
+		pageUrl = "https://www.facebook.com/" + post.getId();
 		
 		/*
 		Map<String, List<MessageTag>> messageTags = post.getMessageTags();

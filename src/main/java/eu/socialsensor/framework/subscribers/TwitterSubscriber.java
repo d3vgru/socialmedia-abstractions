@@ -164,7 +164,7 @@ public class TwitterSubscriber implements Subscriber {
 			FilterQuery fq = getFilterQuery(keywords, follows, locations);
 			if (fq != null) {
 				
-				//getPastTweets(null, follows);
+				getPastTweets(keywords, follows);
 				
 				if (System.currentTimeMillis() - lastFilterInitTime < FILTER_EDIT_WAIT_TIME){
                      try {
@@ -262,10 +262,10 @@ public class TwitterSubscriber implements Subscriber {
 						tweets.addAll(timeline);
 					
 						System.out.println(paging.toString() + " => " + tweets.size());
-						if(timeline.size()<count)
-							break;
-						
 						paging.setPage(++page);
+						
+						if(timeline.size()<count || page>3)
+							break;
 					
 					}
 				

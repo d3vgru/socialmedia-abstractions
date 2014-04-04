@@ -75,8 +75,6 @@ public class FacebookStreamUser extends StreamUser {
 		userid = user.getId();
 		//The name of the page
 		name = user.getName();
-		//The username of the page
-		username = user.getId();
 		//Link to the page
 		pageUrl = "https://www.facebook.com/profile.php?id="+userid;
 		//Avatar of the page
