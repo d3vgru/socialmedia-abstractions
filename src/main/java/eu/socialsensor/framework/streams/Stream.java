@@ -64,7 +64,7 @@ public abstract class Stream implements Runnable {
 	 * @throws StreamException
 	 *      In any case of error during stream close
 	 */
-	public void close() throws StreamException{
+	public void close() throws StreamException {
 		if(monitor != null)
 			monitor.stopMonitor();
 		if(retriever !=null)
@@ -100,6 +100,13 @@ public abstract class Stream implements Runnable {
 	
 	public void setUserLists(Map<String, Set<String>> usersToLists) {
 		this.usersToLists = usersToLists;
+		
+		Set<String> allLists = new HashSet<String>();
+		for(Set<String> lists : usersToLists.values()) {
+			allLists.addAll(lists);
+		}
+		logger.info("=============================================");
+		logger.info(usersToLists.size() + " user in " + allLists.size() + " Lists!!!");
 	}
 	
 	public void setUserCategories(Map<String, Category> usersToCategory) {
@@ -200,10 +207,23 @@ public abstract class Stream implements Runnable {
 				lists.addAll(userLists);
 			}
 		}
-		if(lists.size() > 0)
+		
+		String refUserId = item.getReferencedUserId();
+		if(refUserId != null) {
+			userLists = usersToLists.get(refUserId);
+			if(userLists != null) {
+				lists.addAll(userLists);
+			}
+		}
+		
+		if(lists.size() > 0) {
+			//logger.info(item.getId() + " is associated with " + lists);
 			return lists.toArray(new String[lists.size()]);
-		else
+		}
+		else {
+			//logger.info("Any list found for " + item.getId());
 			return null;
+		}
 		
 	}
 	
