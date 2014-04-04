@@ -4,6 +4,7 @@ import java.net.URL;
 
 import eu.socialsensor.framework.common.domain.Location;
 import eu.socialsensor.framework.common.domain.MediaItem;
+import eu.socialsensor.framework.retrievers.DailyMotionMediaRetriever.DailyMotionVideo;
 
 /**
  * Class that holds the information regarding the dailymotion video

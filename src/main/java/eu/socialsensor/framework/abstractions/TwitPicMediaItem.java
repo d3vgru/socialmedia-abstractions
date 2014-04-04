@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import eu.socialsensor.framework.common.domain.MediaItem;
+import eu.socialsensor.framework.retrievers.TwitpicMediaRetriever.TwitPicImage;
 
 /**
  * Class that holds the information regarding the twitpic media item

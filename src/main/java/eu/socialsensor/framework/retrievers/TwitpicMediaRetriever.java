@@ -11,11 +11,10 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.JsonObjectParser;
 import com.google.api.client.json.jackson.JacksonFactory;
+import com.google.api.client.util.Key;
 
-import eu.socialsensor.framework.abstractions.TwitPicImage;
 import eu.socialsensor.framework.abstractions.TwitPicMediaItem;
 import eu.socialsensor.framework.abstractions.TwitPicStreamUser;
-import eu.socialsensor.framework.abstractions.TwitPicUser;
 import eu.socialsensor.framework.common.domain.MediaItem;
 import eu.socialsensor.framework.common.domain.StreamUser;
 /**
@@ -85,6 +84,38 @@ public class TwitpicMediaRetriever implements MediaRetriever {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	/**
+	 * Class that holds the information regarding the twitpic image
+	 * @author manosetro
+	 * @email  manosetro@iti.gr
+	 */
+	public class TwitPicUser {
+		@Key
+		public String id, username, name, bio, avatar_url, timestamp, location;
+		@Key
+		public int photo_count;
+	}
+	
+	/**
+	 * Class that holds the information regarding the twitpic image
+	 * @author manosetro
+	 * @email  manosetro@iti.gr
+	 */
+	public class TwitPicImage {
+		@Key
+		public String id, message, tags, short_id, type;
+		@Key
+		public int views, number_of_comments, height, width;
+		@Key
+		public String timestamp;
+		@Key
+		public String user_id, location;
+		
+		@Key
+		public TwitPicUser user;
+		
 	}
 	
 	/**

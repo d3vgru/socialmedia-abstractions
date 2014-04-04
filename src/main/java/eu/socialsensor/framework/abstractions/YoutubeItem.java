@@ -79,6 +79,9 @@ public class YoutubeItem extends Item {
 		List<MediaThumbnail> thumbnails = mediaGroup.getThumbnails();
 		MediaPlayer mediaPlayer = mediaGroup.getPlayer();
 		
+		//PageUrl
+		pageUrl = mediaPlayer.getUrl();
+		
 		String videoID = videoEntry.getId().substring(videoEntry.getId().indexOf("video:")+("video:").length());
 		List<YouTubeMediaContent> mediaContent = mediaGroup.getYouTubeContents();
 		

@@ -11,9 +11,9 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.JsonObjectParser;
 import com.google.api.client.json.jackson.JacksonFactory;
+import com.google.api.client.util.Key;
 
 import eu.socialsensor.framework.abstractions.VimeoMediaItem;
-import eu.socialsensor.framework.abstractions.VimeoVideo;
 import eu.socialsensor.framework.common.domain.MediaItem;
 /**
  * The retriever that implements the Vimeo simplified retriever 
@@ -57,6 +57,27 @@ public class VimeoMediaRetriever implements MediaRetriever {
 		return null;
 		 
 		
+	}
+	
+	/**
+	 * Class that holds the information regarding the vimeo video
+	 * @author manosetro
+	 * @email  manosetro@iti.gr
+	 */
+	public class VimeoVideo {
+		
+		@Key
+		public int id;
+		@Key
+		public String title, url, thumbnail_large, description, tags;
+		@Key
+		public int stats_number_of_comments, stats_number_of_likes, stats_number_of_plays;
+		@Key
+		public String upload_date;
+		@Key
+		public int user_id;
+		@Key
+		public int height, width;
 	}
 	
 	/**

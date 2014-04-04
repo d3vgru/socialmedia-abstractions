@@ -1,6 +1,7 @@
 package eu.socialsensor.framework.retrievers;
 
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -8,10 +9,16 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.jinstagram.Instagram;
+import org.jinstagram.InstagramOembed;
 import org.jinstagram.exceptions.InstagramException;
+import org.jinstagram.entity.common.Caption;
+import org.jinstagram.entity.common.ImageData;
+import org.jinstagram.entity.common.Images;
 import org.jinstagram.entity.common.Pagination;
+import org.jinstagram.entity.common.User;
 import org.jinstagram.entity.locations.LocationSearchFeed;
 import org.jinstagram.entity.media.MediaInfoFeed;
+import org.jinstagram.entity.oembed.OembedInformation;
 import org.jinstagram.entity.tags.TagMediaFeed;
 import org.jinstagram.entity.users.basicinfo.UserInfo;
 import org.jinstagram.entity.users.basicinfo.UserInfoData;
@@ -22,11 +29,14 @@ import org.jinstagram.entity.users.feed.UserFeedData;
 import org.jinstagram.auth.model.Token;
 
 import eu.socialsensor.framework.abstractions.InstagramItem;
+import eu.socialsensor.framework.abstractions.InstagramStreamUser;
 import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.Keyword;
 import eu.socialsensor.framework.common.domain.Location;
+import eu.socialsensor.framework.common.domain.MediaItem;
 import eu.socialsensor.framework.common.domain.Source;
+import eu.socialsensor.framework.common.domain.StreamUser;
 import eu.socialsensor.framework.common.domain.feeds.KeywordsFeed;
 import eu.socialsensor.framework.common.domain.feeds.LocationFeed;
 import eu.socialsensor.framework.common.domain.feeds.SourceFeed;
@@ -50,12 +60,16 @@ public class InstagramRetriever implements Retriever {
 	
 	private MediaFeed mediaFeed = new MediaFeed();
 	private TagMediaFeed tagFeed = new TagMediaFeed();
+
+	private InstagramOembed instagramOembed;
 	
 	public InstagramRetriever(String secret, String token, int maxResults,int maxRequests) {
 		Token instagramToken = new Token(token,secret); 
 		this.instagram = new Instagram(instagramToken);
 		this.maxResults = maxResults;
 		this.maxRequests = maxRequests;
+		
+		this.instagramOembed = new InstagramOembed();
 	}
 	
 	@Override
@@ -390,6 +404,98 @@ public class InstagramRetriever implements Retriever {
 
 		UserInfoData userInfoData = userInfo.getData();
 		return userInfoData;
+	}
+	
+	private String getMediaId(String url) {
+		try {
+			OembedInformation info = instagramOembed.getOembedInformation(url);
+			return info.getMediaId();
+		} catch (InstagramException e) {
+
+		}
+		return null;
+	}
+	
+	public MediaItem getMediaItem(String sid) {
+		try {
+			String id = getMediaId("http://instagram.com/p/"+sid);
+			
+			MediaInfoFeed mediaInfo = instagram.getMediaInfo(id);
+			if(mediaInfo != null) {
+				MediaFeedData mediaData = mediaInfo.getData();
+				Images images = mediaData.getImages();
+				
+				ImageData standardUrl = images.getStandardResolution();
+				String url = standardUrl.getImageUrl();
+				
+				MediaItem mediaItem = new MediaItem(new URL(url));
+				
+				ImageData thumb = images.getThumbnail();
+				String thumbnail = thumb.getImageUrl();
+				
+				String mediaId = "Instagram#" + mediaData.getId();
+				List<String> tags = mediaData.getTags();
+				
+				Caption caption = mediaData.getCaption();
+				String title = caption.getText();
+				
+				User user = mediaData.getUser();
+				
+				Long publicationTime =  new Long(1000*Long.parseLong(mediaData.getCreatedTime()));
+				
+				//id
+				mediaItem.setId(mediaId);
+				//SocialNetwork Name
+				mediaItem.setStreamId("Instagram");
+				//Reference
+				mediaItem.setRef(id);
+				//Type 
+				mediaItem.setType("image");
+				//Time of publication
+				mediaItem.setPublicationTime(publicationTime);
+				//PageUrl
+				mediaItem.setPageUrl(url);
+				//Thumbnail
+				mediaItem.setThumbnail(thumbnail);
+				//Title
+				mediaItem.setTitle(title);
+				//Tags
+				mediaItem.setTags(tags.toArray(new String[tags.size()]));
+				//Popularity
+				mediaItem.setLikes(new Long(mediaData.getLikes().getCount()));
+				mediaItem.setComments(new Long(mediaData.getComments().getCount()));
+				
+				//Location
+				org.jinstagram.entity.common.Location geoLocation = mediaData.getLocation();
+				if(geoLocation != null) {
+					double latitude = geoLocation.getLatitude();
+					double longitude = geoLocation.getLongitude();
+					
+					Location location = new Location(latitude, longitude);
+					location.setName(geoLocation.getName());
+					mediaItem.setLocation(location);
+				}
+				//Size
+				ImageData standard = images.getStandardResolution();
+				if(standard!=null) {
+					int height = standard.getImageHeight();
+					int width = standard.getImageWidth();
+					mediaItem.setSize(width, height);
+				}
+				
+				if(user != null) {
+					StreamUser streamUser = new InstagramStreamUser(user);
+					mediaItem.setUser(streamUser);
+					mediaItem.setUserId(streamUser.getId());
+				}
+				return mediaItem;
+			}
+		} catch (Exception e) {
+		
+		} 
+
+		
+		return null;
 	}
 	
 	@Override

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.restfb.types.CategorizedFacebookType;
 import com.restfb.types.Comment;
 import com.restfb.types.Comment.Attachment;
 import com.restfb.types.Comment.Media;
@@ -144,6 +145,7 @@ public class FacebookItem extends Item {
 		
 		if(type.equals("photo")) {
 			
+			pageUrl = post.getLink();
 			String picture = post.getPicture();
 			
 			try {
@@ -202,6 +204,7 @@ public class FacebookItem extends Item {
 			}
 		}
 		else if(type.equals("link")) {
+			pageUrl = "https://www.facebook.com/" + post.getId();
 			
 			webPages = new ArrayList<WebPage>();
 			String picture = post.getPicture(); ///!!!!
@@ -270,6 +273,8 @@ public class FacebookItem extends Item {
 			}
 		}
 		else if(type.equals("video")) {
+			
+			pageUrl = "https://www.facebook.com/" + post.getId();
 			
 			String url = post.getSource();
 			String picture = post.getPicture();
@@ -393,6 +398,11 @@ public class FacebookItem extends Item {
 		//User that posted the post
 		if(user != null) {
 			streamUser = new FacebookStreamUser(user);
+			uid = streamUser.getId();
+		}
+		else {
+			CategorizedFacebookType from = comment.getFrom();
+			streamUser = new FacebookStreamUser(from);
 			uid = streamUser.getId();
 		}
 		

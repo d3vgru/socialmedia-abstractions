@@ -1,5 +1,6 @@
 package eu.socialsensor.framework.abstractions;
 
+import com.restfb.types.CategorizedFacebookType;
 import com.restfb.types.Location;
 import com.restfb.types.Page;
 import com.restfb.types.User;
@@ -63,6 +64,25 @@ public class FacebookStreamUser extends StreamUser {
 		
 	}
 
+	public FacebookStreamUser(CategorizedFacebookType user) {
+		super(SocialNetworkSource.Facebook.toString(), Operation.NEW);
+		
+		if (user == null) return;
+		
+		//Id
+		id = SocialNetworkSource.Facebook+"#"+user.getId();
+		//The id of the page in the network
+		userid = user.getId();
+		//The name of the page
+		name = user.getName();
+		//The username of the page
+		username = user.getId();
+		//Link to the page
+		pageUrl = "https://www.facebook.com/profile.php?id="+userid;
+		//Avatar of the page
+		profileImage = "https://graph.facebook.com/" + userid + "/picture";
+	}
+	
 	public FacebookStreamUser(Page page) {
 		super(SocialNetworkSource.Facebook.toString(), Operation.NEW);
 		if (page == null) return;

@@ -11,7 +11,6 @@ import com.google.api.client.json.JsonObjectParser;
 import com.google.api.client.json.jackson.JacksonFactory;
 import com.google.api.client.util.Key;
 
-import eu.socialsensor.framework.abstractions.DailyMotionVideo;
 import eu.socialsensor.framework.abstractions.DailyMotionMediaItem;
 import eu.socialsensor.framework.common.domain.MediaItem;
 import eu.socialsensor.framework.retrievers.MediaRetriever;
@@ -78,6 +77,20 @@ public class DailyMotionMediaRetriever implements MediaRetriever {
 		return null;
 	}
 
+	/** Represents a daily motion video. */
+	public class DailyMotionVideo {
+		@Key
+		public String id, title, url, embed_url, thumbnail_url;
+		@Key
+		public String[] tags;
+		@Key
+		public int rating, ratings_total, views_total, comments_total;
+		@Key
+		public long created_time;
+		@Key
+		public double[] geoloc;
+	}
+	
 	public static void main(String[] args) {
 		
 		DailyMotionMediaRetriever retriever = new DailyMotionMediaRetriever();

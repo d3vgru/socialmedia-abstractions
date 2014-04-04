@@ -1,6 +1,7 @@
 package eu.socialsensor.framework.abstractions;
 
 import eu.socialsensor.framework.common.domain.StreamUser;
+import eu.socialsensor.framework.retrievers.TwitpicMediaRetriever.TwitPicUser;
 
 public class TwitPicStreamUser extends StreamUser {
 

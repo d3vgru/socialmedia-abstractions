@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import eu.socialsensor.framework.common.domain.MediaItem;
+import eu.socialsensor.framework.retrievers.VimeoMediaRetriever.VimeoVideo;
 
 /**
  * Class that holds the information regarding the vimeo media item
