@@ -101,12 +101,14 @@ public abstract class Stream implements Runnable {
 	public void setUserLists(Map<String, Set<String>> usersToLists) {
 		this.usersToLists = usersToLists;
 		
-		Set<String> allLists = new HashSet<String>();
-		for(Set<String> lists : usersToLists.values()) {
-			allLists.addAll(lists);
+		if(usersToLists != null) {
+			Set<String> allLists = new HashSet<String>();
+			for(Set<String> lists : usersToLists.values()) {
+				allLists.addAll(lists);
+			}
+			logger.info("=============================================");
+			logger.info(usersToLists.size() + " user in " + allLists.size() + " Lists!!!");
 		}
-		logger.info("=============================================");
-		logger.info(usersToLists.size() + " user in " + allLists.size() + " Lists!!!");
 	}
 	
 	public void setUserCategories(Map<String, Category> usersToCategory) {
