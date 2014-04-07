@@ -184,6 +184,11 @@
 			<version>1.7.2</version>
 		</dependency>
 
+		<dependency>
+			<groupId>eu.socialsensor</groupId>
+			<artifactId>otter4java</artifactId>
+			<version>0.1-SNAPSHOT</version>
+		</dependency>
     </dependencies>
    	
   	<repositories>
