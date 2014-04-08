@@ -50,7 +50,7 @@ public class TwitterRetriever implements SocialMediaRetriever{
 	
 	@Override
 	public Integer retrieveKeywordsFeeds(KeywordsFeed feed) {
-		int count = 100 , numberOfRequests = 0;
+		int count = 100 , numberOfRequests = 10;
 		String resultType = "recent";
 	
 		Integer totalRetrievedItems = 0;
@@ -87,9 +87,8 @@ public class TwitterRetriever implements SocialMediaRetriever{
 		Query query = new Query(tags);
 	
 		query.count(count);
-		//query.setResultType(resultType);//do not set last item date-causes problems!
-		query.setSince("2014-01-10");
-		query.setUntil("2014-03-20");
+		query.setResultType(resultType);//do not set last item date-causes problems!
+		
 		while(true) {
 			try {
 				QueryResult response = twitter.search(query);
@@ -113,8 +112,6 @@ public class TwitterRetriever implements SocialMediaRetriever{
 				if(query == null)
 					break;
 				query.count(count);
-				query.setSince("2014-01-10");
-				query.setUntil("2014-03-20");
 				
 			} catch (TwitterException e) {
 				// TODO Auto-generated catch block
