@@ -2,9 +2,11 @@ package eu.socialsensor.framework.retrievers.socialmedia.youtube;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import java.util.Date;
 import java.util.List;
+
+
+
 
 
 
@@ -14,12 +16,20 @@ import org.joda.time.DateTime;
 import com.google.gdata.client.youtube.YouTubeQuery;
 import com.google.gdata.client.youtube.YouTubeService;
 import com.google.gdata.data.Link;
+import com.google.gdata.data.extensions.Rating;
+import com.google.gdata.data.media.mediarss.MediaDescription;
+import com.google.gdata.data.media.mediarss.MediaPlayer;
+import com.google.gdata.data.media.mediarss.MediaThumbnail;
 import com.google.gdata.data.youtube.VideoEntry;
 import com.google.gdata.data.youtube.VideoFeed;
+import com.google.gdata.data.youtube.YouTubeMediaContent;
+import com.google.gdata.data.youtube.YouTubeMediaGroup;
+import com.google.gdata.data.youtube.YtStatistics;
 
 import eu.socialsensor.framework.abstractions.socialmedia.youtube.YoutubeItem;
 import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Keyword;
+import eu.socialsensor.framework.common.domain.MediaItem;
 import eu.socialsensor.framework.common.domain.Source;
 import eu.socialsensor.framework.common.domain.feeds.KeywordsFeed;
 import eu.socialsensor.framework.common.domain.feeds.LocationFeed;
@@ -41,10 +51,15 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 	private Logger logger = Logger.getLogger(YoutubeRetriever.class);
 	
 	private YouTubeService service;
-	private YoutubeStream ytStream;
+	
+	private YoutubeStream ytStream = null;
 	
 	private int results_threshold;
 	private int request_threshold;
+	
+	public YoutubeRetriever(String clientId, String developerKey) {	
+		this.service = new YouTubeService(clientId, developerKey);
+	}
 	
 	public YoutubeRetriever(String clientId, String developerKey,Integer maxResults,Integer maxRequests,YoutubeStream ytStream) {	
 	
@@ -96,7 +111,10 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 					if(publicationDate.after(lastItemDate) && (video != null && video.getId() != null)){
 						YoutubeItem videoItem = new YoutubeItem(video);
 						
-						ytStream.store(videoItem);
+						if(ytStream != null) {
+							ytStream.store(videoItem);
+						}
+						
 						totalRetrievedItems++;
 					}
 					
@@ -201,7 +219,11 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 					
 					if(publicationDate.after(lastItemDate) && (video != null && video.getId() != null)){
 						YoutubeItem videoItem = new YoutubeItem(video);
-						ytStream.store(videoItem);
+						
+						if(ytStream != null) {
+							ytStream.store(videoItem);
+						}
+						
 						totalRetrievedItems++;
 					}
 					
@@ -333,6 +355,89 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 		
 		return new URL(urlStr.toString());
 	}
-		
 
+		
+	public MediaItem getMediaItem(String id) {
+		URL entryUrl;
+		try {
+			entryUrl = new URL(activityFeedVideoUrlPrefix + id);
+			VideoEntry entry = service.getEntry(entryUrl, VideoEntry.class);
+			if(entry != null) {
+				YouTubeMediaGroup mediaGroup = entry.getMediaGroup();
+				List<YouTubeMediaContent> mediaContent = mediaGroup.getYouTubeContents();
+				List<MediaThumbnail> thumbnails = mediaGroup.getThumbnails();
+				
+				String videoURL = null;
+				for(YouTubeMediaContent content : mediaContent) {
+					if(content.getType().equals("application/x-shockwave-flash")) {
+						videoURL = content.getUrl();
+						break;
+					}
+				}
+				
+				if(videoURL != null) {
+					MediaPlayer mediaPlayer = mediaGroup.getPlayer();
+					YtStatistics statistics = entry.getStatistics();
+					
+					Long publicationTime = entry.getPublished().getValue();
+					
+					String mediaId = "Youtube#" + mediaGroup.getVideoId();
+					URL url = new URL(videoURL);
+				
+					String title = mediaGroup.getTitle().getPlainTextContent();
+		
+					MediaDescription desc = mediaGroup.getDescription();
+					String description = desc==null ? "" : desc.getPlainTextContent();
+					//url
+					MediaItem mediaItem = new MediaItem(url);
+					
+					//id
+					mediaItem.setId(mediaId);
+					//SocialNetwork Name
+					mediaItem.setStreamId("Youtube");
+					//Type 
+					mediaItem.setType("video");
+					//Time of publication
+					mediaItem.setPublicationTime(publicationTime);
+					//PageUrl
+					String pageUrl = mediaPlayer.getUrl();
+					mediaItem.setPageUrl(pageUrl);
+					//Thumbnail
+					MediaThumbnail thumb = null;
+					int size = 0;
+					for(MediaThumbnail thumbnail : thumbnails) {
+						int t_size = thumbnail.getHeight() * thumbnail.getWidth();
+						if(t_size > size) {
+							thumb = thumbnail;
+							size = t_size;
+						}
+					}
+					//Title
+					mediaItem.setTitle(title);
+					mediaItem.setDescription(description);
+					
+					//Popularity
+					if(statistics!=null){
+						mediaItem.setLikes(statistics.getFavoriteCount());
+						mediaItem.setViews(statistics.getViewCount());
+					}
+					Rating rating = entry.getRating();
+					if(rating != null) {
+						mediaItem.setRatings(rating.getAverage());
+					}
+					//Size
+					if(thumb!=null) {
+						mediaItem.setThumbnail(thumb.getUrl());
+						mediaItem.setSize(thumb.getWidth(), thumb.getHeight());
+					}
+					
+					return mediaItem;
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
+	
+		return null;
+	}
 }

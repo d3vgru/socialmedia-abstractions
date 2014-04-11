@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 import org.apache.log4j.Logger;
 
 import com.tumblr.jumblr.JumblrClient;
@@ -22,6 +21,7 @@ import eu.socialsensor.framework.abstractions.socialmedia.tumblr.TumblrItem;
 import eu.socialsensor.framework.abstractions.socialmedia.tumblr.TumblrStreamUser;
 import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Keyword;
+import eu.socialsensor.framework.common.domain.MediaItem;
 import eu.socialsensor.framework.common.domain.Source;
 import eu.socialsensor.framework.common.domain.feeds.KeywordsFeed;
 import eu.socialsensor.framework.common.domain.feeds.LocationFeed;
@@ -316,6 +316,11 @@ public class TumblrRetriever implements SocialMediaRetriever{
 	        cal.add(Calendar.DATE, days); //minus number decrements the days
 	        return cal.getTime();
 	    }
+	}
+	@Override
+	public MediaItem getMediaItem(String id) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

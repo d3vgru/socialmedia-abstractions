@@ -15,11 +15,11 @@ import com.restfb.types.Page;
 import com.restfb.types.Post;
 import com.restfb.types.User;
 
-
 import eu.socialsensor.framework.abstractions.socialmedia.facebook.FacebookItem;
 import eu.socialsensor.framework.abstractions.socialmedia.facebook.FacebookStreamUser;
 import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Keyword;
+import eu.socialsensor.framework.common.domain.MediaItem;
 import eu.socialsensor.framework.common.domain.Source;
 import eu.socialsensor.framework.common.domain.feeds.KeywordsFeed;
 import eu.socialsensor.framework.common.domain.feeds.LocationFeed;
@@ -293,5 +293,11 @@ public class FacebookRetriever implements SocialMediaRetriever {
 	public void stop(){
 		if(facebookClient != null)
 			facebookClient = null;
+	}
+
+	@Override
+	public MediaItem getMediaItem(String id) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

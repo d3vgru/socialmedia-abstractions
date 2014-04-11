@@ -4,6 +4,8 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.google.api.client.util.Key;
+
 import eu.socialsensor.framework.common.domain.MediaItem;
 
 /**
@@ -50,6 +52,23 @@ public class TwitPicMediaItem extends MediaItem {
 		//Size
 		this.setSize(image.width, image.height);
 		
+	}
+
+
+	/**
+	 * Class that holds the information regarding the twitpic image
+	 * @author manosetro
+	 * @email  manosetro@iti.gr
+	 */
+	public class TwitPicImage {
+		@Key
+		public String id, message, tags, short_id, type;
+		@Key
+		public int views, number_of_comments, height, width;
+		@Key
+		public String timestamp;
+		@Key
+		public String user_id, location;
 	}
 
 	

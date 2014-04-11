@@ -26,6 +26,11 @@ import eu.socialsensor.framework.common.domain.WebPage;
  */
 public class FacebookItem extends Item {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2267260425325527385L;
+
 	public FacebookItem(String id, Operation operation) {
 		super(SocialNetworkSource.Facebook.toString(), operation);
 		setId(SocialNetworkSource.Facebook+"#"+id);
@@ -43,15 +48,45 @@ public class FacebookItem extends Item {
 		streamId = SocialNetworkSource.Facebook.toString();
 		//Timestamp of the creation of the post
 		publicationTime = post.getCreatedTime().getTime();
-		//Message that post contains
-		String msg = post.getMessage();
 		
-		title = msg;
-		
-		//All the text inside the post
-		text = msg; 
 		description = post.getDescription();
 		
+		//Message that post contains
+  		String msg = post.getMessage();
+  		if(msg != null) {
+  			if(msg.length() > 100) {
+  				title = msg.subSequence(0, 100) + "...";
+  			}
+  			else {
+  				title = msg;
+  			}
+  		}
+ 		else {
+ 			if(post.getCaption() != null) {
+ 				title = post.getCaption();
+ 			}
+ 			else if(post.getName() != null) {
+ 				title = post.getName();
+ 			}
+ 			else if(description != null) {
+ 				if(description.length()>100)
+ 					title = description.subSequence(0, 100)+"...";
+ 				else 
+ 					title = description;
+ 			}
+ 			else {
+ 				title = "";
+ 			}	
+ 		}
+		
+
+  		if(msg != null)
+  			text = msg;
+  		else if(description != null) 
+  		 	text = description;
+  		else
+  		 	text = title;
+  		 
 		//Location 
 		Place place = post.getPlace();
 		if(place != null) {
@@ -299,7 +334,7 @@ public class FacebookItem extends Item {
 		//Message that post contains
 		String msg = comment.getMessage();
 		if(msg!=null) {
-			if(msg.length()>100){
+			if(msg.length()>100) {
 				title = msg.subSequence(0, 100)+"...";
 			}
 			else{

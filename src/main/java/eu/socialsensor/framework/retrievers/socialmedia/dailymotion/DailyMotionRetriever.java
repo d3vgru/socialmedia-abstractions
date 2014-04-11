@@ -12,16 +12,20 @@ import com.google.api.client.json.jackson.JacksonFactory;
 import com.google.api.client.util.Key;
 
 import eu.socialsensor.framework.abstractions.socialmedia.dailymotion.DailyMotionMediaItem;
-import eu.socialsensor.framework.abstractions.socialmedia.dailymotion.DailyMotionVideo;
+import eu.socialsensor.framework.abstractions.socialmedia.dailymotion.DailyMotionMediaItem.DailyMotionVideo;
+import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.MediaItem;
-import eu.socialsensor.framework.retrievers.socialmedia.MediaRetriever;
+import eu.socialsensor.framework.common.domain.feeds.KeywordsFeed;
+import eu.socialsensor.framework.common.domain.feeds.LocationFeed;
+import eu.socialsensor.framework.common.domain.feeds.SourceFeed;
+import eu.socialsensor.framework.retrievers.socialmedia.SocialMediaRetriever;
 
 /**
  * The retriever that implements the Daily Motion wrapper
  * @author manosetro
  * @email  manosetro@iti.gr
  */
-public class DailyMotionMediaRetriever implements MediaRetriever {
+public class DailyMotionRetriever implements SocialMediaRetriever {
 
 	static final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
 	static final JsonFactory JSON_FACTORY = new JacksonFactory();
@@ -30,7 +34,7 @@ public class DailyMotionMediaRetriever implements MediaRetriever {
 	private String requestPrefix = "https://api.dailymotion.com/video/";
 	
 	
-	public DailyMotionMediaRetriever() {
+	public DailyMotionRetriever() {
 		requestFactory = HTTP_TRANSPORT.createRequestFactory(
 				new HttpRequestInitializer() {
 					@Override
@@ -78,12 +82,33 @@ public class DailyMotionMediaRetriever implements MediaRetriever {
 		return null;
 	}
 
-	public static void main(String[] args) {
+	@Override
+	public Integer retrieve(Feed feed) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void stop() {
+		// TODO Auto-generated method stub
 		
-		DailyMotionMediaRetriever retriever = new DailyMotionMediaRetriever();
-		MediaItem mediaItem = retriever.getMediaItem("xy7l3l");
-		
-		System.out.println(mediaItem.toJSONString());
-		
+	}
+
+	@Override
+	public Integer retrieveKeywordsFeeds(KeywordsFeed feed) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer retrieveUserFeeds(SourceFeed feed) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer retrieveLocationFeeds(LocationFeed feed) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

@@ -14,6 +14,7 @@ import com.maruti.otterapi.search.SearchResponse;
 
 import eu.socialsensor.framework.abstractions.socialmedia.topsy.TopsyItem;
 import eu.socialsensor.framework.common.domain.Feed;
+import eu.socialsensor.framework.common.domain.MediaItem;
 import eu.socialsensor.framework.common.domain.feeds.KeywordsFeed;
 import eu.socialsensor.framework.common.domain.feeds.LocationFeed;
 import eu.socialsensor.framework.common.domain.feeds.SourceFeed;
@@ -117,6 +118,12 @@ public class TopsyRetriever implements SocialMediaRetriever{
 	@Override
 	public void stop(){
 
+	}
+
+	@Override
+	public MediaItem getMediaItem(String id) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

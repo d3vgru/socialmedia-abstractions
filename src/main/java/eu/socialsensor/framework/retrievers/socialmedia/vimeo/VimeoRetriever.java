@@ -13,16 +13,20 @@ import com.google.api.client.json.JsonObjectParser;
 import com.google.api.client.json.jackson.JacksonFactory;
 
 import eu.socialsensor.framework.abstractions.socialmedia.vimeo.VimeoMediaItem;
-import eu.socialsensor.framework.abstractions.socialmedia.vimeo.VimeoVideo;
+import eu.socialsensor.framework.abstractions.socialmedia.vimeo.VimeoMediaItem.VimeoVideo;
+import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.MediaItem;
-import eu.socialsensor.framework.retrievers.socialmedia.MediaRetriever;
+import eu.socialsensor.framework.common.domain.feeds.KeywordsFeed;
+import eu.socialsensor.framework.common.domain.feeds.LocationFeed;
+import eu.socialsensor.framework.common.domain.feeds.SourceFeed;
+import eu.socialsensor.framework.retrievers.socialmedia.SocialMediaRetriever;
 
 /**
  * The retriever that implements the Vimeo simplified retriever 
  * @author manosetro
  * @email  manosetro@iti.gr
  */
-public class VimeoMediaRetriever implements MediaRetriever {
+public class VimeoRetriever implements SocialMediaRetriever {
 
 	static final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
 	static final JsonFactory JSON_FACTORY = new JacksonFactory();
@@ -30,7 +34,7 @@ public class VimeoMediaRetriever implements MediaRetriever {
 	private HttpRequestFactory requestFactory;
 	private String requestPrefix = "http://vimeo.com/api/v2/video/";
 	
-	public VimeoMediaRetriever() {
+	public VimeoRetriever() {
 		requestFactory = HTTP_TRANSPORT.createRequestFactory(
 				new HttpRequestInitializer() {
 					@Override
@@ -60,16 +64,35 @@ public class VimeoMediaRetriever implements MediaRetriever {
 		 
 		
 	}
-	
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		VimeoMediaRetriever retriever = new VimeoMediaRetriever();
 
-		MediaItem mediaItem = retriever.getMediaItem("13533846");
-		System.out.println(mediaItem.toJSONString());
+	@Override
+	public Integer retrieve(Feed feed) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void stop() {
+		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public Integer retrieveKeywordsFeeds(KeywordsFeed feed) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer retrieveUserFeeds(SourceFeed feed) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer retrieveLocationFeeds(LocationFeed feed) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -14,10 +14,10 @@ import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.User;
 import twitter4j.conf.Configuration;
-
 import eu.socialsensor.framework.abstractions.socialmedia.twitter.TwitterItem;
 import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Keyword;
+import eu.socialsensor.framework.common.domain.MediaItem;
 import eu.socialsensor.framework.common.domain.feeds.KeywordsFeed;
 import eu.socialsensor.framework.common.domain.feeds.LocationFeed;
 import eu.socialsensor.framework.common.domain.feeds.SourceFeed;
@@ -198,6 +198,12 @@ public class TwitterRetriever implements SocialMediaRetriever{
 			retIds[i] = ids.get(i);
 		
 		return retIds;
+	}
+
+	@Override
+	public MediaItem getMediaItem(String id) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

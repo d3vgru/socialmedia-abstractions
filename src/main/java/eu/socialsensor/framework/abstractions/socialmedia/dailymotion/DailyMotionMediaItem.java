@@ -2,6 +2,8 @@ package eu.socialsensor.framework.abstractions.socialmedia.dailymotion;
 
 import java.net.URL;
 
+import com.google.api.client.util.Key;
+
 import eu.socialsensor.framework.common.domain.Location;
 import eu.socialsensor.framework.common.domain.MediaItem;
 
@@ -45,4 +47,18 @@ public class DailyMotionMediaItem extends MediaItem {
 	
 	}
 
+	/** Represents a daily motion video. */
+	public class DailyMotionVideo {
+		@Key
+		public String id, title, url, embed_url, thumbnail_url;
+		@Key
+		public String[] tags;
+		@Key
+		public int rating, ratings_total, views_total, comments_total;
+		@Key
+		public long created_time;
+		@Key
+		public double[] geoloc;
+	}
+	
 }
