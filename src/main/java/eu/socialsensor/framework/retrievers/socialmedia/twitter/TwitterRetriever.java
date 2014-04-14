@@ -32,15 +32,19 @@ public class TwitterRetriever implements SocialMediaRetriever{
 	
 	private TwitterStream twStream;
 	
-	private int maxResults = 100000;
-	private int maxRequests = 20 ;
+	private int maxResults = 100;
+	private int maxRequests = 1;
 	
-	public TwitterRetriever(Configuration conf,TwitterStream twStream){
+	public TwitterRetriever(Configuration conf,TwitterStream twStream,Integer maxRequests,Integer maxResults){
 		
 		this.tf = new TwitterFactory(conf);
 		twitter = tf.getInstance();
 		
 		this.twStream = twStream;
+		if(maxResults != null)
+			this.maxResults = maxResults;
+		if(maxRequests != null)
+			this.maxRequests = maxRequests;
 	}
 	
 	@Override
@@ -50,7 +54,7 @@ public class TwitterRetriever implements SocialMediaRetriever{
 	
 	@Override
 	public Integer retrieveKeywordsFeeds(KeywordsFeed feed) {
-		int count = 100 , numberOfRequests = 10;
+		int count = 100 , numberOfRequests = 0;
 		String resultType = "recent";
 	
 		Integer totalRetrievedItems = 0;
@@ -105,8 +109,8 @@ public class TwitterRetriever implements SocialMediaRetriever{
 					}
 				}
 				
-				//if(!response.hasNext())
-					//break;
+				if(!response.hasNext() || totalRetrievedItems > maxResults || numberOfRequests > maxRequests)
+					break;
 				
 				query = response.nextQuery();
 				if(query == null)
