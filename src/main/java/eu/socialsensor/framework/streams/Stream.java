@@ -1,5 +1,6 @@
 package eu.socialsensor.framework.streams;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +43,8 @@ public abstract class Stream implements Runnable {
 	protected Retriever retriever = null;
 	protected Subscriber subscriber = null;
 	protected StreamHandler handler;
+	
+	protected List<Item> totalRetrievedItems = new ArrayList<Item>();
 	
 	private Logger  logger = Logger.getLogger(Stream.class);
 	
@@ -127,6 +130,10 @@ public abstract class Stream implements Runnable {
 		
 	}
 	
+	public synchronized List<Item> getTotalRetrievedItems(){
+		return this.totalRetrievedItems;
+	}
+	
 	/**
 	 * Searches with the wrapper of the stream for a particular
 	 * set of feeds (feeds can be keywordsFeeds, userFeeds or locationFeeds)
@@ -134,24 +141,26 @@ public abstract class Stream implements Runnable {
 	 * @return the total number of retrieved items for the stream
 	 * @throws StreamException
 	 */
-	public synchronized Integer poll(List<Feed> feeds) throws StreamException {
-		Integer totalRetrievedItems = 0;
+	public synchronized void poll(List<Feed> feeds) throws StreamException {
+		Integer numOfRetrievedItems = 0;
+		
+		totalRetrievedItems.clear();
 		
 		if(retriever != null) {
 		
 			if(feeds == null)
-				return totalRetrievedItems;
+				return;
 				
 			for(Feed feed : feeds){
 			
-				totalRetrievedItems += retriever.retrieve(feed);
+				numOfRetrievedItems += retriever.retrieve(feed);
 				
 			}
 			
 			
-			logger.info("Retrieved items for "+this.getClass().getName()+ " are : "+totalRetrievedItems);
+			logger.info("Retrieved items for "+this.getClass().getName()+ " are : "+numOfRetrievedItems);
 		}
-		return totalRetrievedItems;
+		
 	}
 	
 	
@@ -181,6 +190,8 @@ public abstract class Stream implements Runnable {
 		
 		if(usersToCategory != null && getUserCategory(item) != null)
 			item.setCategory(getUserCategory(item));
+		
+		totalRetrievedItems.add(item);
 		
 		handler.update(item);
 	}
