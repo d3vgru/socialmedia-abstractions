@@ -60,15 +60,13 @@ public class InstagramRetriever implements SocialMediaRetriever {
 	private InstagramOembed instagramOembed;
 	
 	public InstagramRetriever(String secret, String token) {
-		Token instagramToken = new Token(token,secret); 
+		Token instagramToken = new Token(token, secret); 
 		this.instagram = new Instagram(instagramToken);
 		this.instagramOembed = new InstagramOembed();
 	}
 	
 	public InstagramRetriever(String secret, String token, int maxResults,int maxRequests,InstagramStream igStream) {
-		Token instagramToken = new Token(token,secret); 
-		this.instagram = new Instagram(instagramToken);
-		this.instagramOembed = new InstagramOembed();
+		this(secret, token);
 		
 		this.maxResults = maxResults;
 		this.maxRequests = maxRequests;

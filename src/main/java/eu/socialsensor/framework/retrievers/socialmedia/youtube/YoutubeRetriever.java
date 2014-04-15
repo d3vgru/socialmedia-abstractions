@@ -63,7 +63,7 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 	
 	public YoutubeRetriever(String clientId, String developerKey,Integer maxResults,Integer maxRequests,YoutubeStream ytStream) {	
 	
-		this.service = new YouTubeService(clientId, developerKey);
+		this(clientId, developerKey);
 		this.results_threshold = maxResults;
 		this.request_threshold = maxRequests;
 		this.ytStream = ytStream;
@@ -336,9 +336,7 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 				
 			case LOCATION:
 				logger.error("#YouTube : Location Feed cannot be retreived from YouTube");
-				
 				return null;
-			
 		}
 		 
 		return null;
@@ -360,7 +358,7 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 	public MediaItem getMediaItem(String id) {
 		URL entryUrl;
 		try {
-			entryUrl = new URL(activityFeedVideoUrlPrefix + id);
+			entryUrl = new URL(activityFeedVideoUrlPrefix +"/"+ id);
 			VideoEntry entry = service.getEntry(entryUrl, VideoEntry.class);
 			if(entry != null) {
 				YouTubeMediaGroup mediaGroup = entry.getMediaGroup();
@@ -435,7 +433,7 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 		} 
 	
 		return null;
