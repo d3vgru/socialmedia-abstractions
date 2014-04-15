@@ -5,7 +5,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.restfb.types.CategorizedFacebookType;
 import com.restfb.types.Comment;
+import com.restfb.types.Comment.Attachment;
+import com.restfb.types.Comment.Media;
 import com.restfb.types.NamedFacebookType;
 import com.restfb.types.Place;
 import com.restfb.types.Post;
@@ -125,6 +128,7 @@ public class FacebookItem extends Item {
 		
 		if(type.equals("photo")) {
 			
+			url = post.getLink();
 			String picture = post.getPicture();
 			
 			try {
@@ -185,6 +189,8 @@ public class FacebookItem extends Item {
 			}
 		}
 		else if(type.equals("link")) {
+			
+			url = "https://www.facebook.com/" + post.getId();
 			
 			webPages = new ArrayList<WebPage>();
 			String picture = post.getPicture(); ///!!!!
@@ -254,13 +260,15 @@ public class FacebookItem extends Item {
 		}
 		else if(type.equals("video")) {
 			
-			String url = post.getSource();
+			url = "https://www.facebook.com/" + post.getId();
+			
+			String vUrl = post.getSource();
 			String picture = post.getPicture();
 			if(picture!=null){
 				
 				URL videoUrl = null;
 				try {
-					videoUrl = new URL(url);
+					videoUrl = new URL(vUrl);
 					
 					String mediaId = SocialNetworkSource.Facebook+"#"+post.getId();
 					//url
@@ -303,6 +311,9 @@ public class FacebookItem extends Item {
 			}
 			
 		}
+		else {
+			url = "https://www.facebook.com/" + post.getId();
+		}
 	
 	}
     
@@ -343,15 +354,78 @@ public class FacebookItem extends Item {
 			
 			description = "Comment";
 		}
+		
 		//All the text inside the comment
 		text = msg; 
+		
 		//User that posted the post
-		streamUser = new FacebookStreamUser(user);
-		uid = streamUser.getId();
+		//User that posted the post
+		if(user != null) {
+			streamUser = new FacebookStreamUser(user);
+			uid = streamUser.getId();
+		}
+		else {
+			CategorizedFacebookType from = comment.getFrom();
+			streamUser = new FacebookStreamUser(from);
+			uid = streamUser.getId();
+		}
+		
+		original = false;
 		
 		//Popularity of the post
 		if(comment.getLikeCount() != null)
 			likes = comment.getLikeCount();
+		
+		Attachment attachment = comment.getAttachment();
+		if(attachment != null) {
+			Media media = attachment.getMedia();
+
+			String url = attachment.getUrl();
+			try {
+				URL mediaUrl = new URL(url);
+
+				String mediaId = SocialNetworkSource.Facebook+"#"+media.getId();
+				//url
+				MediaItem mediaItem = new MediaItem(mediaUrl);
+
+				//id
+				mediaItem.setId(mediaId);
+				//SocialNetwork Name
+				mediaItem.setStreamId(streamId);
+				//Reference
+				mediaItem.setRef(id);
+				//Type 
+				mediaItem.setType("image");
+
+
+				//Time of publication
+				mediaItem.setPublicationTime(publicationTime);
+				//Author
+				mediaItem.setUser(streamUser);
+
+				//PageUrl
+				String pageUrl = post.getLink();
+				mediaItem.setPageUrl(pageUrl);
+				//Thumbnail
+				String thumbnail = post.getPicture();
+				mediaItem.setThumbnail(thumbnail);
+				//Title
+				mediaItem.setTitle(title);
+				//Description
+				mediaItem.setDescription(description);
+				//Tags
+				mediaItem.setTags(tags);
+				//Popularity
+				mediaItem.setLikes(likes);
+				mediaItem.setShares(shares);
+
+				//Store mediaItems and their ids 
+				mediaItems.add(mediaItem);
+				mediaIds.add(mediaId);
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			}
+		}
 	
 	}
 }

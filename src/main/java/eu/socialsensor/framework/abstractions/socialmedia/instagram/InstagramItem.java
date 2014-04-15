@@ -55,6 +55,8 @@ public class InstagramItem extends Item {
 		for(String tag:image.getTags())
 			tags[tIndex++]=tag;	
 		
+		url = image.getLink();
+		
 		//User that posted the photo
         if(image.getUser() !=null){
                 streamUser = new InstagramStreamUser(image.getUser());

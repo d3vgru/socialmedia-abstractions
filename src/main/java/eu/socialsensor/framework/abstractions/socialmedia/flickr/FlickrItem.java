@@ -72,12 +72,13 @@ public class FlickrItem extends Item {
 			location = new Location(latitude, longitude);
 		}
 		
+		url = photo.getUrl();
+		
 		//Popularity
 		
 		//Getting the photo
-	
-		String url = null;
 		try {
+			String url = null;
 			String thumbnail = photo.getMediumUrl();
 			if(thumbnail==null) {
 				thumbnail = photo.getThumbnailUrl();
@@ -136,4 +137,17 @@ public class FlickrItem extends Item {
 		}
 	}
 
+	public FlickrItem(Photo photo, FlickrStreamUser streamUser) {
+		this(photo);
+
+		//User that posted the photo
+		this.streamUser = streamUser;
+		uid = streamUser.getId();
+
+		for(MediaItem mItem : mediaItems) {
+			mItem.setUserId(uid);
+		}
+
+	}
+	
 }

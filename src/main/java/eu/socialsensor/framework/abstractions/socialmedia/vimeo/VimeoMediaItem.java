@@ -14,6 +14,8 @@ import eu.socialsensor.framework.common.domain.MediaItem;
  * @email  manosetro@iti.gr
  */
 public class VimeoMediaItem extends MediaItem {
+	
+	
 	private static SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	public VimeoMediaItem(VimeoVideo video) throws Exception {
