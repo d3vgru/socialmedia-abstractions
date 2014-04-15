@@ -1,6 +1,7 @@
 package eu.socialsensor.framework.retrievers.socialmedia;
 
 import eu.socialsensor.framework.common.domain.MediaItem;
+import eu.socialsensor.framework.common.domain.StreamUser;
 import eu.socialsensor.framework.common.domain.feeds.KeywordsFeed;
 import eu.socialsensor.framework.common.domain.feeds.LocationFeed;
 import eu.socialsensor.framework.common.domain.feeds.SourceFeed;
@@ -42,6 +43,7 @@ public interface SocialMediaRetriever extends Retriever {
 	 */
 	public Integer retrieveLocationFeeds(LocationFeed feed) throws Exception;
 
+	public StreamUser getStreamUser(String uid);
 	
 	public MediaItem getMediaItem(String id);
 	

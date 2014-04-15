@@ -21,6 +21,7 @@ import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Keyword;
 import eu.socialsensor.framework.common.domain.MediaItem;
 import eu.socialsensor.framework.common.domain.Source;
+import eu.socialsensor.framework.common.domain.StreamUser;
 import eu.socialsensor.framework.common.domain.feeds.KeywordsFeed;
 import eu.socialsensor.framework.common.domain.feeds.LocationFeed;
 import eu.socialsensor.framework.common.domain.feeds.SourceFeed;
@@ -117,6 +118,7 @@ public class FacebookRetriever implements SocialMediaRetriever {
 		
 		return totalRetrievedItems;
 	}
+	
 	@Override
 	public Integer retrieveKeywordsFeeds(KeywordsFeed feed){
 		Integer totalRetrievedItems = 0;
@@ -297,7 +299,18 @@ public class FacebookRetriever implements SocialMediaRetriever {
 
 	@Override
 	public MediaItem getMediaItem(String id) {
-		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public StreamUser getStreamUser(String uid) {
+		try {
+			Page page = facebookClient.fetchObject(uid, Page.class);
+			StreamUser facebookUser = new FacebookStreamUser(page);
+			return facebookUser;
+		}
+		catch(Exception e) {
+			return null;
+		}
 	}
 }

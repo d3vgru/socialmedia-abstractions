@@ -1,9 +1,13 @@
 package eu.socialsensor.framework.retrievers.socialmedia.youtube;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
 import java.util.List;
+
+
+
 
 
 
@@ -20,17 +24,21 @@ import com.google.gdata.data.extensions.Rating;
 import com.google.gdata.data.media.mediarss.MediaDescription;
 import com.google.gdata.data.media.mediarss.MediaPlayer;
 import com.google.gdata.data.media.mediarss.MediaThumbnail;
+import com.google.gdata.data.youtube.UserProfileEntry;
 import com.google.gdata.data.youtube.VideoEntry;
 import com.google.gdata.data.youtube.VideoFeed;
 import com.google.gdata.data.youtube.YouTubeMediaContent;
 import com.google.gdata.data.youtube.YouTubeMediaGroup;
 import com.google.gdata.data.youtube.YtStatistics;
+import com.google.gdata.util.ServiceException;
 
 import eu.socialsensor.framework.abstractions.socialmedia.youtube.YoutubeItem;
+import eu.socialsensor.framework.abstractions.socialmedia.youtube.YoutubeStreamUser;
 import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Keyword;
 import eu.socialsensor.framework.common.domain.MediaItem;
 import eu.socialsensor.framework.common.domain.Source;
+import eu.socialsensor.framework.common.domain.StreamUser;
 import eu.socialsensor.framework.common.domain.feeds.KeywordsFeed;
 import eu.socialsensor.framework.common.domain.feeds.LocationFeed;
 import eu.socialsensor.framework.common.domain.feeds.SourceFeed;
@@ -100,6 +108,8 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 			try {
 				VideoFeed videoFeed = service.getFeed(channelUrl, VideoFeed.class);
 				
+				//service.getEntry(channelUrl, UserProfileEntry.class);
+				
 				numberOfRequests ++ ;
 				
 				for(VideoEntry  video : videoFeed.getEntries()) {
@@ -108,7 +118,7 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 					DateTime publishedDateTime = new DateTime(publishedTime.toString());
 					Date publicationDate = publishedDateTime.toDate();
 					
-					if(publicationDate.after(lastItemDate) && (video != null && video.getId() != null)){
+					if(publicationDate.after(lastItemDate) && (video != null && video.getId() != null)) {
 						YoutubeItem videoItem = new YoutubeItem(video);
 						
 						if(ytStream != null) {
@@ -118,7 +128,7 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 						totalRetrievedItems++;
 					}
 					
-					if(totalRetrievedItems>results_threshold || numberOfRequests > request_threshold){
+					if(totalRetrievedItems>results_threshold || numberOfRequests > request_threshold) {
 						isFinished = true;
 						break;
 					}
@@ -324,7 +334,7 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 	@Override
 	public Integer retrieve (Feed feed) {
 		
-		switch(feed.getFeedtype()){
+		switch(feed.getFeedtype()) {
 			case SOURCE:
 				SourceFeed userFeed = (SourceFeed) feed;
 				
@@ -429,6 +439,13 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 						mediaItem.setSize(thumb.getWidth(), thumb.getHeight());
 					}
 					
+					String uploader = mediaGroup.getUploader();
+					StreamUser user = getStreamUser(uploader);
+					if(user != null) {
+						mediaItem.setUser(user);
+						mediaItem.setUserId(user.getId());
+					}
+					
 					return mediaItem;
 				}
 			}
@@ -436,6 +453,27 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 			logger.error(e);
 		} 
 	
+		return null;
+	}
+
+	@Override
+	public StreamUser getStreamUser(String uid) {
+		URL profileUrl;
+		try {
+			profileUrl = new URL(activityFeedUserUrlPrefix + uid);
+			UserProfileEntry userProfile = service.getEntry(profileUrl , UserProfileEntry.class);
+			
+			StreamUser user = new YoutubeStreamUser(userProfile);
+			
+			return user;
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
+		
 		return null;
 	}
 }

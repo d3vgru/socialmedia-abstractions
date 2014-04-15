@@ -16,6 +16,7 @@ import eu.socialsensor.framework.abstractions.socialmedia.twitpic.TwitPicMediaIt
 import eu.socialsensor.framework.abstractions.socialmedia.twitpic.TwitPicMediaItem;
 import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.MediaItem;
+import eu.socialsensor.framework.common.domain.StreamUser;
 import eu.socialsensor.framework.common.domain.feeds.KeywordsFeed;
 import eu.socialsensor.framework.common.domain.feeds.LocationFeed;
 import eu.socialsensor.framework.common.domain.feeds.SourceFeed;
@@ -91,6 +92,12 @@ public class TwitpicRetriever implements SocialMediaRetriever {
 
 	@Override
 	public Integer retrieveLocationFeeds(LocationFeed feed) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public StreamUser getStreamUser(String uid) {
 		// TODO Auto-generated method stub
 		return null;
 	}

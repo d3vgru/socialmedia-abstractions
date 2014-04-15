@@ -27,6 +27,11 @@ import eu.socialsensor.framework.common.domain.SocialNetworkSource;
  */
 public class YoutubeItem extends Item {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6355819301582285835L;
+	
 	private Logger logger = Logger.getLogger(YoutubeItem.class);
 	
 	public YoutubeItem(String id, Operation operation) {

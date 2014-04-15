@@ -15,16 +15,19 @@ import twitter4j.TwitterFactory;
 import twitter4j.User;
 import twitter4j.conf.Configuration;
 import eu.socialsensor.framework.abstractions.socialmedia.twitter.TwitterItem;
+import eu.socialsensor.framework.abstractions.socialmedia.twitter.TwitterStreamUser;
 import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Keyword;
 import eu.socialsensor.framework.common.domain.MediaItem;
+import eu.socialsensor.framework.common.domain.StreamUser;
 import eu.socialsensor.framework.common.domain.feeds.KeywordsFeed;
 import eu.socialsensor.framework.common.domain.feeds.LocationFeed;
 import eu.socialsensor.framework.common.domain.feeds.SourceFeed;
 import eu.socialsensor.framework.retrievers.socialmedia.SocialMediaRetriever;
 import eu.socialsensor.framework.streams.socialmedia.twitter.TwitterStream;
 
-public class TwitterRetriever implements SocialMediaRetriever{
+public class TwitterRetriever implements SocialMediaRetriever {
+	
 	private Logger  logger = Logger.getLogger(TwitterRetriever.class);
 	
 	private Twitter twitter = null;
@@ -206,8 +209,21 @@ public class TwitterRetriever implements SocialMediaRetriever{
 
 	@Override
 	public MediaItem getMediaItem(String id) {
-		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public StreamUser getStreamUser(String uid) {
+		try {
+			long userId = Long.parseLong(uid);
+			User user = twitter.showUser(userId);
+			
+			StreamUser streamUser = new TwitterStreamUser(user);
+			return streamUser;
+		}
+		catch(Exception e) {
+			return null;
+		}
 	}
 	
 }

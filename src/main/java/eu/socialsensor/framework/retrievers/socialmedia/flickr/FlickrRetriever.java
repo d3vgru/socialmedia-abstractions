@@ -25,6 +25,7 @@ import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Keyword;
 import eu.socialsensor.framework.common.domain.MediaItem;
 import eu.socialsensor.framework.common.domain.Source;
+import eu.socialsensor.framework.common.domain.StreamUser;
 import eu.socialsensor.framework.common.domain.feeds.KeywordsFeed;
 import eu.socialsensor.framework.common.domain.feeds.LocationFeed;
 import eu.socialsensor.framework.common.domain.feeds.SourceFeed;
@@ -382,9 +383,14 @@ public class FlickrRetriever implements SocialMediaRetriever {
 		if(flickrTransport != null)
 			flickrTransport = null;
 	}
+	
 	@Override
 	public MediaItem getMediaItem(String id) {
-		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public StreamUser getStreamUser(String uid) {
 		return null;
 	}
 	

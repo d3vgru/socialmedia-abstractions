@@ -15,6 +15,7 @@ import eu.socialsensor.framework.abstractions.socialmedia.dailymotion.DailyMotio
 import eu.socialsensor.framework.abstractions.socialmedia.dailymotion.DailyMotionMediaItem.DailyMotionVideo;
 import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.MediaItem;
+import eu.socialsensor.framework.common.domain.StreamUser;
 import eu.socialsensor.framework.common.domain.feeds.KeywordsFeed;
 import eu.socialsensor.framework.common.domain.feeds.LocationFeed;
 import eu.socialsensor.framework.common.domain.feeds.SourceFeed;
@@ -108,6 +109,12 @@ public class DailyMotionRetriever implements SocialMediaRetriever {
 
 	@Override
 	public Integer retrieveLocationFeeds(LocationFeed feed) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public StreamUser getStreamUser(String uid) {
 		// TODO Auto-generated method stub
 		return null;
 	}

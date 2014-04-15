@@ -14,10 +14,12 @@ import org.jinstagram.entity.common.Caption;
 import org.jinstagram.entity.common.ImageData;
 import org.jinstagram.entity.common.Images;
 import org.jinstagram.entity.common.Pagination;
+import org.jinstagram.entity.common.User;
 import org.jinstagram.entity.locations.LocationSearchFeed;
 import org.jinstagram.entity.media.MediaInfoFeed;
 import org.jinstagram.entity.oembed.OembedInformation;
 import org.jinstagram.entity.tags.TagMediaFeed;
+import org.jinstagram.entity.users.basicinfo.UserInfo;
 import org.jinstagram.entity.users.feed.MediaFeed;
 import org.jinstagram.entity.users.feed.MediaFeedData;
 import org.jinstagram.entity.users.feed.UserFeed;
@@ -25,11 +27,13 @@ import org.jinstagram.entity.users.feed.UserFeedData;
 import org.jinstagram.auth.model.Token;
 
 import eu.socialsensor.framework.abstractions.socialmedia.instagram.InstagramItem;
+import eu.socialsensor.framework.abstractions.socialmedia.instagram.InstagramStreamUser;
 import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Keyword;
 import eu.socialsensor.framework.common.domain.Location;
 import eu.socialsensor.framework.common.domain.MediaItem;
 import eu.socialsensor.framework.common.domain.Source;
+import eu.socialsensor.framework.common.domain.StreamUser;
 import eu.socialsensor.framework.common.domain.feeds.KeywordsFeed;
 import eu.socialsensor.framework.common.domain.feeds.LocationFeed;
 import eu.socialsensor.framework.common.domain.feeds.SourceFeed;
@@ -496,6 +500,13 @@ public class InstagramRetriever implements SocialMediaRetriever {
 					mediaItem.setSize(width, height);
 				}
 				
+				User user = mediaData.getUser();
+				if(user != null) {
+					StreamUser streamUser = new InstagramStreamUser(user);
+					mediaItem.setUser(streamUser);
+					mediaItem.setUserId(streamUser.getId());
+				}
+				
 				return mediaItem;
 			}
 		} catch (Exception e) {
@@ -504,6 +515,20 @@ public class InstagramRetriever implements SocialMediaRetriever {
 
 		
 		return null;
+	}
+	
+	@Override
+	public StreamUser getStreamUser(String uid) {
+		try {
+			long userId = Long.parseLong(uid);
+			UserInfo userInfo = instagram.getUserInfo(userId);
+			
+			StreamUser user = new InstagramStreamUser(userInfo.getData());
+			return user;
+		}
+		catch(Exception e) {
+			return null;
+		}
 	}
 	
 	private String getMediaId(String url) {
@@ -515,5 +540,4 @@ public class InstagramRetriever implements SocialMediaRetriever {
 		}
 		return null;
 	}
-	
 }
