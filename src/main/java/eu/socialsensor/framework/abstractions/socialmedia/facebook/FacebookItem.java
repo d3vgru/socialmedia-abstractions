@@ -12,6 +12,7 @@ import com.restfb.types.Comment.Media;
 import com.restfb.types.NamedFacebookType;
 import com.restfb.types.Place;
 import com.restfb.types.Post;
+import com.restfb.types.Post.Comments;
 import com.restfb.types.Post.Likes;
 import com.restfb.types.User;
 
@@ -174,8 +175,16 @@ public class FacebookItem extends Item {
 							//Popularity
 							mediaItem.setLikes(likes);
 							mediaItem.setShares(shares);
-							Integer commentsCount = post.getComments().getData().size();
-							mediaItem.setComments(commentsCount.longValue());
+							
+							Comments postComments = post.getComments();
+							if(postComments != null) {
+								List<Comment> commentsList = postComments.getData();
+								if(commentsList != null) {
+									Integer commentsCount = commentsList.size();
+									mediaItem.setComments(commentsCount.longValue());
+								}
+							}
+							
 							
 							//Store mediaItems and their ids 
 							mediaItems.add(mediaItem);

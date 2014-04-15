@@ -92,6 +92,11 @@ public class FacebookStreamUser extends StreamUser {
 		//Link to the page
 		linkToProfile = page.getLink();
 		
+		pageUrl = page.getLink(); 
+		if(pageUrl == null) {
+			pageUrl = username==null ? ("https://www.facebook.com/profile.php?id="+userid) : ("http://www.facebook.com/"+username);
+		}
+		
 		//Avatar of the page
 		profileImage = page.getPicture();
 		if(profileImage == null) {

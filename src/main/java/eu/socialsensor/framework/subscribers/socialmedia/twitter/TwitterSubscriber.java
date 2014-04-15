@@ -1,7 +1,9 @@
 package eu.socialsensor.framework.subscribers.socialmedia.twitter;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -19,6 +21,7 @@ import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.TwitterStreamFactory;
+import twitter4j.User;
 import twitter4j.conf.Configuration;
 import eu.socialsensor.framework.abstractions.socialmedia.twitter.TwitterItem;
 import eu.socialsensor.framework.common.domain.Feed;
@@ -79,7 +82,7 @@ public class TwitterSubscriber implements Subscriber{
 	private Twitter twitterApi;
 	
 	
-	public TwitterSubscriber(Configuration conf,TwitterStream twitStream){
+	public TwitterSubscriber(Configuration conf,TwitterStream twitStream) {
 		
 		if (twitterStream != null) {
 			logger.error("#Twitter : Stream is already opened");
@@ -112,9 +115,10 @@ public class TwitterSubscriber implements Subscriber{
 			
 			List<String> keys = new ArrayList<String>();
 			List<String> users = new ArrayList<String>();
+			List<Long> userids = new ArrayList<Long>();
 			List<double[]> locs = new ArrayList<double[]>();
 			
-			for(Feed feed : feeds){
+			for(Feed feed : feeds) {
 				if(feed.getFeedtype().equals(FeedType.KEYWORDS)) {
 					if(((KeywordsFeed) feed).getKeyword() != null)
 						keys.add(((KeywordsFeed) feed).getKeyword().getName());
@@ -125,10 +129,20 @@ public class TwitterSubscriber implements Subscriber{
 						
 				}
 				else if(feed.getFeedtype().equals(FeedType.SOURCE)) {
-					Source source = ((SourceFeed) feed).getSource();					
-					users.add(source.getId());
+					Source source = ((SourceFeed) feed).getSource();		
+					if(source.getId() == null) {
+						try {
+							users.add(source.getName());
+						}
+						catch(Exception e) {
+							continue;
+						}
+					}
+					else {
+						userids.add(Long.parseLong(source.getId()));
+					}
 				}
-				else if(feed.getFeedtype().equals(FeedType.LOCATION)){
+				else if(feed.getFeedtype().equals(FeedType.LOCATION)) {
 					double[] location = new double[2];
 					
 					location[0] = ((LocationFeed) feed).getLocation().getLatitude();
@@ -136,15 +150,19 @@ public class TwitterSubscriber implements Subscriber{
 					locs.add(location);
 				}
 			}
+			
+			Set<Long> temp = getUserIds(users);
+			userids.addAll(temp);
+			
 			String[] keywords = new String[keys.size()];
-			long[] follows = new long[users.size()];
+			long[] follows = new long[userids.size()];
 			double[][] locations = new double[locs.size()][2];
 			
 			for(int i=0;i<keys.size();i++)
 				keywords[i] = keys.get(i);
 			
-			for(int i=0;i<users.size();i++)
-				follows[i] = Long.parseLong(users.get(i));
+			for(int i=0;i<userids.size();i++)
+				follows[i] = userids.get(i);
 			
 			for(int i=0;i<locs.size();i++)
 				locations[i] = locs.get(i);
@@ -206,6 +224,7 @@ public class TwitterSubscriber implements Subscriber{
 		}
 
 		if(userids != null) {
+			int mapPagesPerUser = 180 / userids.length;
 			for(long userid : userids) {
 				try {
 					int page = 1, count = 100;
@@ -219,8 +238,10 @@ public class TwitterSubscriber implements Subscriber{
 						paging.setPage(++page);
 						paging.setCount(100);
 						
-						if(timeline.size()<count || page>6 || totalRequests>180)
+						if(timeline.size()<count || page>mapPagesPerUser 
+								|| totalRequests>180) {
 							break;
+						}
 
 					}
 
@@ -235,6 +256,44 @@ public class TwitterSubscriber implements Subscriber{
 		}
 	}
 	
+	private Set<Long> getUserIds(List<String> followsUsernames) {
+		
+		Set<Long> ids = new HashSet<Long>();
+		
+		List<String> usernames = new ArrayList<String>(followsUsernames.size());
+		for(String username : followsUsernames) {
+			usernames.add(username);
+		}
+		
+		int size = usernames.size();
+		int start = 0;
+		int end = Math.min(start+100, size);
+		
+		while(start < size) {
+			List<String> sublist = usernames.subList(start, end);
+			String[] _usernames = sublist.toArray(new String[sublist.size()]);
+			try {
+				System.out.println("Request for " + _usernames.length + " users ");
+				ResponseList<User> users = twitterApi.lookupUsers(_usernames);
+				System.out.println(users.size() + " users ");
+				for(User user : users) {
+					long id = user.getId();
+					ids.add(id);
+				}
+			} catch (TwitterException e) {
+				logger.error("Error while getting user ids from twitter...");
+				logger.error("Exception",e
+						);
+				break;
+			}
+			
+			start = end + 1;
+			end = Math.min(start+100, size);
+		}
+		
+		return ids;
+	}
+
 	@Override
 	public void stop(){
 		if (listener != null) {
