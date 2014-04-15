@@ -3,16 +3,23 @@ package eu.socialsensor.framework.subscribers.socialmedia.twitter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import twitter4j.FilterQuery;
+import twitter4j.Paging;
+import twitter4j.Query;
+import twitter4j.QueryResult;
+import twitter4j.ResponseList;
 import twitter4j.StallWarning;
 import twitter4j.Status;
 import twitter4j.StatusDeletionNotice;
 import twitter4j.StatusListener;
+import twitter4j.Twitter;
+import twitter4j.TwitterException;
+import twitter4j.TwitterFactory;
 import twitter4j.TwitterStreamFactory;
 import twitter4j.conf.Configuration;
-
 import eu.socialsensor.framework.abstractions.socialmedia.twitter.TwitterItem;
 import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Keyword;
@@ -68,6 +75,8 @@ public class TwitterSubscriber implements Subscriber{
 	private AccessLevel accessLevel = AccessLevel.PUBLIC;
 	private StatusListener listener = null;
 	private twitter4j.TwitterStream twitterStream  = null;
+
+	private Twitter twitterApi;
 	
 	
 	public TwitterSubscriber(Configuration conf,TwitterStream twitStream){
@@ -87,6 +96,8 @@ public class TwitterSubscriber implements Subscriber{
 		listener = getListener();
 		twitterStream = new TwitterStreamFactory(conf).getInstance();	
 		twitterStream.addListener(listener);	
+		
+		this.twitterApi = new TwitterFactory(conf).getInstance();
 		
 	}
 	
@@ -145,6 +156,9 @@ public class TwitterSubscriber implements Subscriber{
 
 			FilterQuery fq = getFilterQuery(keywords, follows, locations);
 			if (fq != null) {
+				
+				getPastTweets(keywords, follows);
+				
 				if (System.currentTimeMillis() - lastFilterInitTime < FILTER_EDIT_WAIT_TIME){
                      try {
                     	 logger.info("Wait for " + FILTER_EDIT_WAIT_TIME + " msecs to edit filter");
@@ -164,6 +178,61 @@ public class TwitterSubscriber implements Subscriber{
 			}
 		}
 		
+	}
+	
+	public void getPastTweets(String[] keywords, long[] userids) {
+		
+		int totalRequests = 0;
+		
+		List<Status> tweets = new ArrayList<Status>();
+		if(keywords != null && keywords.length>0) {
+			Query query = new Query();
+			query.setQuery(StringUtils.join(keywords, " OR "));
+			query.setCount(100);
+			do {
+				System.out.println(query.toString());
+				QueryResult resp;
+				try {
+					totalRequests++;
+					resp = twitterApi.search(query);
+					tweets.addAll(resp.getTweets());
+					query = resp.nextQuery();
+				} catch (TwitterException e) { 
+					e.printStackTrace();
+					break;
+				}
+
+			} while(query != null && totalRequests < 180);
+		}
+
+		if(userids != null) {
+			for(long userid : userids) {
+				try {
+					int page = 1, count = 100;
+					Paging paging = new Paging(page, count);
+					while(true) {
+						totalRequests++;
+						ResponseList<Status> timeline = twitterApi.getUserTimeline(userid, paging);
+						tweets.addAll(timeline);
+
+						System.out.println(paging.toString() + " => " + tweets.size());
+						paging.setPage(++page);
+						paging.setCount(100);
+						
+						if(timeline.size()<count || page>6 || totalRequests>180)
+							break;
+
+					}
+
+				} catch (TwitterException e) {
+					e.printStackTrace();
+					break;
+				}
+			}
+			for(Status status : tweets) {
+				listener.onStatus(status);
+			}
+		}
 	}
 	
 	@Override
