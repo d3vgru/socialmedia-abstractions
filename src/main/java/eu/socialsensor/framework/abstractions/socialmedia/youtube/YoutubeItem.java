@@ -163,6 +163,10 @@ public class YoutubeItem extends Item {
 		streamUser = user;
 		uid = streamUser.getId();
 		
+		for(MediaItem mItem : this.mediaItems) {
+			mItem.setUserId(uid);
+		}
+		
 	}
 	
 	

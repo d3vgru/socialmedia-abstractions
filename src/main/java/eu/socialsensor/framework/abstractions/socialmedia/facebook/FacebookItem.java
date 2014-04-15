@@ -326,6 +326,9 @@ public class FacebookItem extends Item {
 		streamUser = user;
 		uid = streamUser.getId();
 		
+		for(MediaItem mi : this.getMediaItems()) {
+			mi.setUserId(uid);
+		}
 		
 	}
 	
