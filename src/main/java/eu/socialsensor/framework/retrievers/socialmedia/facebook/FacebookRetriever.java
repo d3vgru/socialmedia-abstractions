@@ -11,8 +11,10 @@ import com.restfb.FacebookClient;
 import com.restfb.Parameter;
 import com.restfb.exception.FacebookResponseStatusException;
 import com.restfb.types.CategorizedFacebookType;
+import com.restfb.types.Comment;
 import com.restfb.types.Page;
 import com.restfb.types.Post;
+import com.restfb.types.Post.Comments;
 import com.restfb.types.User;
 
 import eu.socialsensor.framework.abstractions.socialmedia.facebook.FacebookItem;
@@ -95,11 +97,36 @@ public class FacebookRetriever implements SocialMediaRetriever {
 				
 				Date publicationDate = post.getCreatedTime();
 				
-				if(publicationDate.after(lastItemDate) && post!=null && post.getId()!=null){
-					FacebookItem facebookUpdate = new FacebookItem(post,facebookUser);
+				if(publicationDate.after(lastItemDate) && post!=null && post.getId() != null) {
+					FacebookItem facebookUpdate = new FacebookItem(post, facebookUser);
 				    fbStream.store(facebookUpdate);
 				    totalRetrievedItems++;
-				}
+				    
+				    Comments comments = post.getComments();
+				    if(comments == null)
+			    		continue;
+
+			    	for(Comment comment : comments.getData()) {
+			    		FacebookItem facebookComment = new FacebookItem(comment, post, null);
+			    		fbStream.store(facebookComment);
+			    	} 
+				
+					/*
+					// Test Code
+				    Connection<Comments> commentsConn = facebookClient.fetchConnection(post.getId()+"/comments", Comments.class);
+				    for(List<Comments> commentsList : commentsConn) {
+				    	for (Comments comments : commentsList) {
+				    	if(comments == null)
+				    		continue;
+
+				    	for(Comment comment : comments.getData()) {
+				    			FacebookItem facebookComment = new FacebookItem(comment, post, null);
+				    			fbStream.store(facebookComment);
+				    		}
+				    	}
+				    }
+				    */
+				 }
 				
 				if(publicationDate.before(lastItemDate) || totalRetrievedItems>maxResults){
 					isFinished = true;
@@ -222,7 +249,7 @@ public class FacebookRetriever implements SocialMediaRetriever {
 		return 0;
 	}
 	
-	public void retrieveFromRetrievedPages(Date date){
+	public void retrieveFromRetrievedPages(Date date) {
 		Integer totalRetrievedItems = 0;
 		boolean isFinished = true;
 		

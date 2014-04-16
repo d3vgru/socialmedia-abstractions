@@ -6,7 +6,6 @@ import com.restfb.types.Page;
 import com.restfb.types.User;
 
 import eu.socialsensor.framework.common.domain.SocialNetworkSource;
-import eu.socialsensor.framework.common.domain.Source;
 import eu.socialsensor.framework.common.domain.StreamUser;
 
 /**
@@ -17,6 +16,12 @@ import eu.socialsensor.framework.common.domain.StreamUser;
 public class FacebookStreamUser extends StreamUser {
 
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3234574808873979755L;
+
+
 	public FacebookStreamUser(User user) {
 		super(SocialNetworkSource.Facebook.toString(), Operation.NEW);
 		

@@ -341,7 +341,7 @@ public class FacebookItem extends Item {
 		
 	}
 	
-	public FacebookItem(Comment comment,Post post,User user) {
+	public FacebookItem(Comment comment, Post post, User user) {
 		super(SocialNetworkSource.Facebook.toString(), Operation.NEW);
 		
 		if (comment == null) return;
@@ -356,7 +356,7 @@ public class FacebookItem extends Item {
 		publicationTime = comment.getCreatedTime().getTime();
 		//Message that post contains
 		String msg = comment.getMessage();
-		if(msg!=null) {
+		if(msg != null) {
 			if(msg.length()>100) {
 				title = msg.subSequence(0, 100)+"...";
 			}
@@ -370,8 +370,9 @@ public class FacebookItem extends Item {
 		//All the text inside the comment
 		text = msg; 
 		
-		//User that posted the post
-		//User that posted the post
+		url = "https://www.facebook.com/" + post.getId();
+		
+		//User that posted the comment
 		if(user != null) {
 			streamUser = new FacebookStreamUser(user);
 			uid = streamUser.getId();
