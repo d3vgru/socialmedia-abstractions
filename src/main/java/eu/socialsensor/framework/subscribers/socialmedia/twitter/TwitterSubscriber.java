@@ -175,7 +175,7 @@ public class TwitterSubscriber implements Subscriber{
 			FilterQuery fq = getFilterQuery(keywords, follows, locations);
 			if (fq != null) {
 				
-				getPastTweets(keywords, follows);
+				//getPastTweets(keywords, follows);
 				
 				if (System.currentTimeMillis() - lastFilterInitTime < FILTER_EDIT_WAIT_TIME){
                      try {
@@ -246,7 +246,7 @@ public class TwitterSubscriber implements Subscriber{
 					}
 
 				} catch (TwitterException e) {
-					e.printStackTrace();
+					logger.error(e);
 					break;
 				}
 			}
