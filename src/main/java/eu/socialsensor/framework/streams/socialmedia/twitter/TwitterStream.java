@@ -59,6 +59,7 @@ public class TwitterStream extends Stream {
 		else{
 			String maxRequests = config.getParameter(MAX_REQUESTS);
 			String maxResults = config.getParameter(MAX_RESULTS);
+			
 			retriever = new TwitterRetriever(conf,this,Integer.parseInt(maxRequests),Integer.parseInt(maxResults));
 		}
 			
