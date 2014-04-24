@@ -60,14 +60,17 @@ public class RSSRetriever implements Retriever{
 	      
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-		
+			return 0;
 		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
-			
+			return 0;
 		} catch (FeedException e) {
 			// TODO Auto-generated catch block
-			
-		} 
+			return 0;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			return 0;
+		}
 		return totalRetrievedItems;
 	}
 
