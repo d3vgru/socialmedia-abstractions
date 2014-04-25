@@ -282,8 +282,7 @@ public class TwitterSubscriber implements Subscriber {
 				}
 			} catch (TwitterException e) {
 				logger.error("Error while getting user ids from twitter...");
-				logger.error("Exception",e
-						);
+				logger.error("Exception in getUserIds: ", e);
 				break;
 			}
 			
@@ -344,7 +343,8 @@ public class TwitterSubscriber implements Subscriber {
 			
 			@Override
 			public void onException(Exception ex) {
-				synchronized(this){
+				synchronized(this) {
+					ex.printStackTrace();
 					logger.error("Internal stream error occured: " + ex.getMessage());
 				}
 			}
