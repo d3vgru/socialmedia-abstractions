@@ -63,6 +63,11 @@ public class InstagramRetriever implements SocialMediaRetriever {
 
 	private InstagramOembed instagramOembed;
 	
+	public InstagramRetriever(String clientId) {
+		this.instagram = new Instagram(clientId);
+		this.instagramOembed = new InstagramOembed();
+	}
+	
 	public InstagramRetriever(String secret, String token) {
 		Token instagramToken = new Token(token, secret); 
 		this.instagram = new Instagram(instagramToken);
