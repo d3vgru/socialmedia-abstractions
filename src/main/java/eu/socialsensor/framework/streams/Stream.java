@@ -121,10 +121,10 @@ public abstract class Stream implements Runnable {
 	public void setAsSubscriber(){
 		this.isSubscriber = true;
 	}
-	
+
 	public synchronized void stream(List<Feed> feeds) throws StreamException {
 		
-		if(subscriber != null){
+		if(subscriber != null) {
 			subscriber.subscribe(feeds);
 		}
 		

@@ -36,7 +36,7 @@ import eu.socialsensor.framework.streams.StreamException;
 import eu.socialsensor.framework.streams.socialmedia.twitter.TwitterStream;
 import eu.socialsensor.framework.subscribers.socialmedia.Subscriber;
 
-public class TwitterSubscriber implements Subscriber{
+public class TwitterSubscriber implements Subscriber {
 	private Logger  logger = Logger.getLogger(TwitterSubscriber.class);
 	
 	public static long FILTER_EDIT_WAIT_TIME = 10000;
@@ -196,6 +196,7 @@ public class TwitterSubscriber implements Subscriber{
 		}
 		
 	}
+	
 	
 	public void getPastTweets(String[] keywords, long[] userids) {
 		

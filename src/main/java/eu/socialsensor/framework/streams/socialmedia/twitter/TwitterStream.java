@@ -59,10 +59,13 @@ public class TwitterStream extends Stream {
 			.setOAuthAccessTokenSecret(oAuthAccessTokenSecret);
 		Configuration conf = cb.build();
 		
-		if(isSubscriber){
+		if(isSubscriber) {
+			logger.info("Initialize Twitter Subscriber");
 			subscriber = new TwitterSubscriber(conf, this);
 		}
-		else{
+		else {
+			logger.info("Initialize Twitter Retriever for REST api");
+			
 			String maxRequests = config.getParameter(MAX_REQUESTS);
 			String maxResults = config.getParameter(MAX_RESULTS);
 			
