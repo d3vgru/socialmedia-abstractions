@@ -45,6 +45,12 @@ public class TwitterStream extends Stream {
 			throw new StreamException("Stream requires authentication");
 		}
 		
+		logger.info("Twitter Credentials: \n" + 
+				"oAuthConsumerKey:  " + oAuthConsumerKey  + "\n" +
+				"oAuthConsumerSecret:  " + oAuthConsumerSecret  + "\n" +
+				"oAuthAccessToken:  " + oAuthAccessToken + "\n" +
+				"oAuthAccessTokenSecret:  " + oAuthAccessTokenSecret);
+		
 		ConfigurationBuilder cb = new ConfigurationBuilder();
 		cb.setJSONStoreEnabled(true)
 			.setOAuthConsumerKey(oAuthConsumerKey)
@@ -54,13 +60,13 @@ public class TwitterStream extends Stream {
 		Configuration conf = cb.build();
 		
 		if(isSubscriber){
-			subscriber = new TwitterSubscriber(conf,this);
+			subscriber = new TwitterSubscriber(conf, this);
 		}
 		else{
 			String maxRequests = config.getParameter(MAX_REQUESTS);
 			String maxResults = config.getParameter(MAX_RESULTS);
 			
-			retriever = new TwitterRetriever(conf,this,Integer.parseInt(maxRequests),Integer.parseInt(maxResults));
+			retriever = new TwitterRetriever(conf, this, Integer.parseInt(maxRequests), Integer.parseInt(maxResults));
 		}
 			
 

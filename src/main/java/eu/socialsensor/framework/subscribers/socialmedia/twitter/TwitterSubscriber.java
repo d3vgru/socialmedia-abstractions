@@ -89,7 +89,6 @@ public class TwitterSubscriber implements Subscriber{
 			try {
 				throw new StreamException("Stream is already opened", null);
 			} catch (StreamException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
