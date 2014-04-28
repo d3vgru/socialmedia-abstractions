@@ -311,26 +311,33 @@ public class TwitterSubscriber implements Subscriber {
 			public void onStatus(Status status) {
 				synchronized(this) {
 					if(status != null){
+						try {
+							// Update original tweet in case of retweets
+							Status retweetedStatus = status.getRetweetedStatus();
+							if(retweetedStatus != null) {
+								twitStream.store(new TwitterItem(retweetedStatus));
+							}
 						
-						// Update original tweet in case of retweets
-						Status retweetedStatus = status.getRetweetedStatus();
-						if(retweetedStatus != null) {
-							twitStream.store(new TwitterItem(retweetedStatus));
+							// store
+							twitStream.store(new TwitterItem(status));
 						}
-						
-						// store
-						twitStream.store(new TwitterItem(status));
-					
+						catch(Exception e) {
+							logger.error("Exception onStatus: ", e);
+						}
 					}
 				}
 			}
 			
 			@Override
 			public void onDeletionNotice(StatusDeletionNotice statusDeletionNotice) {
-				
-					String id = Long.toString(statusDeletionNotice.getStatusId());
-					TwitterItem update = new TwitterItem(id, Operation.DELETED);
-					twitStream.delete(update);
+					try {
+						String id = Long.toString(statusDeletionNotice.getStatusId());
+						TwitterItem update = new TwitterItem(id, Operation.DELETED);
+						twitStream.delete(update);
+					}
+					catch(Exception e) {
+						logger.error("Exception onDeletionNotice: ", e);
+					}
 				
 			}
 			
@@ -350,14 +357,14 @@ public class TwitterSubscriber implements Subscriber {
 			}
 			@Override
 			public void onScrubGeo(long userid, long arg1) {
-				logger.info("Remove appropriate geolocation information for user " +
-						userid + " up to tweet with id " + arg1);
+				logger.info("Remove appropriate geolocation information for user " + userid + " up to tweet with id " + arg1);
 			}
 
 			@Override
 			public void onStallWarning(StallWarning warn) {	
-				logger.error("Stall Warning " + warn.getMessage() + "(" +
-						+ warn.getPercentFull() + ")");
+				if(warn != null) {
+					logger.error("Stall Warning " + warn.getMessage() + "(" + warn.getPercentFull() + ")");
+				}
 			}
 		};
 	}
