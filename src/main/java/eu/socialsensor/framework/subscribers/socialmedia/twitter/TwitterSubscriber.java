@@ -23,7 +23,7 @@ import twitter4j.TwitterFactory;
 import twitter4j.TwitterStreamFactory;
 import twitter4j.User;
 import twitter4j.conf.Configuration;
-import twitter4j.json.DataObjectFactory;
+
 import eu.socialsensor.framework.abstractions.socialmedia.twitter.TwitterItem;
 import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Keyword;
@@ -200,6 +200,7 @@ public class TwitterSubscriber implements Subscriber {
 	
 	
 	public void getPastTweets(String[] keywords, long[] userids) {
+		int maxReq  = 450;
 		
 		int totalRequests = 0;
 		
@@ -221,11 +222,11 @@ public class TwitterSubscriber implements Subscriber {
 					break;
 				}
 
-			} while(query != null && totalRequests < 180);
+			} while(query != null && totalRequests < maxReq);
 		}
 
 		if(userids != null) {
-			int mapPagesPerUser = 180 / userids.length;
+			int mapPagesPerUser = maxReq / userids.length;
 			for(long userid : userids) {
 				try {
 					int page = 1, count = 100;
@@ -240,7 +241,7 @@ public class TwitterSubscriber implements Subscriber {
 						paging.setCount(100);
 						
 						if(timeline.size()<count || page>mapPagesPerUser 
-								|| totalRequests>180) {
+								|| totalRequests>maxReq) {
 							break;
 						}
 
