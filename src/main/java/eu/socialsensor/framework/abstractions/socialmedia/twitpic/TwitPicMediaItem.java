@@ -7,6 +7,7 @@ import java.util.Date;
 import com.google.api.client.util.Key;
 
 import eu.socialsensor.framework.common.domain.MediaItem;
+import eu.socialsensor.framework.common.domain.StreamUser;
 
 /**
  * Class that holds the information regarding the twitpic media item
@@ -14,6 +15,11 @@ import eu.socialsensor.framework.common.domain.MediaItem;
  * @email  manosetro@iti.gr
  */
 public class TwitPicMediaItem extends MediaItem {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4938035976936525314L;
 
 	private static SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
@@ -35,7 +41,9 @@ public class TwitPicMediaItem extends MediaItem {
 			Date date = formatter.parse(image.timestamp);
 			this.setPublicationTime(date.getTime());
 		}
-		catch(Exception e){}
+		catch(Exception e){
+			
+		}
 		//PageUrl
 		this.setPageUrl(pageBase + image.short_id);
 		//Thumbnail
@@ -52,6 +60,9 @@ public class TwitPicMediaItem extends MediaItem {
 		//Size
 		this.setSize(image.width, image.height);
 		
+		this.setUserId(image.user_id);
+		StreamUser user = new TwitPicStreamUser(image.user);
+		this.setUser(user);
 	}
 
 
@@ -60,7 +71,7 @@ public class TwitPicMediaItem extends MediaItem {
 	 * @author manosetro
 	 * @email  manosetro@iti.gr
 	 */
-	public class TwitPicImage {
+	public static class TwitPicImage {
 		@Key
 		public String id, message, tags, short_id, type;
 		@Key
@@ -69,7 +80,20 @@ public class TwitPicMediaItem extends MediaItem {
 		public String timestamp;
 		@Key
 		public String user_id, location;
+		@Key
+		public TwitPicUser user;
 	}
 
+	/**
+	 * Class that holds the information regarding the twitpic image
+	 * @author manosetro
+	 * @email  manosetro@iti.gr
+	 */
+	public static class TwitPicUser {
+		@Key
+		public String id, username, name, bio, avatar_url, timestamp, location;
+		@Key
+		public int photo_count;
+	}
 	
 }

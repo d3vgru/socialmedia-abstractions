@@ -515,7 +515,7 @@ public class InstagramRetriever implements SocialMediaRetriever {
 				return mediaItem;
 			}
 		} catch (Exception e) {
-		
+			e.printStackTrace();
 		} 
 
 		

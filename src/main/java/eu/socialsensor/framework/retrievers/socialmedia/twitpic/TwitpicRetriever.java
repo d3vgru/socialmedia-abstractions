@@ -60,7 +60,7 @@ public class TwitpicRetriever implements SocialMediaRetriever {
 				return mediaItem;
 			}
 		} catch (Exception e) {
-			//e.printStackTrace();
+			e.printStackTrace();
 		}
 		
 		return null;
@@ -68,31 +68,26 @@ public class TwitpicRetriever implements SocialMediaRetriever {
 
 	@Override
 	public Integer retrieve(Feed feed) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void stop() {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public Integer retrieveKeywordsFeeds(KeywordsFeed feed) throws Exception {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Integer retrieveUserFeeds(SourceFeed feed) throws Exception {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Integer retrieveLocationFeeds(LocationFeed feed) throws Exception {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
