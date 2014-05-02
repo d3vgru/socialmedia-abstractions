@@ -8,6 +8,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 
+import org.apache.log4j.Logger;
+
 import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.retrievers.Retriever;
 
@@ -19,6 +21,8 @@ import eu.socialsensor.framework.retrievers.Retriever;
  * Reference: "Maintaining Dynamic Channel Profiles on The Web". 
  */
 public class FeedsMonitor {
+	
+	private Logger _logger = Logger.getLogger(FeedsMonitor.class);
 	
 	private Map<String, FeedFetchTask> feedFetchTasks;
 	private ScheduledExecutorService scheduler;
@@ -45,7 +49,7 @@ public class FeedsMonitor {
 		for(Feed feed : feeds) {
 			addFeed(feed);
 		}
-		System.out.println(feeds.size()+" added to monitor");
+		_logger.info(feeds.size()+" added to monitor");
 	}
 	public void removeFeed(Feed feed) {
 		String feedId = feed.getId();
@@ -54,7 +58,7 @@ public class FeedsMonitor {
 		feedFetchTasks.remove(feedId);
 	}
 	
-	public Integer collectRetrievedItems(){
+	public Integer collectRetrievedItems() {
 		Integer totalRetrievedItems = 0;
 		
 		for(FeedFetchTask  feedFetcherTask : feedFetchTasks.values()) {
@@ -65,7 +69,7 @@ public class FeedsMonitor {
 		return totalRetrievedItems;
 	}
 	
-	public void resetMonitor(){
+	public void resetMonitor() {
 		for(FeedFetchTask  feedFetcherTask : feedFetchTasks.values()) {
 			feedFetcherTask.stop();
 		}
@@ -86,7 +90,7 @@ public class FeedsMonitor {
 		scheduler = Executors.newScheduledThreadPool(size);
 	}
 	
-	public boolean isMonitorFinished(){
+	public boolean isMonitorFinished() {
 		int allComplete = 0;
 		List<FeedFetchTask> finishedTasks = new ArrayList<FeedFetchTask>();
 		while(allComplete < feedFetchTasks.size()){
@@ -99,7 +103,7 @@ public class FeedsMonitor {
 				}
 			}
 		}
-		System.out.println("FeedsMonitor is has executed all tasks!");
+		_logger.info("FeedsMonitor has executed all tasks!");
 		
 		return true;
 	}
@@ -118,9 +122,9 @@ public class FeedsMonitor {
 	
 	public void stopMonitor() {
 		for(FeedFetchTask  feedFetcher : feedFetchTasks.values()) {
-			System.out.println("Stop: " + feedFetcher.getFeedId());
+			_logger.info("Stop: " + feedFetcher.getFeedId());
 			feedFetcher.stop();
 		}
-		System.out.println("FeedsMonitor has stopped all tasks!");
+		_logger.info("FeedsMonitor has stopped all tasks!");
 	}
 }

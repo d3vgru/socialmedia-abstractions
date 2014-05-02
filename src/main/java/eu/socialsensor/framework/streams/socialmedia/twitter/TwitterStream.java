@@ -46,10 +46,10 @@ public class TwitterStream extends Stream {
 		}
 		
 		logger.info("Twitter Credentials: \n" + 
-				"oAuthConsumerKey:  " + oAuthConsumerKey  + "\n" +
-				"oAuthConsumerSecret:  " + oAuthConsumerSecret  + "\n" +
-				"oAuthAccessToken:  " + oAuthAccessToken + "\n" +
-				"oAuthAccessTokenSecret:  " + oAuthAccessTokenSecret);
+				"\t\t\toAuthConsumerKey:  " + oAuthConsumerKey  + "\n" +
+				"\t\t\toAuthConsumerSecret:  " + oAuthConsumerSecret  + "\n" +
+				"\t\t\toAuthAccessToken:  " + oAuthAccessToken + "\n" +
+				"\t\t\toAuthAccessTokenSecret:  " + oAuthAccessTokenSecret);
 		
 		ConfigurationBuilder cb = new ConfigurationBuilder();
 		cb.setJSONStoreEnabled(true)

@@ -35,6 +35,7 @@ public abstract class Stream implements Runnable {
 	protected static final String ACCESS_TOKEN = "AccessToken";
 	protected static final String ACCESS_TOKEN_SECRET = "AccessTokenSecret";
 	protected static final String CLIENT_ID = "ClientId";
+	
 	protected static final String MAX_RESULTS = "maxResults";
 	protected static final String MAX_REQUESTS = "maxRequests";
 	
@@ -68,15 +69,23 @@ public abstract class Stream implements Runnable {
 	 *      In any case of error during stream close
 	 */
 	public void close() throws StreamException {
-		if(monitor != null)
+	
+		if(monitor != null) {
+			logger.info("Stop monitor");
 			monitor.stopMonitor();
-		if(retriever !=null)
+		}
+		
+		if(retriever !=null) {
+			logger.info("Stop retriever");
 			retriever.stop();
-		if(subscriber != null)
+		}
+		
+		if(subscriber != null) {
+			logger.info("Stop subscriber");
 			subscriber.stop();
+		}
 		
-		
-		logger.info("Close Stream  : "+this.getClass().getName());
+		logger.info("Close Stream  : " + this.getClass().getName());
 	}
 	
 	
@@ -93,7 +102,7 @@ public abstract class Stream implements Runnable {
 	 * Sets the feeds monitor for the stream
 	 * @return
 	 */
-	public boolean setMonitor(){
+	public boolean setMonitor() {
 		if(retriever == null)
 			return false;
 		
@@ -158,7 +167,7 @@ public abstract class Stream implements Runnable {
 			}
 			
 			
-			logger.info("Retrieved items for "+this.getClass().getName()+ " are : "+numOfRetrievedItems);
+			logger.info("Retrieved items for " + this.getClass().getName()+ " are : " + numOfRetrievedItems);
 		}
 		
 	}
@@ -199,12 +208,12 @@ public abstract class Stream implements Runnable {
 	private String[] getUserList(Item item) {
 		
 		Set<String> lists = new HashSet<String>();
-		if(usersToLists == null){
+		if(usersToLists == null) {
 			logger.error("User list is null");
 			return null;
 		}
 			
-		if(item.getUserId() == null){
+		if(item.getUserId() == null) {
 			logger.error("User in item is null");
 			return null;
 		}
@@ -252,9 +261,7 @@ public abstract class Stream implements Runnable {
 			return null;
 		}
 			
-		
 		return usersToCategory.get(item.getUserId());
-		
 	}
 	
 	/**
@@ -286,6 +293,7 @@ public abstract class Stream implements Runnable {
 				monitor.startMonitor(feed);
 				
 			} catch (InterruptedException e) {
+				logger.error(e);
 				return;
 			}
 		}

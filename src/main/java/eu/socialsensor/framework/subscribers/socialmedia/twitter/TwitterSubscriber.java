@@ -39,7 +39,7 @@ import eu.socialsensor.framework.subscribers.socialmedia.Subscriber;
 public class TwitterSubscriber implements Subscriber {
 	private Logger  logger = Logger.getLogger(TwitterSubscriber.class);
 	
-	public static long FILTER_EDIT_WAIT_TIME = 10000;
+	public static long FILTER_EDIT_WAIT_TIME = 1000;
 	
 	private long lastFilterInitTime = System.currentTimeMillis();
 	
@@ -294,11 +294,12 @@ public class TwitterSubscriber implements Subscriber {
 	}
 
 	@Override
-	public void stop(){
+	public void stop() {
 		if (listener != null) {
-			if(twitterStream!=null)
+			if(twitterStream != null) {
+				logger.info("Shutdown TwiterStream.");
 				twitterStream.shutdown();
-			
+			}
 			listener = null;
 			twitterStream  = null;
 			
@@ -307,6 +308,8 @@ public class TwitterSubscriber implements Subscriber {
 	
 	private StatusListener getListener() { 
 		return new StatusListener() {
+			long items = 0;
+			
 			@Override
 			public void onStatus(Status status) {
 				synchronized(this) {
@@ -319,6 +322,9 @@ public class TwitterSubscriber implements Subscriber {
 							}
 						
 							// store
+							if(++items%5000==0) {
+								logger.info(items + " incoming items from twitter.");
+							}
 							twitStream.store(new TwitterItem(status));
 						}
 						catch(Exception e) {
@@ -381,23 +387,28 @@ public class TwitterSubscriber implements Subscriber {
 		FilterQuery query = new FilterQuery();
 		boolean empty = true;
 		if (keywords != null && keywords.length > 0) {
+			logger.info(follows.length + " keywords to track.");
 			query = query.track(keywords);
 			empty = false;
 		}
 		
 		if (follows != null && follows.length > 0) {
+			logger.info(follows.length + " users to follow.");
 			query = query.follow(follows);
 			empty = false;
 		}
 		
 		if (locations != null && locations.length > 0) {
+			logger.info(locations.length + " locations to track.");
 			query = query.locations(locations);
 			empty = false;
 		}
 		
-		if (empty) 
+		if (empty) {
 			return null;
-		else 
+		}
+		else {
 			return query;
+		}
 	}
 }
