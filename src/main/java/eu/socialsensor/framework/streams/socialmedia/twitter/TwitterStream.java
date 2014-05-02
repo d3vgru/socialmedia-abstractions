@@ -52,7 +52,7 @@ public class TwitterStream extends Stream {
 				"\t\t\toAuthAccessTokenSecret:  " + oAuthAccessTokenSecret);
 		
 		ConfigurationBuilder cb = new ConfigurationBuilder();
-		cb.setJSONStoreEnabled(true)
+		cb.setJSONStoreEnabled(false)
 			.setOAuthConsumerKey(oAuthConsumerKey)
 			.setOAuthConsumerSecret(oAuthConsumerSecret)
 			.setOAuthAccessToken(oAuthAccessToken)

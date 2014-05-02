@@ -23,6 +23,7 @@ import twitter4j.TwitterFactory;
 import twitter4j.TwitterStreamFactory;
 import twitter4j.User;
 import twitter4j.conf.Configuration;
+import twitter4j.json.DataObjectFactory;
 import eu.socialsensor.framework.abstractions.socialmedia.twitter.TwitterItem;
 import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Keyword;
@@ -315,6 +316,7 @@ public class TwitterSubscriber implements Subscriber {
 				synchronized(this) {
 					if(status != null){
 						try {
+							
 							// Update original tweet in case of retweets
 							Status retweetedStatus = status.getRetweetedStatus();
 							if(retweetedStatus != null) {
