@@ -139,28 +139,26 @@ public class InstagramRetriever implements SocialMediaRetriever {
 							}
 							totalRetrievedItems++;
 						}
-						
 					}
 				}
 				
 			}
 			catch(InstagramException e){
-				logger.error("#Instagram Exception : "+e);
+				logger.error("#Instagram Exception:", e);
 				return totalRetrievedItems;
-			} catch (MalformedURLException e1) {
-				// TODO Auto-generated catch block
-				logger.error("#Instagram Exception : "+e1);
-				e1.printStackTrace();
+			} catch (MalformedURLException e) {
+				logger.error("#Instagram Exception: ", e);
+				e.printStackTrace();
 				return totalRetrievedItems;
 			}
 		}	
 		
-		//logger.info("#Instagram : Done retrieving for this session");
 		logger.info("#Instagram : Handler fetched " + totalRetrievedItems + " photos from " + uName + 
 				" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
 		
 		return totalRetrievedItems;
 	}
+	
 	@Override
 	public Integer retrieveKeywordsFeeds(KeywordsFeed feed){
 		Integer totalRetrievedItems = 0;
@@ -299,7 +297,7 @@ public class InstagramRetriever implements SocialMediaRetriever {
 		return totalRetrievedItems;
 	}
 	@Override
-	public Integer retrieveLocationFeeds(LocationFeed feed){
+	public Integer retrieveLocationFeeds(LocationFeed feed) {
 		Integer totalRetrievedItems = 0;
 		
 		Date lastItemDate = feed.getDateToRetrieve();
@@ -390,9 +388,9 @@ public class InstagramRetriever implements SocialMediaRetriever {
     		
     	}
     	
-//    	logger.info("#Instagram : Done retrieving for this session");
-//		logger.info("#Instagram : Handler fetched " + items.size() + " posts from (" + latitude+","+longtitude+")" + 
-//				" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
+    	//logger.info("#Instagram : Done retrieving for this session");
+		//logger.info("#Instagram : Handler fetched " + totalRetrievedItems + " posts from (" + latitude+","+longtitude+")" + 
+		//		" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
 		
     	return totalRetrievedItems;
     }
@@ -416,6 +414,9 @@ public class InstagramRetriever implements SocialMediaRetriever {
 				LocationFeed locationFeed = (LocationFeed) feed;
 				
 				return retrieveLocationFeeds(locationFeed);
+			default:
+				logger.error("Unkonwn Feed Type: " + feed.toJSONString());
+				break;
 				
 		}
 		 
@@ -441,9 +442,9 @@ public class InstagramRetriever implements SocialMediaRetriever {
 	}
 
 	@Override
-	public MediaItem getMediaItem(String sid) {
+	public MediaItem getMediaItem(String shortId) {
 		try {
-			String id = getMediaId("http://instagram.com/p/"+sid);
+			String id = getMediaId("http://instagram.com/p/"+shortId);
 			
 			MediaInfoFeed mediaInfo = instagram.getMediaInfo(id);
 			if(mediaInfo != null) {
@@ -516,8 +517,8 @@ public class InstagramRetriever implements SocialMediaRetriever {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			logger.error(e);
 		} 
-
 		
 		return null;
 	}
@@ -532,6 +533,7 @@ public class InstagramRetriever implements SocialMediaRetriever {
 			return user;
 		}
 		catch(Exception e) {
+			logger.error("Exception for user " + uid, e);
 			return null;
 		}
 	}
@@ -541,7 +543,7 @@ public class InstagramRetriever implements SocialMediaRetriever {
 			OembedInformation info = instagramOembed.getOembedInformation(url);
 			return info.getMediaId();
 		} catch (InstagramException e) {
-
+			logger.error("Failed to get id for " + url, e);
 		}
 		return null;
 	}

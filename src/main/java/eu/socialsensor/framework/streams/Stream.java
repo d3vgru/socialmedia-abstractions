@@ -75,7 +75,7 @@ public abstract class Stream implements Runnable {
 			monitor.stopMonitor();
 		}
 		
-		if(retriever !=null) {
+		if(retriever != null) {
 			logger.info("Stop retriever");
 			retriever.stop();
 		}
@@ -139,7 +139,7 @@ public abstract class Stream implements Runnable {
 		
 	}
 	
-	public synchronized List<Item> getTotalRetrievedItems(){
+	public synchronized List<Item> getTotalRetrievedItems() {
 		return this.totalRetrievedItems;
 	}
 	
@@ -151,28 +151,27 @@ public abstract class Stream implements Runnable {
 	 * @throws StreamException
 	 */
 	public synchronized void poll(List<Feed> feeds) throws StreamException {
+		
 		Integer numOfRetrievedItems = 0;
 		
 		totalRetrievedItems.clear();
 		
 		if(retriever != null) {
 		
-			if(feeds == null)
+			if(feeds == null) {
+				logger.error("Feeds is null in poll method.");
 				return;
-				
-			for(Feed feed : feeds){
-			
-				numOfRetrievedItems += retriever.retrieve(feed);
-				
 			}
 			
+			logger.info("poll for " + feeds.size() + " feeds");
+			for(Feed feed : feeds){
+				numOfRetrievedItems += retriever.retrieve(feed);
+			}
 			
 			logger.info("Retrieved items for " + this.getClass().getName()+ " are : " + numOfRetrievedItems);
 		}
 		
 	}
-	
-	
 	
 	/**
 	 * Store a set of items in the selected databases
@@ -200,7 +199,9 @@ public abstract class Stream implements Runnable {
 		if(usersToCategory != null && getUserCategory(item) != null)
 			item.setCategory(getUserCategory(item));
 		
-		totalRetrievedItems.add(item);
+		if(!this.isSubscriber) {
+			totalRetrievedItems.add(item);
+		}
 		
 		handler.update(item);
 	}

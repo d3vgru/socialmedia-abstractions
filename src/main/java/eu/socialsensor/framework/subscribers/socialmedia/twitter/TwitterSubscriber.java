@@ -23,7 +23,6 @@ import twitter4j.TwitterFactory;
 import twitter4j.TwitterStreamFactory;
 import twitter4j.User;
 import twitter4j.conf.Configuration;
-
 import eu.socialsensor.framework.abstractions.socialmedia.twitter.TwitterItem;
 import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Keyword;
@@ -33,8 +32,8 @@ import eu.socialsensor.framework.common.domain.Item.Operation;
 import eu.socialsensor.framework.common.domain.feeds.KeywordsFeed;
 import eu.socialsensor.framework.common.domain.feeds.LocationFeed;
 import eu.socialsensor.framework.common.domain.feeds.SourceFeed;
+import eu.socialsensor.framework.streams.Stream;
 import eu.socialsensor.framework.streams.StreamException;
-import eu.socialsensor.framework.streams.socialmedia.twitter.TwitterStream;
 import eu.socialsensor.framework.subscribers.socialmedia.Subscriber;
 
 public class TwitterSubscriber implements Subscriber {
@@ -44,7 +43,7 @@ public class TwitterSubscriber implements Subscriber {
 	
 	private long lastFilterInitTime = System.currentTimeMillis();
 	
-	private TwitterStream twitStream;
+	private Stream stream;
 	
 	public enum AccessLevel {
 		PUBLIC(400, 5000, 25);
@@ -75,7 +74,6 @@ public class TwitterSubscriber implements Subscriber {
 
 	}
 	
-	
 	private AccessLevel accessLevel = AccessLevel.PUBLIC;
 	private StatusListener listener = null;
 	private twitter4j.TwitterStream twitterStream  = null;
@@ -83,7 +81,7 @@ public class TwitterSubscriber implements Subscriber {
 	private Twitter twitterApi;
 	
 	
-	public TwitterSubscriber(Configuration conf,TwitterStream twitStream) {
+	public TwitterSubscriber(Configuration conf, Stream stream) {
 		
 		if (twitterStream != null) {
 			logger.error("#Twitter : Stream is already opened");
@@ -94,7 +92,7 @@ public class TwitterSubscriber implements Subscriber {
 			}
 		}
 		
-		this.twitStream = twitStream;
+		this.stream = stream;
 		
 		listener = getListener();
 		twitterStream = new TwitterStreamFactory(conf).getInstance();	
@@ -310,25 +308,26 @@ public class TwitterSubscriber implements Subscriber {
 	
 	private StatusListener getListener() { 
 		return new StatusListener() {
-			long items = 0;
+			long items = 0, deletion = 0;
 			
 			@Override
 			public void onStatus(Status status) {
 				synchronized(this) {
-					if(status != null){
+					if(status != null) {
 						try {
 							
 							// Update original tweet in case of retweets
 							Status retweetedStatus = status.getRetweetedStatus();
 							if(retweetedStatus != null) {
-								twitStream.store(new TwitterItem(retweetedStatus));
+								stream.store(new TwitterItem(retweetedStatus));
 							}
 						
 							// store
-							if(++items%5000==0) {
-								logger.info(items + " incoming items from twitter.");
+							if((++items)%5000==0) {
+								logger.info(items + " incoming items from twitter. " + deletion + " deletions.");
+								logger.info("Total retrieved items: " + stream.getTotalRetrievedItems().size());
 							}
-							twitStream.store(new TwitterItem(status));
+							stream.store(new TwitterItem(status));
 						}
 						catch(Exception e) {
 							logger.error("Exception onStatus: ", e);
@@ -340,9 +339,10 @@ public class TwitterSubscriber implements Subscriber {
 			@Override
 			public void onDeletionNotice(StatusDeletionNotice statusDeletionNotice) {
 					try {
+						deletion++;
 						String id = Long.toString(statusDeletionNotice.getStatusId());
 						TwitterItem update = new TwitterItem(id, Operation.DELETED);
-						twitStream.delete(update);
+						stream.delete(update);
 					}
 					catch(Exception e) {
 						logger.error("Exception onDeletionNotice: ", e);

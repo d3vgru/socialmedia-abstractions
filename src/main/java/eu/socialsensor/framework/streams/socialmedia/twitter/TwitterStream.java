@@ -1,4 +1,3 @@
-
 package eu.socialsensor.framework.streams.socialmedia.twitter;
 
 import org.apache.log4j.Logger;
@@ -70,68 +69,7 @@ public class TwitterStream extends Stream {
 			String maxResults = config.getParameter(MAX_RESULTS);
 			
 			retriever = new TwitterRetriever(conf, this, Integer.parseInt(maxRequests), Integer.parseInt(maxResults));
-		}
-			
-
-		/*logger.info("Start filtering.");
-		filter(filter);
-		
-		List<Keyword> keywords = new ArrayList<Keyword>();
-		for(String keyword : filter.keywords())
-			keywords.add(new Keyword(keyword, 0));
-		
-		crawlerSpecsDAO.setKeywords(keywords , Source.Type.Twitter);
-		Thread updater = new Thread(new CrawlerSpecsUpdate(crawlerSpecsDAO));
-		updater.start();*/
-		
+		}	
 	}
-
-
-
-//	public class CrawlerSpecsUpdate implements Runnable {
-//		
-//		private Logger  LOG = Logger.getLogger(CrawlerSpecsUpdate.class);
-//		
-//		CrawlerSpecsDAO crawlerSpecs = null;
-//		long update_period = 3000;
-//		
-//		public CrawlerSpecsUpdate(CrawlerSpecsDAO crawlerSpecs) {
-//			this.crawlerSpecs = crawlerSpecs;
-//		}
-//		
-//		@Override
-//		public void run() {
-//			while(true) {
-//				try {
-//					Thread.sleep(update_period);
-//				} catch (InterruptedException e) {
-//					e.printStackTrace();
-//					continue;
-//				}
-//				
-//				List<Keyword> keywords = crawlerSpecs.getTopKeywords(10, SOURCE);
-//				System.out.println("=======UPDATE CRAWLER SPECS=====");
-//				for(Keyword keyword : keywords) {
-//					System.out.println(keyword.toJSONString());
-//				}
-//				System.out.println("================================");
-//
-//				List<String> filter_keywords = new ArrayList<String>(keywords.size());
-//				for(Keyword keyword : keywords) {
-//					filter_keywords.add(keyword.getName());
-//				}
-////				
-////				List<Long> follows = new ArrayList<Long>(topKeywords.size());
-////				for(String source : topSources) {
-////					follows.add(Long.parseLong(source));
-////				}
-//				
-//			
-//			}
-//		}
-//		
-//	}
-
-	
 }
 
