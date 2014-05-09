@@ -462,8 +462,11 @@ public class InstagramRetriever implements SocialMediaRetriever {
 				String mediaId = "Instagram#" + mediaData.getId();
 				List<String> tags = mediaData.getTags();
 				
+				String title = null;
 				Caption caption = mediaData.getCaption();
-				String title = caption.getText();
+				if(caption !=  null) {
+					title = caption.getText();
+				}
 				
 				Long publicationTime = new Long(1000*Long.parseLong(mediaData.getCreatedTime()));
 				
@@ -516,7 +519,6 @@ public class InstagramRetriever implements SocialMediaRetriever {
 				return mediaItem;
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
 			logger.error(e);
 		} 
 		
