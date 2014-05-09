@@ -445,6 +445,8 @@ public class InstagramRetriever implements SocialMediaRetriever {
 	public MediaItem getMediaItem(String shortId) {
 		try {
 			String id = getMediaId("http://instagram.com/p/"+shortId);
+			if(id == null)
+				return null;
 			
 			MediaInfoFeed mediaInfo = instagram.getMediaInfo(id);
 			if(mediaInfo != null) {
@@ -543,6 +545,8 @@ public class InstagramRetriever implements SocialMediaRetriever {
 	private String getMediaId(String url) {
 		try {
 			OembedInformation info = instagramOembed.getOembedInformation(url);
+			if(info == null) 
+				return null;
 			return info.getMediaId();
 		} catch (InstagramException e) {
 			logger.error("Failed to get id for " + url, e);

@@ -6,14 +6,6 @@ import java.net.URL;
 import java.util.Date;
 import java.util.List;
 
-
-
-
-
-
-
-
-
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 
@@ -42,6 +34,7 @@ import eu.socialsensor.framework.common.domain.StreamUser;
 import eu.socialsensor.framework.common.domain.feeds.KeywordsFeed;
 import eu.socialsensor.framework.common.domain.feeds.LocationFeed;
 import eu.socialsensor.framework.common.domain.feeds.SourceFeed;
+import eu.socialsensor.framework.retrievers.Retriever;
 import eu.socialsensor.framework.retrievers.socialmedia.SocialMediaRetriever;
 import eu.socialsensor.framework.streams.socialmedia.youtube.YoutubeStream;
 
@@ -366,9 +359,8 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 
 		
 	public MediaItem getMediaItem(String id) {
-		URL entryUrl;
 		try {
-			entryUrl = new URL(activityFeedVideoUrlPrefix +"/"+ id);
+			URL entryUrl = new URL(activityFeedVideoUrlPrefix +"/"+ id);
 			VideoEntry entry = service.getEntry(entryUrl, VideoEntry.class);
 			if(entry != null) {
 				YouTubeMediaGroup mediaGroup = entry.getMediaGroup();
@@ -452,7 +444,6 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 		} catch (Exception e) {
 			logger.error(e);
 		} 
-	
 		return null;
 	}
 
@@ -476,4 +467,6 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 		
 		return null;
 	}
+	
+
 }
