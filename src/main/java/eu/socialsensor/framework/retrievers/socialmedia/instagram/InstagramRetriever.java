@@ -548,7 +548,7 @@ public class InstagramRetriever implements SocialMediaRetriever {
 			if(info == null) 
 				return null;
 			return info.getMediaId();
-		} catch (InstagramException e) {
+		} catch (Exception e) {
 			logger.error("Failed to get id for " + url, e);
 		}
 		return null;

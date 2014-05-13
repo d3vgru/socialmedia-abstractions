@@ -1,5 +1,7 @@
 package eu.socialsensor.framework.retrievers.socialmedia.facebook;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -7,12 +9,14 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import com.restfb.Connection;
+import com.restfb.DefaultFacebookClient;
 import com.restfb.FacebookClient;
 import com.restfb.Parameter;
 import com.restfb.exception.FacebookResponseStatusException;
 import com.restfb.types.CategorizedFacebookType;
 import com.restfb.types.Comment;
 import com.restfb.types.Page;
+import com.restfb.types.Photo;
 import com.restfb.types.Post;
 import com.restfb.types.Post.Comments;
 import com.restfb.types.User;
@@ -20,6 +24,7 @@ import com.restfb.types.User;
 import eu.socialsensor.framework.abstractions.socialmedia.facebook.FacebookItem;
 import eu.socialsensor.framework.abstractions.socialmedia.facebook.FacebookStreamUser;
 import eu.socialsensor.framework.common.domain.Feed;
+import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.Keyword;
 import eu.socialsensor.framework.common.domain.MediaItem;
 import eu.socialsensor.framework.common.domain.Source;
@@ -325,8 +330,45 @@ public class FacebookRetriever implements SocialMediaRetriever {
 	}
 
 	@Override
-	public MediaItem getMediaItem(String id) {
-		return null;
+	public MediaItem getMediaItem(String mediaId) {
+		Photo photo = facebookClient.fetchObject(mediaId, Photo.class);
+		
+		if(photo == null)
+			return null;
+
+		MediaItem mediaItem = null;
+		try {
+			String src = photo.getSource();
+			mediaItem = new MediaItem(new URL(src));
+			mediaItem.setId("Facebook#" + photo.getId());
+			
+			mediaItem.setPageUrl(photo.getLink());
+			mediaItem.setThumbnail(photo.getPicture());
+			
+			mediaItem.setStreamId("Facebook");
+			mediaItem.setType("image");
+			
+			mediaItem.setTitle(photo.getName());
+			
+			Date date = photo.getCreatedTime();
+			mediaItem.setPublicationTime(date.getTime());
+			
+			mediaItem.setSize(photo.getWidth(), photo.getHeight());
+			mediaItem.setLikes((long) photo.getLikes().size());
+			
+			CategorizedFacebookType from = photo.getFrom();
+			if(from != null) {
+				StreamUser streamUser = new FacebookStreamUser(from);
+				mediaItem.setUser(streamUser);
+				mediaItem.setUserId(streamUser.getUserid());
+			}
+			
+			
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+		
+		return mediaItem;
 	}
 
 	@Override
@@ -338,6 +380,19 @@ public class FacebookRetriever implements SocialMediaRetriever {
 		}
 		catch(Exception e) {
 			return null;
+		}
+	}
+	
+	public static void main(String...args) {
+		String accessToken = "260504214011769|jATWKceE7aVH4jxsB4DBuNjKBRc";
+		FacebookClient fbClient = new DefaultFacebookClient(accessToken );
+		
+		FacebookRetriever retriever = new FacebookRetriever(fbClient, 100, 0, 1000, null);
+		MediaItem mediaItem = retriever.getMediaItem("869838183042964");
+		
+		if(mediaItem != null) {
+			System.out.println(mediaItem.toJSONString());
+			System.out.println(mediaItem.getUser().toJSONString());
 		}
 	}
 }

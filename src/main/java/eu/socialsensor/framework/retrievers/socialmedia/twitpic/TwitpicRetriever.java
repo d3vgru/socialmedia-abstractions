@@ -60,7 +60,6 @@ public class TwitpicRetriever implements SocialMediaRetriever {
 				return mediaItem;
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
 		}
 		
 		return null;
