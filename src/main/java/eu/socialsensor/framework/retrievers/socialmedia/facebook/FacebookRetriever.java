@@ -58,6 +58,10 @@ public class FacebookRetriever implements SocialMediaRetriever {
 	
 	private Logger  logger = Logger.getLogger(FacebookRetriever.class);
 	
+	public FacebookRetriever(String  facebookAccessToken) {
+		this.facebookClient = new DefaultFacebookClient(facebookAccessToken);
+	}
+	
 	public FacebookRetriever(FacebookClient facebookClient, int maxRequests, long minInterval,Integer maxResults,FacebookStream fbStream) {
 		this.facebookClient = facebookClient;		
 		this.fbStream = fbStream;
