@@ -445,6 +445,8 @@ public class InstagramRetriever implements SocialMediaRetriever {
 	public MediaItem getMediaItem(String shortId) {
 		try {
 			String id = getMediaId("http://instagram.com/p/"+shortId);
+			if(id == null)
+				return null;
 			
 			MediaInfoFeed mediaInfo = instagram.getMediaInfo(id);
 			if(mediaInfo != null) {
@@ -462,8 +464,11 @@ public class InstagramRetriever implements SocialMediaRetriever {
 				String mediaId = "Instagram#" + mediaData.getId();
 				List<String> tags = mediaData.getTags();
 				
+				String title = null;
 				Caption caption = mediaData.getCaption();
-				String title = caption.getText();
+				if(caption !=  null) {
+					title = caption.getText();
+				}
 				
 				Long publicationTime = new Long(1000*Long.parseLong(mediaData.getCreatedTime()));
 				
@@ -516,7 +521,6 @@ public class InstagramRetriever implements SocialMediaRetriever {
 				return mediaItem;
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
 			logger.error(e);
 		} 
 		
@@ -541,6 +545,8 @@ public class InstagramRetriever implements SocialMediaRetriever {
 	private String getMediaId(String url) {
 		try {
 			OembedInformation info = instagramOembed.getOembedInformation(url);
+			if(info == null) 
+				return null;
 			return info.getMediaId();
 		} catch (InstagramException e) {
 			logger.error("Failed to get id for " + url, e);
