@@ -184,7 +184,7 @@ public class FacebookRetriever implements SocialMediaRetriever {
 		if(tags.equals(""))
 			return totalRetrievedItems;
 		
-		logger.info("#Facebook : Retrieving Keywords Feed : "+tags);
+		//logger.info("#Facebook : Retrieving Keywords Feed : "+tags);
 		Connection<Post> connection = null;
 		try{
 			connection = facebookClient.fetchConnection("search",Post.class,
