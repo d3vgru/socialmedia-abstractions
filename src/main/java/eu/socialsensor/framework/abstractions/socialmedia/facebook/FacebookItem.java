@@ -55,6 +55,8 @@ public class FacebookItem extends Item {
 		
 		description = post.getDescription();
 		
+		original = true;
+		
 		//Message that post contains
   		String msg = post.getMessage();
   		if(msg != null) {
