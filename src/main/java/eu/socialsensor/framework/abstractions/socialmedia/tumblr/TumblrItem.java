@@ -37,8 +37,10 @@ public class TumblrItem extends Item{
 		
 		super(SocialNetworkSource.Tumblr.toString(), Operation.NEW);
 		
-		if(post == null || post.getId() == null)
+		if(post == null || post.getId() == null){
 			return;
+		}
+			
 		
 		//Id
 		id = SocialNetworkSource.Tumblr + "#" + post.getId();
@@ -119,6 +121,9 @@ public class TumblrItem extends Item{
 		
 			String embedCode = videos.get(0).getEmbedCode();
 		
+			if(embedCode == null)
+				return; 
+			
 			String postfix = "";
 			String prefix = "src=";
 			String compl = "";
