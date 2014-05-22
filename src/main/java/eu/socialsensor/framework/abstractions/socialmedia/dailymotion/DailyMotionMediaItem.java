@@ -48,7 +48,7 @@ public class DailyMotionMediaItem extends MediaItem {
 	}
 
 	/** Represents a daily motion video. */
-	public class DailyMotionVideo {
+	public static class DailyMotionVideo {
 		@Key
 		public String id, title, url, embed_url, thumbnail_url;
 		@Key

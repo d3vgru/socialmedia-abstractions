@@ -58,7 +58,7 @@ public class VimeoMediaItem extends MediaItem {
 
 	}
 	
-	public class VimeoVideo {
+	public static class VimeoVideo {
 		
 		@Key
 		public int id;
