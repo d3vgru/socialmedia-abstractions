@@ -24,7 +24,6 @@ import com.restfb.types.User;
 import eu.socialsensor.framework.abstractions.socialmedia.facebook.FacebookItem;
 import eu.socialsensor.framework.abstractions.socialmedia.facebook.FacebookStreamUser;
 import eu.socialsensor.framework.common.domain.Feed;
-import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.Keyword;
 import eu.socialsensor.framework.common.domain.MediaItem;
 import eu.socialsensor.framework.common.domain.Source;
@@ -161,7 +160,7 @@ public class FacebookRetriever implements SocialMediaRetriever {
 		
 		Date lastItemDate = feed.getDateToRetrieve();
 		
-		
+		long t1 = System.currentTimeMillis();
 		
 		boolean isFinished = false;
 		
@@ -199,8 +198,8 @@ public class FacebookRetriever implements SocialMediaRetriever {
 			connection = facebookClient.fetchConnection("search",Post.class,
 					Parameter.with("q",tags),Parameter.with("type","post"));
 			
-			Connection<Page> page_connection = facebookClient.fetchConnection("search",Page.class,
-					Parameter.with("q",tags),Parameter.with("type","page"));
+			//Connection<Page> page_connection = facebookClient.fetchConnection("search",Page.class,
+					//Parameter.with("q",tags),Parameter.with("type","page"));
 			
 			/*for(List<Page> pageConnection : page_connection)
 				for(Page page : pageConnection){
@@ -248,7 +247,8 @@ public class FacebookRetriever implements SocialMediaRetriever {
 //		logger.info("#Facebook : Done retrieving for this session");
 //		logger.info("#Facebook : Handler fetched " + items.size() + " posts from " + tags + 
 //			" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
-		
+		long t2 = System.currentTimeMillis();
+		System.out.println("Facebook Retrieval time: "+(t2-t1)/1000);
 	
 		return totalRetrievedItems;
 	}

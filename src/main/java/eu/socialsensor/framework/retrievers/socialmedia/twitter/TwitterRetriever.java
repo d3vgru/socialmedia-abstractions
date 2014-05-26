@@ -57,7 +57,7 @@ public class TwitterRetriever implements SocialMediaRetriever {
 	
 	@Override
 	public Integer retrieveKeywordsFeeds(KeywordsFeed feed) {
-		int count = 100 , numberOfRequests = 0;
+		int count = 50 , numberOfRequests = 0;
 		String resultType = "recent";
 	
 		Integer totalRetrievedItems = 0;
@@ -96,35 +96,35 @@ public class TwitterRetriever implements SocialMediaRetriever {
 		query.count(count);
 		query.setResultType(resultType);//do not set last item date-causes problems!
 		
-		while(true) {
-			try {
-				QueryResult response = twitter.search(query);
+		
+		try {
+			QueryResult response = twitter.search(query);
+		
+			numberOfRequests++;
 			
-				numberOfRequests++;
-				
-				List<Status> statuses = response.getTweets();
-				
-				for(Status status : statuses) {
-					if(status != null){
-						TwitterItem twitterItem = new TwitterItem(status);
-						twStream.store(twitterItem);
-						totalRetrievedItems++;
-					}
+			List<Status> statuses = response.getTweets();
+			
+			for(Status status : statuses) {
+				if(status != null){
+					TwitterItem twitterItem = new TwitterItem(status);
+					twStream.store(twitterItem);
+					totalRetrievedItems++;
 				}
-				
-				if(!response.hasNext() || totalRetrievedItems > maxResults || numberOfRequests > maxRequests)
-					break;
-				
-				query = response.nextQuery();
-				if(query == null)
-					break;
-				query.count(count);
-				
-			} catch (TwitterException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}	
-		}
+			}
+			
+//			if(!response.hasNext() || totalRetrievedItems > maxResults || numberOfRequests > maxRequests)
+//				break;
+			
+			//query = response.nextQuery();
+//			if(query == null)
+//				break;
+			//query.count(count);
+			
+		} catch (TwitterException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
+	
 		
 		return totalRetrievedItems;
 	}

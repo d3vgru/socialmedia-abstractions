@@ -35,6 +35,8 @@ public abstract class Stream implements Runnable {
 	protected static final String ACCESS_TOKEN = "AccessToken";
 	protected static final String ACCESS_TOKEN_SECRET = "AccessTokenSecret";
 	protected static final String CLIENT_ID = "ClientId";
+	protected static final String APP_ID = "AppId";
+	protected static final String APP_SECRET = "AppSecret";
 	
 	protected static final String MAX_RESULTS = "maxResults";
 	protected static final String MAX_REQUESTS = "maxRequests";
