@@ -55,6 +55,8 @@ public class FacebookRetriever implements SocialMediaRetriever {
 	private int maxResults;
 	private int maxRequests;
 	
+	private long runningTime = 0L;
+	
 	private Logger  logger = Logger.getLogger(FacebookRetriever.class);
 	
 	public FacebookRetriever(String  facebookAccessToken) {
@@ -69,7 +71,7 @@ public class FacebookRetriever implements SocialMediaRetriever {
 		this.maxRequests = maxRequests;
 	}
 	
-	public List<String> getRetrivedFbPages(){
+	public List<String> getRetrievedFbPages(){
 		return retrievedPages;
 	}
 	
@@ -158,9 +160,9 @@ public class FacebookRetriever implements SocialMediaRetriever {
 	public Integer retrieveKeywordsFeeds(KeywordsFeed feed){
 		Integer totalRetrievedItems = 0;
 		
-		Date lastItemDate = feed.getDateToRetrieve();
+		runningTime = System.currentTimeMillis();
 		
-		long t1 = System.currentTimeMillis();
+		Date lastItemDate = feed.getDateToRetrieve();
 		
 		boolean isFinished = false;
 		
@@ -195,6 +197,8 @@ public class FacebookRetriever implements SocialMediaRetriever {
 		//logger.info("#Facebook : Retrieving Keywords Feed : "+tags);
 		Connection<Post> connection = null;
 		try{
+			long t1 = System.currentTimeMillis();
+			
 			connection = facebookClient.fetchConnection("search",Post.class,
 					Parameter.with("q",tags),Parameter.with("type","post"));
 			
@@ -206,6 +210,10 @@ public class FacebookRetriever implements SocialMediaRetriever {
 					System.out.println("page : "+page.getName());
 					retrievedPages.add(page.getName());
 				}*/
+			
+			long t2 = System.currentTimeMillis();
+			
+			System.out.println("Facebook Retrieval time: "+(t2-t1)/1000);
 		}catch(FacebookResponseStatusException e1){
 			
 			return totalRetrievedItems;
@@ -233,7 +241,7 @@ public class FacebookRetriever implements SocialMediaRetriever {
 					break;
 				}
 				
-				if(publicationDate.before(lastItemDate) || totalRetrievedItems>maxResults){
+				if(publicationDate.before(lastItemDate) || totalRetrievedItems>maxResults || (System.currentTimeMillis() - runningTime) > 60000){
 					isFinished = true;
 					break;
 				}
@@ -247,8 +255,8 @@ public class FacebookRetriever implements SocialMediaRetriever {
 //		logger.info("#Facebook : Done retrieving for this session");
 //		logger.info("#Facebook : Handler fetched " + items.size() + " posts from " + tags + 
 //			" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
-		long t2 = System.currentTimeMillis();
-		System.out.println("Facebook Retrieval time: "+(t2-t1)/1000);
+		
+		
 	
 		return totalRetrievedItems;
 	}
@@ -281,7 +289,7 @@ public class FacebookRetriever implements SocialMediaRetriever {
 							
 							FacebookItem facebookUpdate = new FacebookItem(post,facebookUser);
 							fbStream.store(facebookUpdate);
-							System.out.println("Page item : "+facebookUpdate.toJSONString());
+							
 							totalRetrievedItems++;
 						}
 					}
