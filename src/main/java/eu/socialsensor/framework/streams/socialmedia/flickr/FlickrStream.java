@@ -40,12 +40,14 @@ public class FlickrStream extends Stream {
 		String maxResults = config.getParameter(MAX_RESULTS);
 		String maxRequests = config.getParameter(MAX_REQUESTS);
 		
+		String maxRunningTime = config.getParameter(MAX_RUNNING_TIME);
+		
 		if (key == null || secret==null) {
 			logger.error("#Flickr : Stream requires authentication.");
 			throw new StreamException("Stream requires authentication.");
 		}
 		
-		retriever = new FlickrRetriever(key, secret,Integer.parseInt(maxResults),Integer.parseInt(maxRequests),this);
+		retriever = new FlickrRetriever(key, secret,Integer.parseInt(maxResults),Integer.parseInt(maxRequests),Long.parseLong(maxRunningTime),this);
 		
 	}
 	

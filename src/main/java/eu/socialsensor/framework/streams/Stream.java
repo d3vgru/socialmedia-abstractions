@@ -40,6 +40,7 @@ public abstract class Stream implements Runnable {
 	
 	protected static final String MAX_RESULTS = "maxResults";
 	protected static final String MAX_REQUESTS = "maxRequests";
+	protected static final String MAX_RUNNING_TIME = "maxRunningTime";
 	
 	protected FeedsMonitor monitor;
 	protected BlockingQueue<Feed> feedsQueue;

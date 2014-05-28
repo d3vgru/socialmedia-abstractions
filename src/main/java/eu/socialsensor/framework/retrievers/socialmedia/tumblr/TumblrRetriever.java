@@ -45,11 +45,15 @@ public class TumblrRetriever implements SocialMediaRetriever{
 	private int maxResults;
 	private int maxRequests;
 	
+	private long maxRunningTime;
+	private long currRunningTime = 0l;
+	
 
-	public TumblrRetriever(String consumerKey, String consumerSecret,Integer maxResults,Integer maxRequests,TumblrStream tlStream) {
+	public TumblrRetriever(String consumerKey, String consumerSecret,Integer maxResults,Integer maxRequests,Long maxRunningTime,TumblrStream tlStream) {
 		
 		this.maxResults = maxResults;
 		this.maxRequests = maxRequests;
+		this.maxRunningTime = maxRunningTime;
 		
 		this.tlStream = tlStream;
 		
@@ -160,6 +164,8 @@ public class TumblrRetriever implements SocialMediaRetriever{
 		
 		int numberOfRequests=0;
 		
+		long currRunningTime = System.currentTimeMillis();
+		
 		boolean isFinished = false;
 		
 		Keyword keyword = feed.getKeyword();
@@ -253,7 +259,8 @@ public class TumblrRetriever implements SocialMediaRetriever{
 					}
 				
 				}
-				if(totalRetrievedItems>maxResults || numberOfRequests>=maxRequests){
+				
+				if(totalRetrievedItems>maxResults || numberOfRequests>=maxRequests || (System.currentTimeMillis() - currRunningTime) > maxRunningTime){
 					isFinished = true;
 					break;
 				}

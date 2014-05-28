@@ -54,6 +54,9 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 	private int maxResults;
 	private int maxRequests;
 	
+	private long maxRunningTime;
+	private long currRunningTime = 0l;
+	
 	public String getKey() { 
 		return GooglePlusKey;
 	}
@@ -61,7 +64,7 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 		return null;
 	}
 
-	public GooglePlusRetriever(String key,Integer maxResults,Integer maxRequests,GooglePlusStream gpStream) {
+	public GooglePlusRetriever(String key,Integer maxResults,Integer maxRequests,Long maxRunningTime,GooglePlusStream gpStream) {
 		GooglePlusKey = key;
 		GoogleCredential credential = new GoogleCredential();
 		plusSrv = new Plus.Builder(transport, jsonFactory, credential)
@@ -73,6 +76,7 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 		
 		this.maxResults = maxResults;
 		this.maxRequests = maxRequests;
+		this.maxRunningTime = maxRunningTime;
 	}
 
 	@Override
@@ -195,6 +199,8 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 		
 		int totalRequests = 0;
 		
+		long currRunningTime = System.currentTimeMillis();
+		
 		boolean isFinished = false;
 		
 		Keyword keyword = feed.getKeyword();
@@ -276,7 +282,8 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 			 }
 			
 			 totalRequests++;
-			 if(totalRequests>maxRequests || isFinished || (activityFeed.getNextPageToken() == null))
+
+			 if(totalRequests>maxRequests || isFinished || (activityFeed.getNextPageToken() == null) || (System.currentTimeMillis() - currRunningTime) > maxRunningTime)
 				 break;
 			 
 			 searchActivities.setPageToken(activityFeed.getNextPageToken());

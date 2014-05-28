@@ -67,8 +67,9 @@ public class TwitterStream extends Stream {
 			
 			String maxRequests = config.getParameter(MAX_REQUESTS);
 			String maxResults = config.getParameter(MAX_RESULTS);
+			String maxRunningTime = config.getParameter(MAX_RUNNING_TIME);
 			
-			retriever = new TwitterRetriever(conf, this, Integer.parseInt(maxRequests), Integer.parseInt(maxResults));
+			retriever = new TwitterRetriever(conf, Integer.parseInt(maxRequests), Integer.parseInt(maxResults),Long.parseLong(maxRunningTime),this);
 		}	
 	}
 }

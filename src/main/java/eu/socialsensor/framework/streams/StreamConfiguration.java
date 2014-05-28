@@ -1,5 +1,3 @@
-
-
 package eu.socialsensor.framework.streams;
 
 import eu.socialsensor.framework.Configuration;

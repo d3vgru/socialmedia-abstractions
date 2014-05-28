@@ -56,6 +56,9 @@ public class FlickrRetriever implements SocialMediaRetriever {
 	private int maxResults;
 	private int maxRequests;
 	
+	private long maxRunningTime;
+	private long currRunningTime = 0l;
+	
 	private String flickrHost = "www.flickr.com";
 	
 	private Transport flickrTransport = null;
@@ -67,13 +70,14 @@ public class FlickrRetriever implements SocialMediaRetriever {
 		return flickrSecret;
 	}
 
-	public FlickrRetriever(String flickrKey, String flickrSecret,Integer maxResults,Integer maxRequests,FlickrStream flStream) {
+	public FlickrRetriever(String flickrKey, String flickrSecret,Integer maxResults,Integer maxRequests,long maxRunningTime,FlickrStream flStream) {
 		this.flStream = flStream;
 		
 		this.flickrKey = flickrKey;
 		this.flickrSecret = flickrSecret;
 		this.maxResults = maxResults;
 		this.maxRequests = maxRequests;
+		this.maxRunningTime = maxRunningTime;
 		
 		Flickr.debugStream = false;
 		try {
@@ -186,6 +190,8 @@ public class FlickrRetriever implements SocialMediaRetriever {
 		
 		boolean isFinished = false;
 		
+		long currRunningTime = System.currentTimeMillis();
+		
 		Keyword keyword = feed.getKeyword();
 		List<Keyword> keywords = feed.getKeywords();
 		
@@ -239,6 +245,7 @@ public class FlickrRetriever implements SocialMediaRetriever {
 			
 			try {
 				response = flickrTransport.get(flickrTransport.getPath(), parameters);
+				
 				numberOfRequests++;
 			} catch (Exception e) {
 				logger.error("#Flickr Exception: "+e);
@@ -261,7 +268,9 @@ public class FlickrRetriever implements SocialMediaRetriever {
 				FlickrItem flickrUpdate = new FlickrItem(photo);
 				flStream.store(flickrUpdate);
 				totalRetrievedItems++;
-				if(totalRetrievedItems>maxResults || numberOfRequests >= maxRequests){
+				
+				
+				if(totalRetrievedItems>maxResults || numberOfRequests >= maxRequests || (System.currentTimeMillis() - currRunningTime) > maxRunningTime){
 					isFinished = true;
 					break;
 				}

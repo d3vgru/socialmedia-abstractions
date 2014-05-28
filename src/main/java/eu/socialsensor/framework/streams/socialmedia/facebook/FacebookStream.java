@@ -49,6 +49,8 @@ public class FacebookStream extends Stream {
 		if(maxRequests > maxFBRequests)
 			maxRequests = maxFBRequests;   
 		
+		long maxRunningTime = Long.parseLong(config.getParameter(MAX_RUNNING_TIME));
+		
 		if (access_token == null && app_id == null && app_secret == null) {
 			logger.error("#Facebook : Stream requires authentication.");
 			throw new StreamException("Stream requires authentication.");
@@ -59,7 +61,7 @@ public class FacebookStream extends Stream {
 			access_token = app_id+"|"+app_secret;
 		
 		facebookClient = new DefaultFacebookClient(access_token);
-		retriever = new FacebookRetriever(facebookClient, maxRequests, minInterval,maxResults,this);	
+		retriever = new FacebookRetriever(facebookClient, maxRequests, minInterval,maxResults,maxRunningTime,this);	
 
 	}
 

@@ -34,13 +34,14 @@ public class GooglePlusStream extends Stream {
 		
 		String maxResults = config.getParameter(MAX_RESULTS);
 		String maxRequests = config.getParameter(MAX_REQUESTS);
+		String maxRunningTime = config.getParameter(MAX_RUNNING_TIME);
 		
 		if (key == null) {
 			logger.error("#GooglePlus : Stream requires authentication.");
 			throw new StreamException("Stream requires authentication.");
 		}
 		
-		retriever = new GooglePlusRetriever(key,Integer.parseInt(maxResults),Integer.parseInt(maxRequests),this);
+		retriever = new GooglePlusRetriever(key,Integer.parseInt(maxResults),Integer.parseInt(maxRequests),Long.parseLong(maxRunningTime),this);
 		
 	}
 	

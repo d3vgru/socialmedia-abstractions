@@ -57,15 +57,19 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 	private int results_threshold;
 	private int request_threshold;
 	
+	private long maxRunningTime;
+	private long currRunningTime;
+	
 	public YoutubeRetriever(String clientId, String developerKey) {	
 		this.service = new YouTubeService(clientId, developerKey);
 	}
 	
-	public YoutubeRetriever(String clientId, String developerKey,Integer maxResults,Integer maxRequests,YoutubeStream ytStream) {	
+	public YoutubeRetriever(String clientId, String developerKey,Integer maxResults,Integer maxRequests, Long maxRunningTime, YoutubeStream ytStream) {	
 	
 		this(clientId, developerKey);
 		this.results_threshold = maxResults;
 		this.request_threshold = maxRequests;
+		this.maxRunningTime = maxRunningTime;
 		this.ytStream = ytStream;
 	}
 
@@ -157,6 +161,8 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 		int currResults = 0;
 		int numberOfRequests = 0;
 		
+		long currRunningTime = System.currentTimeMillis();
+		
 		boolean isFinished = false;
 		
 		Keyword keyword = feed.getKeyword();
@@ -229,7 +235,7 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 						totalRetrievedItems++;
 					}
 					
-					if(totalRetrievedItems>results_threshold || numberOfRequests >= request_threshold){
+					if(totalRetrievedItems>results_threshold || numberOfRequests >= request_threshold || (System.currentTimeMillis() - currRunningTime) > maxRunningTime){
 						isFinished = true;
 						break;
 					}

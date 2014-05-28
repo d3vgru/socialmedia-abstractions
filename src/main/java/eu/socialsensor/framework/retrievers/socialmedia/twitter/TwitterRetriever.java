@@ -38,7 +38,10 @@ public class TwitterRetriever implements SocialMediaRetriever {
 	private int maxResults = 100;
 	private int maxRequests = 1;
 	
-	public TwitterRetriever(Configuration conf,TwitterStream twStream,Integer maxRequests,Integer maxResults){
+	private long maxRunningTime;
+	private long currRunningTime = 0l;
+	
+	public TwitterRetriever(Configuration conf,Integer maxRequests,Integer maxResults,Long maxRunningTime,TwitterStream twStream){
 		
 		this.tf = new TwitterFactory(conf);
 		twitter = tf.getInstance();
@@ -48,6 +51,8 @@ public class TwitterRetriever implements SocialMediaRetriever {
 			this.maxResults = maxResults;
 		if(maxRequests != null)
 			this.maxRequests = maxRequests;
+		
+		this.maxRunningTime = maxRunningTime;
 	}
 	
 	@Override
@@ -61,6 +66,8 @@ public class TwitterRetriever implements SocialMediaRetriever {
 		String resultType = "recent";
 	
 		Integer totalRetrievedItems = 0;
+		
+		long currRunningTime = System.currentTimeMillis();
 		
 		Keyword keyword = feed.getKeyword();
 		List<Keyword> keywords = feed.getKeywords();
@@ -99,26 +106,29 @@ public class TwitterRetriever implements SocialMediaRetriever {
 		
 		try {
 			QueryResult response = twitter.search(query);
-		
-			numberOfRequests++;
 			
-			List<Status> statuses = response.getTweets();
-			
-			for(Status status : statuses) {
-				if(status != null){
-					TwitterItem twitterItem = new TwitterItem(status);
-					twStream.store(twitterItem);
-					totalRetrievedItems++;
+			while(response != null){
+				numberOfRequests++;
+				
+				List<Status> statuses = response.getTweets();
+				
+				for(Status status : statuses) {
+					if(status != null){
+						TwitterItem twitterItem = new TwitterItem(status);
+						twStream.store(twitterItem);
+						totalRetrievedItems++;
+					}
+					
+					
 				}
+				if(!response.hasNext() || totalRetrievedItems > maxResults || numberOfRequests > maxRequests || (System.currentTimeMillis() - currRunningTime)>maxRunningTime)
+					break;
+				
+				query = response.nextQuery();
+				if(query == null)
+					break;
+				response = twitter.search(response.nextQuery());
 			}
-			
-//			if(!response.hasNext() || totalRetrievedItems > maxResults || numberOfRequests > maxRequests)
-//				break;
-			
-			//query = response.nextQuery();
-//			if(query == null)
-//				break;
-			//query.count(count);
 			
 		} catch (TwitterException e) {
 			// TODO Auto-generated catch block

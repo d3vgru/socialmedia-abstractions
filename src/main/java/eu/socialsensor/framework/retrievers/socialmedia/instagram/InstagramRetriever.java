@@ -58,6 +58,9 @@ public class InstagramRetriever implements SocialMediaRetriever {
 	private int maxResults;
 	private int maxRequests;
 	
+	private long maxRunningTime;
+	private long currRunningTime = 0l;
+	
 	private MediaFeed mediaFeed = new MediaFeed();
 	private TagMediaFeed tagFeed = new TagMediaFeed();
 
@@ -74,11 +77,12 @@ public class InstagramRetriever implements SocialMediaRetriever {
 		this.instagramOembed = new InstagramOembed();
 	}
 	
-	public InstagramRetriever(String secret, String token, int maxResults,int maxRequests,InstagramStream igStream) {
+	public InstagramRetriever(String secret, String token, int maxResults,int maxRequests,long maxRunningTime,InstagramStream igStream) {
 		this(secret, token);
 		
 		this.maxResults = maxResults;
 		this.maxRequests = maxRequests;
+		this.maxRunningTime = maxRunningTime;
 		
 		this.igStream = igStream;
 	}
@@ -169,6 +173,8 @@ public class InstagramRetriever implements SocialMediaRetriever {
 		
 		int numberOfRequests = 0;
 		
+		long currRunningTime = System.currentTimeMillis();
+		
 		Keyword keyword = feed.getKeyword();
 		List<Keyword> keywords = feed.getKeywords();
 		
@@ -215,7 +221,7 @@ public class InstagramRetriever implements SocialMediaRetriever {
 				int createdTime = Integer.parseInt(mfeed.getCreatedTime());
 				Date publicationDate = new Date((long) createdTime * 1000);
 				
-				if(publicationDate.before(lastItemDate) || totalRetrievedItems>maxResults || numberOfRequests>maxRequests){
+				if(publicationDate.before(lastItemDate) || totalRetrievedItems>maxResults || numberOfRequests>maxRequests || (System.currentTimeMillis() - currRunningTime) > maxRunningTime){
 					isFinished = true;
 					break;
 				}

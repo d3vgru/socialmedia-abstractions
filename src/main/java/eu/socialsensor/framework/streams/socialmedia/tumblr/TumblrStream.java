@@ -39,13 +39,14 @@ public class TumblrStream extends Stream {
 		
 		String maxResults = config.getParameter(MAX_RESULTS);
 		String maxRequests = config.getParameter(MAX_REQUESTS);
+		String maxRunningTime = config.getParameter(MAX_RUNNING_TIME);
 		
 		if (consumerKey == null || consumerSecret==null) {
 			logger.error("#Tumblr : Stream requires authentication.");
 			throw new StreamException("Stream requires authentication.");
 		}
 		
-		retriever = new TumblrRetriever(consumerKey,consumerSecret,Integer.parseInt(maxResults),Integer.parseInt(maxRequests),this);
+		retriever = new TumblrRetriever(consumerKey,consumerSecret,Integer.parseInt(maxResults),Integer.parseInt(maxRequests),Long.parseLong(maxRunningTime),this);
 		
 	}
 

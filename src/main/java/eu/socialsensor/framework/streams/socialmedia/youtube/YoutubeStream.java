@@ -46,13 +46,14 @@ public class YoutubeStream extends Stream {
 		this.developerKey = config.getParameter(KEY);
 		String maxResults = config.getParameter(MAX_RESULTS);
 		String maxRequests = config.getParameter(MAX_REQUESTS);
+		String maxRunningTime = config.getParameter(MAX_RUNNING_TIME);
 		
 		if (clientId == null || developerKey == null) {
 			logger.error("#YouTube : Stream requires authentication.");
 			throw new StreamException("Stream requires authentication");
 		}
 
-		retriever = new YoutubeRetriever(clientId, developerKey,Integer.parseInt(maxResults),Integer.parseInt(maxRequests),this);
+		retriever = new YoutubeRetriever(clientId, developerKey,Integer.parseInt(maxResults),Integer.parseInt(maxRequests),Long.parseLong(maxRunningTime),this);
 
 	}
 }
