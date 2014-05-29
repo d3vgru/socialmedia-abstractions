@@ -22,6 +22,8 @@ public class RSSRetriever implements Retriever{
 	
 	RSSStream rssStream;
 	
+	long oneMonthPeriod = 2592000000L;
+	
 	public RSSRetriever(RSSStream rssStream){
 		
 		this.rssStream = rssStream;
@@ -47,11 +49,17 @@ public class RSSRetriever implements Retriever{
 			for (SyndEntry rss:rssEntries){
 				
 				if(rss.getLink() != null){
-					RSSItem rssItem = new RSSItem(rss);
-				
-					rssStream.store(rssItem);
 					
-					totalRetrievedItems++;
+					if(rss.getPublishedDate() != null && rss.getPublishedDate().getTime()>0 
+							&& Math.abs(System.currentTimeMillis() - rss.getPublishedDate().getTime())<oneMonthPeriod){
+						
+						RSSItem rssItem = new RSSItem(rss);
+						
+						rssStream.store(rssItem);
+						
+						totalRetrievedItems++;
+					}
+				
 				}
 				
 				

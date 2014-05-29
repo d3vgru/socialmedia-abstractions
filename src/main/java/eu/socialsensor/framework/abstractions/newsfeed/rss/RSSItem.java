@@ -24,8 +24,8 @@ public class RSSItem extends Item{
 		if(rssEntry.getDescription()!=null)
 			description = extractDocumentContent(rssEntry.getDescription().getValue());
 		//Document's time of publication
-		if( rssEntry.getPublishedDate() != null)
-			publicationTime = rssEntry.getPublishedDate().getTime();
+		
+		publicationTime = rssEntry.getPublishedDate().getTime();
 		//The url where the document can be found
 		url = rssEntry.getLink();
 		
