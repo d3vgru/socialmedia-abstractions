@@ -217,6 +217,9 @@ public class FacebookRetriever implements SocialMediaRetriever {
 			
 			return totalRetrievedItems;
 		}
+		catch(Exception e2){
+			return totalRetrievedItems;
+		}
 		for(List<Post> connectionPage : connection) {
 						
 			//logger.info("#Facebook : Retrieving page "+it+" that contains "+connectionPage.size()+" posts");
@@ -329,9 +332,11 @@ public class FacebookRetriever implements SocialMediaRetriever {
 				logger.error("#Facebook : Location Feed cannot be retreived from Facebook");
 				
 				return 0;
+			default:
+				return 0;
 			
 		}
-		return 0;
+		
 	}
 	
 	@Override
