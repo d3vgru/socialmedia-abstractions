@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import twitter4j.GeoLocation;
 import twitter4j.Query;
 import twitter4j.QueryResult;
 import twitter4j.ResponseList;
@@ -18,6 +19,7 @@ import eu.socialsensor.framework.abstractions.socialmedia.twitter.TwitterItem;
 import eu.socialsensor.framework.abstractions.socialmedia.twitter.TwitterStreamUser;
 import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Keyword;
+import eu.socialsensor.framework.common.domain.Location;
 import eu.socialsensor.framework.common.domain.MediaItem;
 import eu.socialsensor.framework.common.domain.StreamUser;
 import eu.socialsensor.framework.common.domain.feeds.KeywordsFeed;
@@ -121,7 +123,7 @@ public class TwitterRetriever implements SocialMediaRetriever {
 					
 					
 				}
-				if(!response.hasNext() || totalRetrievedItems > maxResults || numberOfRequests > maxRequests || (System.currentTimeMillis() - currRunningTime)>maxRunningTime)
+				if(!response.hasNext() || totalRetrievedItems > maxResults || numberOfRequests > maxRequests || (System.currentTimeMillis()-currRunningTime)>maxRunningTime)
 					break;
 				
 				query = response.nextQuery();
@@ -131,7 +133,6 @@ public class TwitterRetriever implements SocialMediaRetriever {
 			}
 			
 		} catch (TwitterException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}	
 	
@@ -140,8 +141,53 @@ public class TwitterRetriever implements SocialMediaRetriever {
 	}
 	
 	@Override
-	public Integer retrieveLocationFeeds(LocationFeed feed){
-		return 0;
+	public Integer retrieveLocationFeeds(LocationFeed feed) {
+		
+		Integer totalRetrievedItems = 0, numberOfRequests = 0;
+		
+		Location location = feed.getLocation();
+		if(location == null)
+			return totalRetrievedItems;
+		
+		//Set the query
+		Query query = new Query();
+		Double radius = location.getRadius();
+		if(radius==null)
+			radius = 1.5; // default radius 1.5 Km 
+		
+		GeoLocation geoLocation = new GeoLocation(location.getLatitude(), location.getLongitude());
+		query.setGeoCode(geoLocation, radius, Query.KILOMETERS);
+		query.count(100);
+				
+		while(true) {
+			try {
+				numberOfRequests++;
+				QueryResult response = twitter.search(query);
+				
+				
+				List<Status> statuses = response.getTweets();
+				for(Status status : statuses) {
+					if(status != null) {
+						TwitterItem twitterItem = new TwitterItem(status);
+						twStream.store(twitterItem);
+						totalRetrievedItems++;
+					}
+				}
+				
+				if(!response.hasNext() || totalRetrievedItems > maxResults || numberOfRequests > maxRequests || (System.currentTimeMillis() - currRunningTime)>maxRunningTime)
+					break;
+				
+				query = response.nextQuery();
+				if(query == null)
+					break;
+			} catch (TwitterException e) {
+				e.printStackTrace();
+				logger.error(e);
+				break;
+			}
+		}
+		
+		return totalRetrievedItems;
 	}
 	
 	@Override
