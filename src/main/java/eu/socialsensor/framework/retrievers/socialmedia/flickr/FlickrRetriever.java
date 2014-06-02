@@ -374,6 +374,8 @@ public class FlickrRetriever implements SocialMediaRetriever {
 		switch(feed.getFeedtype()) {
 			case SOURCE:
 				SourceFeed userFeed = (SourceFeed) feed;
+				if(!userFeed.getSource().getNetwork().equals("Flickr"))
+					return 0;
 				
 				return retrieveUserFeeds(userFeed);
 				

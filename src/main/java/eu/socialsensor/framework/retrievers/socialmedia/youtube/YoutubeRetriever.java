@@ -341,6 +341,8 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 		switch(feed.getFeedtype()) {
 			case SOURCE:
 				SourceFeed userFeed = (SourceFeed) feed;
+				if(!userFeed.getSource().getNetwork().equals("Youtube"))
+					return 0;
 				
 				return retrieveUserFeeds(userFeed);
 				

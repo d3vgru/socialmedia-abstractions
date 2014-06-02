@@ -11,7 +11,9 @@ import org.apache.log4j.Logger;
 
 import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Item;
+import eu.socialsensor.framework.common.domain.Feed.FeedType;
 import eu.socialsensor.framework.common.domain.StreamUser.Category;
+import eu.socialsensor.framework.common.domain.feeds.SourceFeed;
 import eu.socialsensor.framework.monitors.FeedsMonitor;
 import eu.socialsensor.framework.retrievers.Retriever;
 import eu.socialsensor.framework.subscribers.socialmedia.Subscriber;
@@ -168,6 +170,7 @@ public abstract class Stream implements Runnable {
 			
 			logger.info("poll for " + feeds.size() + " feeds");
 			for(Feed feed : feeds){
+			
 				numOfRetrievedItems += retriever.retrieve(feed);
 			}
 			

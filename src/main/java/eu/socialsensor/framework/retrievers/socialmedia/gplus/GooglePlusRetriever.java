@@ -322,6 +322,8 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 		switch(feed.getFeedtype()){
 			case SOURCE:
 				SourceFeed userFeed = (SourceFeed) feed;
+				if(!userFeed.getSource().getNetwork().equals("GooglePlus"))
+					return 0;
 				
 				return retrieveUserFeeds(userFeed);
 				

@@ -239,6 +239,8 @@ public class TwitterRetriever implements SocialMediaRetriever {
 		switch(feed.getFeedtype()){
 			case SOURCE:
 				SourceFeed userFeed = (SourceFeed) feed;
+				if(!userFeed.getSource().getNetwork().equals("Twitter"))
+					return 0;
 				
 				return retrieveUserFeeds(userFeed);
 				

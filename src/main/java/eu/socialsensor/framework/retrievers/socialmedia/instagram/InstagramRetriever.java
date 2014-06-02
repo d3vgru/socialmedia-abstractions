@@ -414,6 +414,8 @@ public class InstagramRetriever implements SocialMediaRetriever {
 		switch(feed.getFeedtype()){
 			case SOURCE:
 				SourceFeed userFeed = (SourceFeed) feed;
+				if(!userFeed.getSource().getNetwork().equals("Instagram"))
+					return 0;
 				
 				return retrieveUserFeeds(userFeed);
 				

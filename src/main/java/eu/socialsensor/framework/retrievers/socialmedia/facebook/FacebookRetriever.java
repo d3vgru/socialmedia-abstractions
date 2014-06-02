@@ -326,6 +326,9 @@ public class FacebookRetriever implements SocialMediaRetriever {
 			case SOURCE:
 				SourceFeed userFeed = (SourceFeed) feed;
 				
+				if(!userFeed.getSource().getNetwork().equals("Facebook"))
+					return 0;
+				
 				return retrieveUserFeeds(userFeed);
 				
 			
