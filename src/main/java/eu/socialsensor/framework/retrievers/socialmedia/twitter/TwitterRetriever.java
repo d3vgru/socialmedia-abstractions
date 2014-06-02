@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import twitter4j.GeoLocation;
+import twitter4j.Paging;
 import twitter4j.Query;
 import twitter4j.QueryResult;
 import twitter4j.ResponseList;
@@ -149,6 +150,8 @@ public class TwitterRetriever implements SocialMediaRetriever {
 		if(location == null)
 			return totalRetrievedItems;
 		
+		long currRunningTime = System.currentTimeMillis();
+		
 		//Set the query
 		Query query = new Query();
 		Double radius = location.getRadius();
@@ -190,8 +193,54 @@ public class TwitterRetriever implements SocialMediaRetriever {
 		return totalRetrievedItems;
 	}
 	
+	public Integer retrieveListsFeeds(List<String> lists) {
+		
+		Integer totalRetrievedItems = 0;
+		long currRunningTime = System.currentTimeMillis();
+		
+		for(String list : lists) {
+			
+			Integer listRetrievedItems = 0, numberOfRequests = 0;
+					
+			String[] parts = list.split(",");
+			
+			String ownerScreenName = parts[0];
+			String slug = parts[1];
+			
+			
+			int page = 1;
+			Paging paging = new Paging(page, 100);
+			while(true) {
+				try {
+					numberOfRequests++;
+					ResponseList<Status> response = twitter.getUserListStatuses(ownerScreenName, slug, paging);
+					for(Status status : response) {
+						if(status != null) {
+							TwitterItem twitterItem = new TwitterItem(status);
+							twStream.store(twitterItem);
+							listRetrievedItems++;
+						}
+					}
+					
+					if(listRetrievedItems > (maxResults/lists.size()) || numberOfRequests > (maxRequests/lists.size()) 
+							|| (System.currentTimeMillis() - currRunningTime)>maxRunningTime) {
+						break;
+					}
+					
+					paging.setPage(++page);
+				} catch (TwitterException e) {
+					e.printStackTrace();
+					logger.error(e);
+					
+				}
+			}
+			totalRetrievedItems += listRetrievedItems;
+		}
+		return totalRetrievedItems;
+	}
+	
 	@Override
-	public Integer retrieve(Feed feed){
+	public Integer retrieve(Feed feed) {
 		
 		switch(feed.getFeedtype()){
 			case SOURCE:
