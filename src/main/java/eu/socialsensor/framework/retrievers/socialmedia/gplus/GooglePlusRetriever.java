@@ -28,6 +28,7 @@ import eu.socialsensor.framework.common.domain.MediaItem;
 import eu.socialsensor.framework.common.domain.Source;
 import eu.socialsensor.framework.common.domain.StreamUser;
 import eu.socialsensor.framework.common.domain.feeds.KeywordsFeed;
+import eu.socialsensor.framework.common.domain.feeds.ListFeed;
 import eu.socialsensor.framework.common.domain.feeds.LocationFeed;
 import eu.socialsensor.framework.common.domain.feeds.SourceFeed;
 import eu.socialsensor.framework.retrievers.socialmedia.SocialMediaRetriever;
@@ -310,6 +311,10 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 		return 0;
     }
 	
+	@Override
+	public Integer retrieveListsFeeds(ListFeed feed) {
+		return 0;
+	}
 	
 	@Override
 	public Integer retrieve (Feed feed) {
@@ -329,6 +334,9 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 				logger.error("#GooglePlus : Location Feed cannot be retreived from GooglePlus");
 				return null;
 			
+			case LIST:
+				logger.error("#GooglePlus : List Feed cannot be retreived from GooglePlus");
+				return null;
 		}
 		
 		return null;
@@ -348,5 +356,6 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 	public StreamUser getStreamUser(String uid) {
 		return null;
 	}
+
 	
 }

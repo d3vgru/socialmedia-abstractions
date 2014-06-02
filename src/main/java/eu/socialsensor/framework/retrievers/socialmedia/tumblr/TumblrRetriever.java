@@ -25,6 +25,7 @@ import eu.socialsensor.framework.common.domain.MediaItem;
 import eu.socialsensor.framework.common.domain.Source;
 import eu.socialsensor.framework.common.domain.StreamUser;
 import eu.socialsensor.framework.common.domain.feeds.KeywordsFeed;
+import eu.socialsensor.framework.common.domain.feeds.ListFeed;
 import eu.socialsensor.framework.common.domain.feeds.LocationFeed;
 import eu.socialsensor.framework.common.domain.feeds.SourceFeed;
 import eu.socialsensor.framework.retrievers.socialmedia.SocialMediaRetriever;
@@ -287,6 +288,12 @@ public class TumblrRetriever implements SocialMediaRetriever{
     }
 
 	@Override
+	public Integer retrieveListsFeeds(ListFeed feed) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
+	@Override
 	public Integer retrieve (Feed feed) {
 	
 		switch(feed.getFeedtype()){
@@ -303,6 +310,9 @@ public class TumblrRetriever implements SocialMediaRetriever{
 				
 			case LOCATION:
 				logger.error("#Tumblr : Location Feed cannot be retreived from Tumblr");
+			
+			case LIST:
+				logger.error("#Tumblr : List Feed cannot be retreived from Tumblr");
 				
 				return 0;
 		}

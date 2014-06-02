@@ -29,6 +29,7 @@ import eu.socialsensor.framework.common.domain.MediaItem;
 import eu.socialsensor.framework.common.domain.Source;
 import eu.socialsensor.framework.common.domain.StreamUser;
 import eu.socialsensor.framework.common.domain.feeds.KeywordsFeed;
+import eu.socialsensor.framework.common.domain.feeds.ListFeed;
 import eu.socialsensor.framework.common.domain.feeds.LocationFeed;
 import eu.socialsensor.framework.common.domain.feeds.SourceFeed;
 import eu.socialsensor.framework.monitors.RateLimitsMonitor;
@@ -314,6 +315,11 @@ public class FacebookRetriever implements SocialMediaRetriever {
 	}
 	
 	@Override
+	public Integer retrieveListsFeeds(ListFeed feed) {
+		return 0;
+	}
+	
+	@Override
 	public Integer retrieve (Feed feed) {
 		
 		switch(feed.getFeedtype()){
@@ -330,7 +336,9 @@ public class FacebookRetriever implements SocialMediaRetriever {
 				
 			case LOCATION:
 				logger.error("#Facebook : Location Feed cannot be retreived from Facebook");
-				
+			
+			case LIST:
+				logger.error("#Facebook : List Feed cannot be retreived from Facebook");	
 				return 0;
 			default:
 				return 0;

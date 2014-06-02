@@ -32,6 +32,7 @@ import eu.socialsensor.framework.common.domain.MediaItem;
 import eu.socialsensor.framework.common.domain.Source;
 import eu.socialsensor.framework.common.domain.StreamUser;
 import eu.socialsensor.framework.common.domain.feeds.KeywordsFeed;
+import eu.socialsensor.framework.common.domain.feeds.ListFeed;
 import eu.socialsensor.framework.common.domain.feeds.LocationFeed;
 import eu.socialsensor.framework.common.domain.feeds.SourceFeed;
 import eu.socialsensor.framework.retrievers.socialmedia.SocialMediaRetriever;
@@ -328,7 +329,12 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 		return null;
     }
 	
-
+	@Override
+	public Integer retrieveListsFeeds(ListFeed feed) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
 	@Override
 	public Integer retrieve (Feed feed) {
 		
@@ -344,6 +350,10 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 				
 			case LOCATION:
 				logger.error("#YouTube : Location Feed cannot be retreived from YouTube");
+				return null;
+				
+			case LIST:
+				logger.error("#YouTube : List Feed cannot be retreived from YouTube");
 				return null;
 		}
 		 
@@ -472,6 +482,5 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 		
 		return null;
 	}
-	
 
 }

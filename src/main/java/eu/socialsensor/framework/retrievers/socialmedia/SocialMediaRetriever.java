@@ -3,6 +3,7 @@ package eu.socialsensor.framework.retrievers.socialmedia;
 import eu.socialsensor.framework.common.domain.MediaItem;
 import eu.socialsensor.framework.common.domain.StreamUser;
 import eu.socialsensor.framework.common.domain.feeds.KeywordsFeed;
+import eu.socialsensor.framework.common.domain.feeds.ListFeed;
 import eu.socialsensor.framework.common.domain.feeds.LocationFeed;
 import eu.socialsensor.framework.common.domain.feeds.SourceFeed;
 import eu.socialsensor.framework.retrievers.Retriever;
@@ -43,6 +44,15 @@ public interface SocialMediaRetriever extends Retriever {
 	 */
 	public Integer retrieveLocationFeeds(LocationFeed feed) throws Exception;
 
+	/**
+	 * Retrieves a list feed that contains the owner of a list an a slug 
+	 * used for the description of the list.
+	 * @param feed
+	 * @return
+	 * @throws Exception
+	 */
+	public Integer retrieveListsFeeds(ListFeed feed);
+	
 	public StreamUser getStreamUser(String uid);
 	
 	public MediaItem getMediaItem(String id);

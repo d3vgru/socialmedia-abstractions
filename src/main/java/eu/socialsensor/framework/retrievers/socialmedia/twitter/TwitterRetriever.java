@@ -24,6 +24,7 @@ import eu.socialsensor.framework.common.domain.Location;
 import eu.socialsensor.framework.common.domain.MediaItem;
 import eu.socialsensor.framework.common.domain.StreamUser;
 import eu.socialsensor.framework.common.domain.feeds.KeywordsFeed;
+import eu.socialsensor.framework.common.domain.feeds.ListFeed;
 import eu.socialsensor.framework.common.domain.feeds.LocationFeed;
 import eu.socialsensor.framework.common.domain.feeds.SourceFeed;
 import eu.socialsensor.framework.retrievers.socialmedia.SocialMediaRetriever;
@@ -193,48 +194,41 @@ public class TwitterRetriever implements SocialMediaRetriever {
 		return totalRetrievedItems;
 	}
 	
-	public Integer retrieveListsFeeds(List<String> lists) {
+	@Override
+	public Integer retrieveListsFeeds(ListFeed feed) {
 		
-		Integer totalRetrievedItems = 0;
+		Integer totalRetrievedItems = 0, numberOfRequests = 0;
 		long currRunningTime = System.currentTimeMillis();
-		
-		for(String list : lists) {
+
 			
-			Integer listRetrievedItems = 0, numberOfRequests = 0;
-					
-			String[] parts = list.split(",");
-			
-			String ownerScreenName = parts[0];
-			String slug = parts[1];
+		String ownerScreenName = feed.getListOwner();
+		String slug = feed.getListSlug();
 			
 			
-			int page = 1;
-			Paging paging = new Paging(page, 100);
-			while(true) {
-				try {
-					numberOfRequests++;
-					ResponseList<Status> response = twitter.getUserListStatuses(ownerScreenName, slug, paging);
-					for(Status status : response) {
-						if(status != null) {
-							TwitterItem twitterItem = new TwitterItem(status);
-							twStream.store(twitterItem);
-							listRetrievedItems++;
-						}
+		int page = 1;
+		Paging paging = new Paging(page, 100);
+		while(true) {
+			try {
+				numberOfRequests++;
+				ResponseList<Status> response = twitter.getUserListStatuses(ownerScreenName, slug, paging);
+				for(Status status : response) {
+					if(status != null) {
+						TwitterItem twitterItem = new TwitterItem(status);
+						twStream.store(twitterItem);
+						totalRetrievedItems++;
 					}
-					
-					if(listRetrievedItems > (maxResults/lists.size()) || numberOfRequests > (maxRequests/lists.size()) 
-							|| (System.currentTimeMillis() - currRunningTime)>maxRunningTime) {
-						break;
-					}
-					
-					paging.setPage(++page);
-				} catch (TwitterException e) {
-					e.printStackTrace();
-					logger.error(e);
-					
 				}
+					
+				if(totalRetrievedItems > maxResults || numberOfRequests > maxRequests 
+						|| (System.currentTimeMillis() - currRunningTime)>maxRunningTime) {
+					break;
+				}
+					
+				paging.setPage(++page);
+			} catch (TwitterException e) {
+				e.printStackTrace();
+				logger.error(e);	
 			}
-			totalRetrievedItems += listRetrievedItems;
 		}
 		return totalRetrievedItems;
 	}

@@ -27,6 +27,7 @@ import eu.socialsensor.framework.common.domain.MediaItem;
 import eu.socialsensor.framework.common.domain.Source;
 import eu.socialsensor.framework.common.domain.StreamUser;
 import eu.socialsensor.framework.common.domain.feeds.KeywordsFeed;
+import eu.socialsensor.framework.common.domain.feeds.ListFeed;
 import eu.socialsensor.framework.common.domain.feeds.LocationFeed;
 import eu.socialsensor.framework.common.domain.feeds.SourceFeed;
 import eu.socialsensor.framework.retrievers.socialmedia.SocialMediaRetriever;
@@ -363,6 +364,11 @@ public class FlickrRetriever implements SocialMediaRetriever {
     }
 	
 	@Override
+	public Integer retrieveListsFeeds(ListFeed feed) {
+		return 0;
+	}
+	
+	@Override
 	public Integer retrieve (Feed feed) {
 		
 		switch(feed.getFeedtype()) {
@@ -380,6 +386,11 @@ public class FlickrRetriever implements SocialMediaRetriever {
 				LocationFeed locationFeed = (LocationFeed) feed;
 				
 				return retrieveLocationFeeds(locationFeed);
+			
+			case LIST:
+				ListFeed listFeed = (ListFeed) feed;
+				
+				return retrieveListsFeeds(listFeed);
 				
 			
 		}

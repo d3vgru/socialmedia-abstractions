@@ -35,6 +35,7 @@ import eu.socialsensor.framework.common.domain.MediaItem;
 import eu.socialsensor.framework.common.domain.Source;
 import eu.socialsensor.framework.common.domain.StreamUser;
 import eu.socialsensor.framework.common.domain.feeds.KeywordsFeed;
+import eu.socialsensor.framework.common.domain.feeds.ListFeed;
 import eu.socialsensor.framework.common.domain.feeds.LocationFeed;
 import eu.socialsensor.framework.common.domain.feeds.SourceFeed;
 import eu.socialsensor.framework.retrievers.socialmedia.SocialMediaRetriever;
@@ -401,6 +402,11 @@ public class InstagramRetriever implements SocialMediaRetriever {
     	return totalRetrievedItems;
     }
 	
+	@Override
+	public Integer retrieveListsFeeds(ListFeed feed) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 	
 	@Override
 	public Integer retrieve (Feed feed) {
@@ -420,6 +426,12 @@ public class InstagramRetriever implements SocialMediaRetriever {
 				LocationFeed locationFeed = (LocationFeed) feed;
 				
 				return retrieveLocationFeeds(locationFeed);
+			
+			case LIST:
+				ListFeed listFeed = (ListFeed) feed;
+				
+				return retrieveListsFeeds(listFeed);
+				
 			default:
 				logger.error("Unkonwn Feed Type: " + feed.toJSONString());
 				break;
@@ -559,4 +571,5 @@ public class InstagramRetriever implements SocialMediaRetriever {
 		}
 		return null;
 	}
+
 }
