@@ -59,7 +59,7 @@ public class TwitterStreamUser extends StreamUser {
 		//Friends of the user
 		friends =  (long) user.getFriendsCount();
 		
-		
+		timezone = user.getTimeZone();
 	}
 	
 }
