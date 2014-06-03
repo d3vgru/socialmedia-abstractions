@@ -300,6 +300,9 @@ public class FlickrRetriever implements SocialMediaRetriever {
 		
 		Double[][] bbox = feed.getLocation().getbbox();
 		
+		if(bbox == null || bbox.length==0)
+			return 0;
+		
 		int page=1, pages=1;
 		
 		boolean isFinished = false;
