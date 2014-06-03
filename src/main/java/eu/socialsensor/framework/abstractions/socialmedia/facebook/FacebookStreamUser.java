@@ -57,6 +57,7 @@ public class FacebookStreamUser extends StreamUser {
 		}
 		
 		profileImage = "https://graph.facebook.com/" + userid + "/picture";
+		imageUrl = profileImage;
 		
 		//Last time user's profile was updated
 		if(user.getUpdatedTime() != null)
@@ -107,6 +108,7 @@ public class FacebookStreamUser extends StreamUser {
 		if(profileImage == null) {
 			profileImage = "https://graph.facebook.com/" + userid + "/picture";
 		}
+		imageUrl = profileImage;
 		
 		//Number of people talking about the page
 		followers = page.getTalkingAboutCount();
@@ -135,6 +137,8 @@ public class FacebookStreamUser extends StreamUser {
 		pageUrl = "https://www.facebook.com/profile.php?id="+userid;
 		//Avatar of the page
 		profileImage = "https://graph.facebook.com/" + userid + "/picture";
+		imageUrl = profileImage;
+		
 	}
 	
 }
