@@ -15,6 +15,7 @@ import com.restfb.Parameter;
 import com.restfb.exception.FacebookResponseStatusException;
 import com.restfb.types.CategorizedFacebookType;
 import com.restfb.types.Comment;
+import com.restfb.types.NamedFacebookType;
 import com.restfb.types.Page;
 import com.restfb.types.Photo;
 import com.restfb.types.Post;
@@ -98,8 +99,10 @@ public class FacebookRetriever implements SocialMediaRetriever {
 		//logger.info("#Facebook : Retrieving User Feed : "+userName);
 		
 		Connection<Post> connection = facebookClient.fetchConnection(userFeed , Post.class);
-		Page page = facebookClient.fetchObject(userName, Page.class);
+		User page = facebookClient.fetchObject(userName, User.class);
+		
 		FacebookStreamUser facebookUser = new FacebookStreamUser(page);
+		System.out.println(facebookUser);
 		
 		for(List<Post> connectionPage : connection) {
 			rateLimitsMonitor.check();
