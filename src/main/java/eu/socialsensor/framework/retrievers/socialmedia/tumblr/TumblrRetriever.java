@@ -1,6 +1,7 @@
 package eu.socialsensor.framework.retrievers.socialmedia.tumblr;
 
 
+import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -212,7 +213,6 @@ public class TumblrRetriever implements SocialMediaRetriever{
 			}catch(JumblrException e){
 				return totalRetrievedItems;
 			}
-			
 			it++;
 			
 			if(posts == null || posts.isEmpty())
