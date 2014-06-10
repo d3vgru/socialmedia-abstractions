@@ -1,6 +1,7 @@
 package eu.socialsensor.framework.retrievers.socialmedia.twitter;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -22,6 +23,7 @@ import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Keyword;
 import eu.socialsensor.framework.common.domain.Location;
 import eu.socialsensor.framework.common.domain.MediaItem;
+import eu.socialsensor.framework.common.domain.Source;
 import eu.socialsensor.framework.common.domain.StreamUser;
 import eu.socialsensor.framework.common.domain.feeds.KeywordsFeed;
 import eu.socialsensor.framework.common.domain.feeds.ListFeed;
@@ -60,8 +62,64 @@ public class TwitterRetriever implements SocialMediaRetriever {
 	}
 	
 	@Override
-	public Integer retrieveUserFeeds(SourceFeed feed){
-		return 0;
+	public Integer retrieveUserFeeds(SourceFeed feed) {
+		Integer totalRetrievedItems = 0, numberOfRequests = 0;
+		
+		Source source = feed.getSource();
+		if(source == null)
+			return totalRetrievedItems;
+		
+		Date sinceDate = feed.getDateToRetrieve();
+		
+		String userId = source.getId();
+		String screenName = source.getName();
+		
+		int page = 1;
+		Paging paging = new Paging(page, 100);
+		boolean sinceDateReached = false;
+		while(true) {
+			try {
+				ResponseList<Status> response = null;
+				if(userId != null) {
+					response = twitter.getUserTimeline(Integer.parseInt(userId), paging);
+				}
+				else if(screenName != null) {
+					response = twitter.getUserTimeline(screenName, paging);
+				}
+				else {
+					break;
+				}
+				numberOfRequests++;
+				
+				for(Status status : response) {
+					if(status != null) {
+						
+						if(sinceDate != null) {
+							Date createdAt = status.getCreatedAt();
+							if(sinceDate.after(createdAt)) {
+								sinceDateReached = true;
+								break;
+							}
+						}
+						
+						TwitterItem twitterItem = new TwitterItem(status);
+						twStream.store(twitterItem);
+						totalRetrievedItems++;
+					}
+				}
+				
+				if(totalRetrievedItems > maxResults || numberOfRequests > maxRequests 
+					|| (System.currentTimeMillis() - currRunningTime)>maxRunningTime || sinceDateReached) {
+					break;
+				}
+				
+				paging.setPage(++page);
+			} catch (TwitterException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return totalRetrievedItems;
 	}
 	
 	@Override
