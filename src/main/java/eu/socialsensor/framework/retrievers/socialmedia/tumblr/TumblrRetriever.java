@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.scribe.exceptions.OAuthConnectionException;
 
 import com.tumblr.jumblr.JumblrClient;
 import com.tumblr.jumblr.exceptions.JumblrException;
@@ -211,6 +212,8 @@ public class TumblrRetriever implements SocialMediaRetriever{
 			try{
 				posts = client.tagged(tags);
 			}catch(JumblrException e){
+				return totalRetrievedItems;
+			}catch(OAuthConnectionException e1){
 				return totalRetrievedItems;
 			}
 			it++;
