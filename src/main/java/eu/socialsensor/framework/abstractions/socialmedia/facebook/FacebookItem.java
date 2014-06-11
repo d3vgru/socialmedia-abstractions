@@ -126,6 +126,19 @@ public class FacebookItem extends Item {
 		if(post.getSharesCount() != null)
 			shares = post.getSharesCount();
 		
+		Comments cmnts = post.getComments();
+		if(cmnts != null) {
+			Long n = cmnts.getTotalCount();
+			if(n != null) {
+				numOfComments = n;
+			}
+			else {
+				List<Comment> data = cmnts.getData();
+				if(data != null)
+					numOfComments = (long) data.size();
+			}
+		}
+		
 		//Media Items - WebPages in a post
 		String type = post.getType();
 		
