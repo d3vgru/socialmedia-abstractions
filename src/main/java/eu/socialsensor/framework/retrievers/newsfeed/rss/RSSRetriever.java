@@ -40,32 +40,36 @@ public class RSSRetriever implements Retriever{
 				return totalRetrievedItems;
 			
 		    XmlReader reader = new XmlReader(url);
-
-	        SyndFeed rssData = new SyndFeedInput().build(reader);
-			
-			@SuppressWarnings("unchecked")
-			List<SyndEntry> rssEntries = rssData.getEntries();
-			
-			for (SyndEntry rss:rssEntries){
+		    
+		    try{
+		    	SyndFeed rssData = new SyndFeedInput().build(reader);
+		    	@SuppressWarnings("unchecked")
+				List<SyndEntry> rssEntries = rssData.getEntries();
 				
-				if(rss.getLink() != null){
+				for (SyndEntry rss:rssEntries){
 					
-					if(rss.getPublishedDate() != null && rss.getPublishedDate().getTime()>0 
-							&& Math.abs(System.currentTimeMillis() - rss.getPublishedDate().getTime())<oneMonthPeriod){
+					if(rss.getLink() != null){
 						
-						RSSItem rssItem = new RSSItem(rss);
-						
-						rssStream.store(rssItem);
-						
-						totalRetrievedItems++;
+						if(rss.getPublishedDate() != null && rss.getPublishedDate().getTime()>0 
+								&& Math.abs(System.currentTimeMillis() - rss.getPublishedDate().getTime())<oneMonthPeriod){
+							
+							RSSItem rssItem = new RSSItem(rss);
+							
+							rssStream.store(rssItem);
+							
+							totalRetrievedItems++;
+						}
+					
 					}
-				
+					
+					
 				}
 				
 				
-			}
-		 
-	      
+		    }catch(NullPointerException e2){
+		    	return totalRetrievedItems;
+		    }
+		    
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			return 0;
