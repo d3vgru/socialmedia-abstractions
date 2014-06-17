@@ -180,6 +180,46 @@ public abstract class Stream implements Runnable {
 	}
 	
 	/**
+	 * Searches with the wrapper of the stream for a particular
+	 * set of feeds (feeds can be keywordsFeeds, userFeeds or locationFeeds)
+	 * @param feeds
+	 * @return the total number of retrieved items for the stream
+	 * @throws StreamException
+	 */
+	public synchronized void pollInThreads(List<Feed> feeds) throws StreamException {
+		
+		Integer numOfRetrievedItems = 0;
+		
+		totalRetrievedItems.clear();
+		
+		if(retriever != null) {
+		
+			if(feeds == null) {
+				logger.error("Feeds is null in poll method.");
+				return;
+			}
+			
+			logger.info("poll for " + feeds.size() + " feeds");
+			
+			monitor.addFeeds(feeds);
+			monitor.setSizeOfThreads(feeds.size());
+			monitor.startMonitor();
+			while(!monitor.isMonitorFinished()){
+				//do nothing
+			}
+
+			numOfRetrievedItems = monitor.collectRetrievedItems();
+			
+			
+			logger.info("Retrieved items for " + this.getClass().getName()+ " are : " + numOfRetrievedItems);
+			
+			monitor.stopMonitor();
+		}
+		
+	}
+	
+	
+	/**
 	 * Store a set of items in the selected databases
 	 * @param items
 	 */
@@ -290,6 +330,18 @@ public abstract class Stream implements Runnable {
 		
 		return feedsQueue.offer(feed);
 	}
+	
+	public boolean addFeeds(List<Feed> feeds) {
+		
+		for(Feed feed : feeds){
+			if(!addFeed(feed))
+				return false;
+			
+		}
+		
+		return true;
+	}
+	
 	
 	@Override
 	public void run() {

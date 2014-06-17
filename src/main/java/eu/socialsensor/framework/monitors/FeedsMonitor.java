@@ -49,7 +49,7 @@ public class FeedsMonitor {
 		for(Feed feed : feeds) {
 			addFeed(feed);
 		}
-		_logger.info(feeds.size()+" added to monitor");
+		//_logger.info(feeds.size()+" added to monitor");
 	}
 	public void removeFeed(Feed feed) {
 		String feedId = feed.getId();
@@ -103,7 +103,7 @@ public class FeedsMonitor {
 				}
 			}
 		}
-		_logger.info("FeedsMonitor has executed all tasks!");
+		//_logger.info("FeedsMonitor has executed all tasks!");
 		
 		return true;
 	}
@@ -125,6 +125,6 @@ public class FeedsMonitor {
 			_logger.info("Stop: " + feedFetcher.getFeedId());
 			feedFetcher.stop();
 		}
-		_logger.info("FeedsMonitor has stopped all tasks!");
+		//_logger.info("FeedsMonitor has stopped all tasks!");
 	}
 }
