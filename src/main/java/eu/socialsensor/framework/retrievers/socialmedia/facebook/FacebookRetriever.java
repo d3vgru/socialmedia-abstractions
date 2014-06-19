@@ -12,6 +12,7 @@ import com.restfb.Connection;
 import com.restfb.DefaultFacebookClient;
 import com.restfb.FacebookClient;
 import com.restfb.Parameter;
+import com.restfb.exception.FacebookNetworkException;
 import com.restfb.exception.FacebookResponseStatusException;
 import com.restfb.types.CategorizedFacebookType;
 import com.restfb.types.Comment;
@@ -224,38 +225,43 @@ public class FacebookRetriever implements SocialMediaRetriever {
 		catch(Exception e2){
 			return totalRetrievedItems;
 		}
-		for(List<Post> connectionPage : connection) {
-						
-			//logger.info("#Facebook : Retrieving page "+it+" that contains "+connectionPage.size()+" posts");
-			
-			for(Post post : connectionPage) {	
+		try{
+			for(List<Post> connectionPage : connection) {
+							
+				//logger.info("#Facebook : Retrieving page "+it+" that contains "+connectionPage.size()+" posts");
 				
-				Date publicationDate = post.getCreatedTime();
-				try{
-					if(publicationDate.after(lastItemDate) && post!=null && post.getId()!=null){
-						//Get the user of the post
-						CategorizedFacebookType c_user = post.getFrom();
-						User user = facebookClient.fetchObject(c_user.getId(), User.class);
-						FacebookStreamUser facebookUser = new FacebookStreamUser(user);
-						
-						FacebookItem facebookUpdate = new FacebookItem(post,facebookUser);
-						fbStream.store(facebookUpdate);
-						totalRetrievedItems++;
+				for(Post post : connectionPage) {	
+					
+					Date publicationDate = post.getCreatedTime();
+					try{
+						if(publicationDate.after(lastItemDate) && post!=null && post.getId()!=null){
+							//Get the user of the post
+							CategorizedFacebookType c_user = post.getFrom();
+							User user = facebookClient.fetchObject(c_user.getId(), User.class);
+							FacebookStreamUser facebookUser = new FacebookStreamUser(user);
+							
+							FacebookItem facebookUpdate = new FacebookItem(post,facebookUser);
+							fbStream.store(facebookUpdate);
+							totalRetrievedItems++;
+						}
 					}
+					catch(Exception e){
+						break;
+					}
+					
+					if(publicationDate.before(lastItemDate) || totalRetrievedItems>maxResults || (System.currentTimeMillis() - currRunningTime) > maxRunningTime){
+						isFinished = true;
+						break;
+					}
+					
 				}
-				catch(Exception e){
+				if(isFinished)
 					break;
-				}
-				
-				if(publicationDate.before(lastItemDate) || totalRetrievedItems>maxResults || (System.currentTimeMillis() - currRunningTime) > maxRunningTime){
-					isFinished = true;
-					break;
-				}
 				
 			}
-			if(isFinished)
-				break;
-			
+		}
+		catch(FacebookNetworkException e1){
+			return totalRetrievedItems;
 		}
 		
 //		logger.info("#Facebook : Done retrieving for this session");
