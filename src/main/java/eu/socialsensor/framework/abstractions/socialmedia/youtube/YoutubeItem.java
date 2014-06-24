@@ -21,7 +21,7 @@ import eu.socialsensor.framework.common.domain.MediaItem;
 import eu.socialsensor.framework.common.domain.SocialNetworkSource;
 
 /**
- * Class that holds the information regarding the youtube video
+ * Class that holds the information of a youtube video
  * @author ailiakop
  * @email  ailiakop@iti.gr
  */

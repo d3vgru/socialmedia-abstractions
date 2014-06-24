@@ -20,12 +20,11 @@ import eu.socialsensor.framework.common.domain.SocialNetworkSource;
 import eu.socialsensor.framework.common.domain.WebPage;
 
 /**
- * Class that holds the information regarding the google plus activity
+ * Class that holds the information of a google plus activity
  * @author ailiakop
  * @email  ailiakop@iti.gr
  */
 public class GooglePlusItem extends Item {
-	//private Logger logger = Logger.getLogger(GooglePlusItem.class);
 	
 	public GooglePlusItem(String id, Operation operation) {
 		super(SocialNetworkSource.GooglePlus.toString(), operation);

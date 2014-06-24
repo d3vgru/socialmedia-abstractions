@@ -5,7 +5,8 @@ import eu.socialsensor.framework.common.domain.Feed;
 
 public interface Retriever {
 	/**
-	 * Retrieve a general feed that is inserted into the system
+	 * Retrieves a feed that is inserted into the system (Feeds currently supported
+	 * by the platform are: KeywordFeeds,LocationFeeds,SourceFeeds,ListFeeds,URLFeeds)
 	 * @param feed
 	 * @return
 	 */

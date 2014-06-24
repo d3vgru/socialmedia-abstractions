@@ -1,7 +1,5 @@
 package eu.socialsensor.framework.retrievers.socialmedia.tumblr;
 
-
-import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -34,7 +32,8 @@ import eu.socialsensor.framework.retrievers.socialmedia.SocialMediaRetriever;
 import eu.socialsensor.framework.streams.socialmedia.tumblr.TumblrStream;
 
 /**
- * The retriever that implements the Tumblr wrapper
+ * Class responsible for retrieving Tumblr content based on keywords or tumblr users
+ * The retrieval process takes place through Tumblr API (Jumblr)
  * @author ailiakop
  * @email  ailiakop@iti.gr
  */
@@ -49,7 +48,6 @@ public class TumblrRetriever implements SocialMediaRetriever{
 	private int maxRequests;
 	
 	private long maxRunningTime;
-	private long currRunningTime = 0l;
 	
 
 	public TumblrRetriever(String consumerKey, String consumerSecret,Integer maxResults,Integer maxRequests,Long maxRunningTime,TumblrStream tlStream) {
@@ -82,8 +80,6 @@ public class TumblrRetriever implements SocialMediaRetriever{
 			logger.info("#Tumblr : No source feed");
 			return null;
 		}
-			
-		//logger.info("#Tumblr : Retrieving User Feed : "+uName);
 		
 		Blog blog = client.blogInfo(uName);
 		TumblrStreamUser tumblrStreamUser = new TumblrStreamUser(blog);
@@ -103,7 +99,6 @@ public class TumblrRetriever implements SocialMediaRetriever{
 				break;
 			
 			numberOfRequests ++;
-			//logger.info("#Tumblr : Retrieving page "+it+" that contains "+posts.size()+" posts");
 			
 			for(Post post : posts){
 				
@@ -117,7 +112,7 @@ public class TumblrRetriever implements SocialMediaRetriever{
 						publicationDate = (Date) formatter.parse(retrievedDate);
 						
 					} catch (ParseException e) {
-						logger.error("#Tumblr - ParseException: "+e);
+						return totalRetrievedItems;
 					}
 					
 					if(publicationDate.after(lastItemDate) && post != null && post.getId() != null){
@@ -126,9 +121,7 @@ public class TumblrRetriever implements SocialMediaRetriever{
 						try {
 							tumblrItem = new TumblrItem(post,tumblrStreamUser);
 						} catch (MalformedURLException e) {
-							// TODO Auto-generated catch block
-							logger.error("#Tumblr Exception: "+e);
-							e.printStackTrace();
+							
 							return totalRetrievedItems;
 						}
 						
@@ -150,8 +143,8 @@ public class TumblrRetriever implements SocialMediaRetriever{
 		}
 
 		//logger.info("#Tumblr : Done retrieving for this session");
-		logger.info("#Tumblr : Handler fetched " +totalRetrievedItems + " posts from " + uName + 
-				" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
+//		logger.info("#Tumblr : Handler fetched " +totalRetrievedItems + " posts from " + uName + 
+//				" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
 		
 		return totalRetrievedItems;
 	}
@@ -196,9 +189,6 @@ public class TumblrRetriever implements SocialMediaRetriever{
 			}
 		}
 		
-		//tags.replaceAll(" ", "");
-		
-		//logger.info("#Tumblr : Retrieving Keywords Feed : "+tags);
 		if(tags.equals(""))
 			return totalRetrievedItems;
 		
@@ -222,7 +212,6 @@ public class TumblrRetriever implements SocialMediaRetriever{
 				break;
 			
 			numberOfRequests ++;
-			//logger.info("#Tumblr : Retrieving page "+it+" that contains "+posts.size()+" posts");
 			
 			for(Post post : posts){
 				
@@ -235,7 +224,7 @@ public class TumblrRetriever implements SocialMediaRetriever{
 						publicationDate = (Date) formatter.parse(retrievedDate);
 						
 					} catch (ParseException e) {
-						logger.error("#Tumblr - ParseException: "+e);
+						
 						return totalRetrievedItems;
 					}
 					
@@ -251,9 +240,7 @@ public class TumblrRetriever implements SocialMediaRetriever{
 							
 							
 						} catch (MalformedURLException e) {
-							// TODO Auto-generated catch block
-							logger.error("#Tumblr Exception: "+e);
-							e.printStackTrace();
+							
 							return totalRetrievedItems;
 						}
 						if(tumblrItem != null){
@@ -314,12 +301,18 @@ public class TumblrRetriever implements SocialMediaRetriever{
 				return retrieveKeywordsFeeds(keyFeed);
 				
 			case LOCATION:
-				logger.error("#Tumblr : Location Feed cannot be retreived from Tumblr");
+				LocationFeed locationFeed = (LocationFeed) feed;
+				
+				return retrieveLocationFeeds(locationFeed);
 			
 			case LIST:
-				logger.error("#Tumblr : List Feed cannot be retreived from Tumblr");
+				ListFeed listFeed = (ListFeed) feed;
 				
-				return 0;
+				return retrieveListsFeeds(listFeed);
+				
+			default:
+				logger.error("Unkonwn Feed Type: " + feed.toJSONString());
+				break;
 		}
 	
 		return 0;

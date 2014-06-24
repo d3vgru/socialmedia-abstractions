@@ -8,7 +8,12 @@ import eu.socialsensor.framework.streams.Stream;
 import eu.socialsensor.framework.streams.StreamConfiguration;
 import eu.socialsensor.framework.streams.StreamException;
 
-
+/**
+ * Class responsible for setting up the connection to Topsy API
+ * for retrieving relevant Tospy content.
+ * @author ailiakop
+ * @email  ailiakop@iti.gr
+ */
 public class TopsyStream extends Stream{
 	private Logger logger = Logger.getLogger(TopsyStream.class);
 	

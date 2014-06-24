@@ -15,7 +15,7 @@ import eu.socialsensor.framework.common.domain.MediaItem;
 import eu.socialsensor.framework.common.domain.SocialNetworkSource;
 
 /**
- * Class that holds the information regarding the flickr photo
+ * Class that holds the information of a flickr photo
  * @author ailiakop
  * @email  ailiakop@iti.gr
  */

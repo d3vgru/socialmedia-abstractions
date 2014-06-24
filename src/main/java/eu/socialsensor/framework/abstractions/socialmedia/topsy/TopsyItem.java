@@ -2,9 +2,6 @@ package eu.socialsensor.framework.abstractions.socialmedia.topsy;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import com.maruti.otterapi.search.Post;
 
@@ -12,7 +9,11 @@ import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.MediaItem;
 import eu.socialsensor.framework.common.domain.SocialNetworkSource;
 
-
+/**
+ * Class that holds the information of a topsy post
+ * @author ailiakop
+ * @email ailiakop@iti.gr
+ */
 public class TopsyItem extends Item{
 	public TopsyItem(String id, Operation operation) {
 		super(SocialNetworkSource.Topsy.toString(), operation);
@@ -33,8 +34,9 @@ public class TopsyItem extends Item{
 
 		if(post.getFirstpost_date() != null)
 		publicationTime = Long.parseLong(post.getFirstpost_date()) * 1000;
-		
+		//title of the post
 		title = post.getTitle();
+		//description of the post
 		description = post.getContent();
 		
 		//Media Items - WebPages in a post

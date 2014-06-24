@@ -34,7 +34,8 @@ import eu.socialsensor.framework.retrievers.socialmedia.SocialMediaRetriever;
 import eu.socialsensor.framework.streams.socialmedia.flickr.FlickrStream;
 
 /**
- * The retriever that implements the Flickr wrapper
+ * Class responsible for retrieving Flickr content based on keywords,users or location coordinates
+ * The retrieval process takes place through Flickr API.
  * @author ailiakop
  * @email  ailiakop@iti.gr
  */
@@ -58,8 +59,7 @@ public class FlickrRetriever implements SocialMediaRetriever {
 	private int maxRequests;
 	
 	private long maxRunningTime;
-	private long currRunningTime = 0l;
-	
+
 	private String flickrHost = "www.flickr.com";
 	
 	private Transport flickrTransport = null;
@@ -121,8 +121,6 @@ public class FlickrRetriever implements SocialMediaRetriever {
 			return totalRetrievedItems;
 		}
 		
-		//logger.info("#Flickr : Retrieving User Feed : "+userID);
-		
 		Response response = null;
 		
 		while(true){
@@ -147,8 +145,6 @@ public class FlickrRetriever implements SocialMediaRetriever {
 				
 			Element photosElement = response.getPayload();
 			NodeList photoNodes = photosElement.getElementsByTagName("photo");
-			
-			//logger.info("#Flickr : Retrieving page "+page+" that contains "+photoNodes.getLength()+" photos");
 			
 			for (int i = 0; i < photoNodes.getLength(); i++) {
 				Element photoElement = (Element) photoNodes.item(i);
@@ -226,8 +222,6 @@ public class FlickrRetriever implements SocialMediaRetriever {
 		if(tags.equals(""))
 			return totalRetrievedItems;
 		
-//		logger.info("#Flickr : Retrieving Keywords Feed : "+text);
-		
 		Response response = null;
 		
 		while(true){
@@ -259,8 +253,6 @@ public class FlickrRetriever implements SocialMediaRetriever {
 			
 			Element photosElement = response.getPayload();
 			NodeList photoNodes = photosElement.getElementsByTagName("photo");
-			
-			//logger.info("#Flickr : Retrieving page "+page+" that contains "+photoNodes.getLength()+" photos");
 			
 			for (int i = 0; i < photoNodes.getLength(); i++) {
 				Element photoElement = (Element) photoNodes.item(i);
@@ -307,8 +299,6 @@ public class FlickrRetriever implements SocialMediaRetriever {
 		
 		boolean isFinished = false;
 		
-		//logger.info("#Flickr : Retrieving Location Feed ");
-		
 		Response response = null;
 		
 		while(true){
@@ -332,8 +322,6 @@ public class FlickrRetriever implements SocialMediaRetriever {
 			
 			Element photosElement = response.getPayload();
 			NodeList photoNodes = photosElement.getElementsByTagName("photo");
-			
-			//logger.info("#Flickr : Retrieving page "+page+" that contains "+photoNodes.getLength()+" photos");
 			
 			for (int i = 0; i < photoNodes.getLength(); i++) {
 				Element photoElement = (Element) photoNodes.item(i);
@@ -359,7 +347,6 @@ public class FlickrRetriever implements SocialMediaRetriever {
 			page++;
 		}
 		
-		//logger.info("#Flickr : Done retrieving for this session");
 		logger.info("#Flickr : Handler fetched " + totalRetrievedItems + " photos "+ 
 				" [ " + dateToRetrieve + " - " + new Date(System.currentTimeMillis()) + " ]");
 		
@@ -396,7 +383,9 @@ public class FlickrRetriever implements SocialMediaRetriever {
 				ListFeed listFeed = (ListFeed) feed;
 				
 				return retrieveListsFeeds(listFeed);
-				
+			default:
+				logger.error("Unkonwn Feed Type: " + feed.toJSONString());
+				break;	
 			
 		}
 	

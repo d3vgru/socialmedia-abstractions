@@ -7,7 +7,7 @@ import eu.socialsensor.framework.common.domain.SocialNetworkSource;
 import eu.socialsensor.framework.common.domain.StreamUser;
 
 /**
- * Class that holds the information regarding the twitter user
+ * Class that holds the information of a twitter user
  * @author manosetro
  * @email  manosetro@iti.gr
  */

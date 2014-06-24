@@ -2,7 +2,6 @@ package eu.socialsensor.framework.retrievers.socialmedia.facebook;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -16,7 +15,6 @@ import com.restfb.exception.FacebookNetworkException;
 import com.restfb.exception.FacebookResponseStatusException;
 import com.restfb.types.CategorizedFacebookType;
 import com.restfb.types.Comment;
-import com.restfb.types.NamedFacebookType;
 import com.restfb.types.Page;
 import com.restfb.types.Photo;
 import com.restfb.types.Post;
@@ -41,7 +39,8 @@ import eu.socialsensor.framework.streams.socialmedia.facebook.FacebookStream;
 
 
 /**
- * The retriever that implements the Facebook wrapper
+ * Class responsible for retrieving facebook content based on keywords or facebook users/facebook pages
+ * The retrieval process takes place through facebook graph API.
  * @author ailiakop
  * @email  ailiakop@iti.gr
  * 
@@ -52,8 +51,6 @@ public class FacebookRetriever implements SocialMediaRetriever {
 			
 	private FacebookClient facebookClient;
 	private FacebookStream fbStream;
-	
-	private List<String> retrievedPages = new ArrayList<String>();
 	
 	private int maxResults;
 	private int maxRequests;
@@ -76,10 +73,7 @@ public class FacebookRetriever implements SocialMediaRetriever {
 		this.maxRunningTime = maxRunningTime;
 	}
 	
-	public List<String> getRetrievedFbPages(){
-		return retrievedPages;
-	}
-	
+
 	@Override
 	public Integer retrieveUserFeeds(SourceFeed feed){
 		Integer totalRetrievedItems = 0;
@@ -97,8 +91,6 @@ public class FacebookRetriever implements SocialMediaRetriever {
 		}
 		String userFeed = source.getName()+"/feed";
 		
-		//logger.info("#Facebook : Retrieving User Feed : "+userName);
-		
 		Connection<Post> connection = facebookClient.fetchConnection(userFeed , Post.class);
 		User page = facebookClient.fetchObject(userName, User.class);
 		
@@ -107,8 +99,6 @@ public class FacebookRetriever implements SocialMediaRetriever {
 		
 		for(List<Post> connectionPage : connection) {
 			rateLimitsMonitor.check();
-			
-			//logger.info("#Facebook : Retrieving page "+it+" that contains "+connectionPage.size()+" posts");
 			
 			for(Post post : connectionPage) {	
 				
@@ -201,7 +191,6 @@ public class FacebookRetriever implements SocialMediaRetriever {
 		if(tags.equals(""))
 			return totalRetrievedItems;
 		
-		//logger.info("#Facebook : Retrieving Keywords Feed : "+tags);
 		Connection<Post> connection = null;
 		try{
 			
@@ -209,14 +198,6 @@ public class FacebookRetriever implements SocialMediaRetriever {
 			connection = facebookClient.fetchConnection("search",Post.class,
 					Parameter.with("q",tags),Parameter.with("type","post"));
 			
-			//Connection<Page> page_connection = facebookClient.fetchConnection("search",Page.class,
-					//Parameter.with("q",tags),Parameter.with("type","page"));
-			
-			/*for(List<Page> pageConnection : page_connection)
-				for(Page page : pageConnection){
-					System.out.println("page : "+page.getName());
-					retrievedPages.add(page.getName());
-				}*/
 			
 		}catch(FacebookResponseStatusException e1){
 			
@@ -227,8 +208,6 @@ public class FacebookRetriever implements SocialMediaRetriever {
 		}
 		try{
 			for(List<Post> connectionPage : connection) {
-							
-				//logger.info("#Facebook : Retrieving page "+it+" that contains "+connectionPage.size()+" posts");
 				
 				for(Post post : connectionPage) {	
 					
@@ -277,8 +256,11 @@ public class FacebookRetriever implements SocialMediaRetriever {
 	public Integer retrieveLocationFeeds(LocationFeed feed){
 		return 0;
 	}
-	
-	public void retrieveFromRetrievedPages(Date date) {
+	/**
+	 * Retrieve from certain facebook pages after a specific date
+	 * @param date
+	 */
+	public void retrieveFromPages(List<String> retrievedPages,Date date) {
 		Integer totalRetrievedItems = 0;
 		boolean isFinished = true;
 		
@@ -286,9 +268,7 @@ public class FacebookRetriever implements SocialMediaRetriever {
 			Connection<Post> connection = facebookClient.fetchConnection(page+"/posts" , Post.class);
 			
 			for(List<Post> connectionPage : connection) {
-				
-				//logger.info("#Facebook : Retrieving page "+it+" that contains "+connectionPage.size()+" posts");
-				
+					
 				for(Post post : connectionPage) {	
 					
 					Date publicationDate = post.getCreatedTime();
@@ -347,16 +327,20 @@ public class FacebookRetriever implements SocialMediaRetriever {
 				return retrieveKeywordsFeeds(keyFeed);
 				
 			case LOCATION:
-				logger.error("#Facebook : Location Feed cannot be retreived from Facebook");
+				LocationFeed locationFeed = (LocationFeed) feed;
+				
+				return retrieveLocationFeeds(locationFeed);
 			
 			case LIST:
-				logger.error("#Facebook : List Feed cannot be retreived from Facebook");	
-				return 0;
+				ListFeed listFeed = (ListFeed) feed;
+				
+				return retrieveListsFeeds(listFeed);
 			default:
-				return 0;
+				logger.error("Unkonwn Feed Type: " + feed.toJSONString());
+				break;
 			
 		}
-		
+		return 0;
 	}
 	
 	@Override

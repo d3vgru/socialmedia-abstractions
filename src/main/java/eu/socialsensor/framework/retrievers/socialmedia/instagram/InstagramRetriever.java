@@ -43,7 +43,8 @@ import eu.socialsensor.framework.streams.StreamConfiguration;
 import eu.socialsensor.framework.streams.socialmedia.instagram.InstagramStream;
 
 /**
- * The retriever that implements the Instagram wrapper
+ * Class responsible for retrieving Instagram content based on keywords or instagram users or locations
+ * The retrieval process takes place through Instagram API
  * @author ailiakop
  * @email  ailiakop@iti.gr
  */
@@ -118,14 +119,11 @@ public class InstagramRetriever implements SocialMediaRetriever {
 			return totalRetrievedItems;
 		}
 		
-		//logger.info("#Instagram : "+revUsers.size()+" relevant users found");
-		
 		for(UserFeedData revUser : revUsers){
 
 			try{
 				mediaFeed = instagram.getRecentMediaFeed(revUser.getId(),-1,null,null,null,null);
 				if(mediaFeed != null){
-					//logger.info("#Instagram : "+mediaFeed.getData().size()+" photos of "+it+" relevant user found to retrieve");
 					
 					for(MediaFeedData mfeed : mediaFeed.getData()){
 						int createdTime = Integer.parseInt(mfeed.getCreatedTime());
@@ -158,8 +156,8 @@ public class InstagramRetriever implements SocialMediaRetriever {
 			}
 		}	
 		
-		logger.info("#Instagram : Handler fetched " + totalRetrievedItems + " photos from " + uName + 
-				" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
+//		logger.info("#Instagram : Handler fetched " + totalRetrievedItems + " photos from " + uName + 
+//				" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
 		
 		return totalRetrievedItems;
 	}
@@ -199,8 +197,7 @@ public class InstagramRetriever implements SocialMediaRetriever {
 			}
 		}
 		tags = tags.replaceAll(" ", "");
-		//logger.info("#Instagram : Retrieving Keywords Feed : "+tags);
-		
+	
 		if(tags.equals(""))
 			return totalRetrievedItems;
 		
@@ -209,9 +206,7 @@ public class InstagramRetriever implements SocialMediaRetriever {
 			tagFeed = instagram.getRecentMediaTags(tags);
 			numberOfRequests++;
 		}
-		catch(InstagramException e){
-			/*logger.error("#First Instagram Exception : "+e);*/
-			
+		catch(InstagramException e){	
 			return totalRetrievedItems;
 		}
 		
@@ -286,9 +281,7 @@ public class InstagramRetriever implements SocialMediaRetriever {
 						logger.error("#Second Instagram Exception : "+e);
 						return totalRetrievedItems;
 					} catch (MalformedURLException e1) {
-						// TODO Auto-generated catch block
-						/*logger.error("#Second Instagram Exception : "+e1);
-						e1.printStackTrace();*/
+					
 						return totalRetrievedItems;
 					}
 
@@ -327,8 +320,6 @@ public class InstagramRetriever implements SocialMediaRetriever {
 		
     	double latitude = loc.getLatitude();
     	double longtitude = loc.getLongitude();
-
-    	logger.info("#Instagram : Retrieving Location Feed : ("+latitude+","+longtitude+")");
     	
     	try{
     		LocationSearchFeed locs = instagram.searchLocation(latitude , longtitude,5000);
@@ -343,8 +334,6 @@ public class InstagramRetriever implements SocialMediaRetriever {
     		
     		Date upDate = currentDate;
     		Date downDate = dateUtil.addDays(upDate, -1);
-    		
-    		//logger.info("#Instagram : Retrieving for location : "+location.getName());	
     		
     		while(downDate.after(lastItemDate) || downDate.equals(lastItemDate)){
     	
@@ -378,12 +367,11 @@ public class InstagramRetriever implements SocialMediaRetriever {
         			}
         		}
         		catch(InstagramException e){
-        			logger.error("#Instagram Exception : "+e);
+        			
         			return totalRetrievedItems;
         		} catch (MalformedURLException e1) {
-					// TODO Auto-generated catch block
-        			logger.error("#Instagram Exception : "+e1);
-					e1.printStackTrace();
+        			return totalRetrievedItems;
+					
 				}
     			
     			if(isFinished)

@@ -9,7 +9,10 @@ import eu.socialsensor.framework.common.domain.feeds.SourceFeed;
 import eu.socialsensor.framework.retrievers.Retriever;
 
 /**
- * The interface that represents the retriever for all wrappers
+ * The interface for retrieving from social media - Currently the
+ * social networks supprorted by the platform are the following:
+ * YouTube,Google+,Twitter, Facebook,Flickr,Instagram,Topsy,Tumblr,
+ * Vimeo,DailyMotion,Twitpic
  * @author ailiakop
  * @email  ailiakop@iti.gr
  */
@@ -19,7 +22,7 @@ public interface SocialMediaRetriever extends Retriever {
 	
 	/**
 	 * Retrieves a keywords feed that contains certain keywords
-	 * in order to retrieve relevant multimedia content
+	 * in order to retrieve relevant content
 	 * @param feed
 	 * @return
 	 * @throws Exception
@@ -28,7 +31,7 @@ public interface SocialMediaRetriever extends Retriever {
 	
 	/**
 	 * Retrieves a user feed that contains the user/users in 
-	 * order to retrieve multimedia content posted by them
+	 * order to retrieve content posted by them
 	 * @param feed
 	 * @return
 	 * @throws Exception
@@ -37,7 +40,7 @@ public interface SocialMediaRetriever extends Retriever {
 	
 	/**
 	 * Retrieves a location feed that contains the coordinates of the location
-	 * that the retrieved multimedia content must come from.
+	 * that the retrieved content must come from.
 	 * @param feed
 	 * @return
 	 * @throws Exception
@@ -53,8 +56,20 @@ public interface SocialMediaRetriever extends Retriever {
 	 */
 	public Integer retrieveListsFeeds(ListFeed feed);
 	
+	/**
+	 * Retrieves the info for a specific user on the basis
+	 * of his id in the social network
+	 * @param uid
+	 * @return a StreamUser instance
+	 */
 	public StreamUser getStreamUser(String uid);
 	
+	/**
+	 * Retrieves the info for a specific media object on the basis
+	 * of its id in the social network
+	 * @param id
+	 * @return a MediaItem instance
+	 */
 	public MediaItem getMediaItem(String id);
 	
 }

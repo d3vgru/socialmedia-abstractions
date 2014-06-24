@@ -18,7 +18,12 @@ import eu.socialsensor.framework.common.domain.feeds.URLFeed;
 import eu.socialsensor.framework.retrievers.Retriever;
 import eu.socialsensor.framework.streams.newsfeed.rss.RSSStream;
 
-
+/**
+ * Class for retrieving rss feeds from official sources
+ * The retrieval process takes place through ROME API. 
+ * @author ailiakop
+ * @email ailiakop@iti.gr
+ */
 public class RSSRetriever implements Retriever{
 	
 	RSSStream rssStream;

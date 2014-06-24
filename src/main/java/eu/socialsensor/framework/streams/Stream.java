@@ -11,9 +11,7 @@ import org.apache.log4j.Logger;
 
 import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Item;
-import eu.socialsensor.framework.common.domain.Feed.FeedType;
 import eu.socialsensor.framework.common.domain.StreamUser.Category;
-import eu.socialsensor.framework.common.domain.feeds.SourceFeed;
 import eu.socialsensor.framework.monitors.FeedsMonitor;
 import eu.socialsensor.framework.retrievers.Retriever;
 import eu.socialsensor.framework.subscribers.socialmedia.Subscriber;
@@ -21,9 +19,10 @@ import eu.socialsensor.framework.subscribers.socialmedia.Subscriber;
 
 
 /**
- * Class handles the stream of information regarding a social network.
- * It is responsible for its configuration, its wrapper's initialization
- * and its retrieval process.
+ * Class responsible for handling the stream of information regarding 
+ * a social network or a news feed source.
+ * It is responsible for the configuration of the connection to the selected API
+ * and the retrieval/storing of relevant content.
  * @author manosetro
  * @email  manosetro@iti.gr
  * @author ailiakop
@@ -60,7 +59,7 @@ public abstract class Stream implements Runnable {
 	private Map<String,Category> usersToCategory;
 	
 	/**
-	 * Open a stream for updates delivery
+	 * Opens a stream for updates delivery
 	 * @param config
 	 *      Stream configuration parameters
 	 * @throws StreamException
@@ -69,7 +68,7 @@ public abstract class Stream implements Runnable {
 	public abstract void open(StreamConfiguration config) throws StreamException;
 	
 	/**
-	 * Close a stream 
+	 * Closes a stream 
 	 * @throws StreamException
 	 *      In any case of error during stream close
 	 */
@@ -95,7 +94,7 @@ public abstract class Stream implements Runnable {
 	
 	
 	/**
-	 * Set the handler that is responsible for the handling 
+	 * Sets the handler that is responsible for the handling 
 	 * of the retrieved items
 	 * @param handler
 	 */
@@ -114,7 +113,10 @@ public abstract class Stream implements Runnable {
 		monitor = new FeedsMonitor(retriever);
 		return true;
 	}
-	
+	/**
+	 * Sets the users list that will be used to retrieve from the stream (utilized for Twitter Stream)
+	 * @param usersToLists
+	 */
 	public void setUserLists(Map<String, Set<String>> usersToLists) {
 		this.usersToLists = usersToLists;
 		
@@ -127,15 +129,25 @@ public abstract class Stream implements Runnable {
 			logger.info(usersToLists.size() + " user in " + allLists.size() + " Lists!!!");
 		}
 	}
-	
+	/**
+	 * Sets the category that the investigated user belongs to
+	 * @param usersToCategory
+	 */
 	public void setUserCategories(Map<String, Category> usersToCategory) {
 		this.usersToCategory = usersToCategory;
 	}
-	
+	/**
+	 * Sets that the current stream instance behaves as a Subscriber.
+	 */
 	public void setAsSubscriber(){
 		this.isSubscriber = true;
 	}
-
+	/**
+	 * Subscribes to a social network channel to retrieve relevant content to
+	 * a give list of input feeds
+	 * @param feeds
+	 * @throws StreamException
+	 */
 	public synchronized void stream(List<Feed> feeds) throws StreamException {
 		
 		if(subscriber != null) {
@@ -143,16 +155,18 @@ public abstract class Stream implements Runnable {
 		}
 		
 	}
-	
+	/**
+	 * Returns the list of retrieved items 
+	 * @return
+	 */
 	public synchronized List<Item> getTotalRetrievedItems() {
 		return this.totalRetrievedItems;
 	}
 	
 	/**
 	 * Searches with the wrapper of the stream for a particular
-	 * set of feeds (feeds can be keywordsFeeds, userFeeds or locationFeeds)
+	 * set of feeds (feeds can be keywordsFeeds, userFeeds, locationFeeds, listFeeds or URLFeeds)
 	 * @param feeds
-	 * @return the total number of retrieved items for the stream
 	 * @throws StreamException
 	 */
 	public synchronized void poll(List<Feed> feeds) throws StreamException {
@@ -178,46 +192,6 @@ public abstract class Stream implements Runnable {
 		}
 		
 	}
-	
-	/**
-	 * Searches with the wrapper of the stream for a particular
-	 * set of feeds (feeds can be keywordsFeeds, userFeeds or locationFeeds)
-	 * @param feeds
-	 * @return the total number of retrieved items for the stream
-	 * @throws StreamException
-	 */
-	public synchronized void pollInThreads(List<Feed> feeds) throws StreamException {
-		
-		Integer numOfRetrievedItems = 0;
-		
-		totalRetrievedItems.clear();
-		
-		if(retriever != null) {
-		
-			if(feeds == null) {
-				logger.error("Feeds is null in poll method.");
-				return;
-			}
-			
-			logger.info("poll for " + feeds.size() + " feeds");
-			
-			monitor.addFeeds(feeds);
-			monitor.setSizeOfThreads(feeds.size());
-			monitor.startMonitor();
-			while(!monitor.isMonitorFinished()){
-				//do nothing
-			}
-
-			numOfRetrievedItems = monitor.collectRetrievedItems();
-			
-			
-			logger.info("Retrieved items for " + this.getClass().getName()+ " are : " + numOfRetrievedItems);
-			
-			monitor.stopMonitor();
-		}
-		
-	}
-	
 	
 	/**
 	 * Store a set of items in the selected databases
@@ -251,7 +225,12 @@ public abstract class Stream implements Runnable {
 		
 		handler.update(item);
 	}
-	
+	/**
+	 * Returns the lists that the user associated with a given 
+	 * item belongs to
+	 * @param item
+	 * @return
+	 */
 	private String[] getUserList(Item item) {
 		
 		Set<String> lists = new HashSet<String>();
@@ -286,16 +265,21 @@ public abstract class Stream implements Runnable {
 		}
 		
 		if(lists.size() > 0) {
-			//logger.info(item.getId() + " is associated with " + lists);
+	
 			return lists.toArray(new String[lists.size()]);
 		}
 		else {
-			//logger.info("Any list found for " + item.getId());
+	
 			return null;
 		}
 		
 	}
-	
+	/**
+	 * Returns the category that a user associated with a given
+	 * item belongs to
+	 * @param item
+	 * @return
+	 */
 	private Category getUserCategory(Item item){
 		
 		if(usersToCategory == null){
@@ -330,7 +314,11 @@ public abstract class Stream implements Runnable {
 		
 		return feedsQueue.offer(feed);
 	}
-	
+	/**
+	 * Adds a set of feeds to the stream for future searching
+	 * @param feeds
+	 * @return
+	 */
 	public boolean addFeeds(List<Feed> feeds) {
 		
 		for(Feed feed : feeds){

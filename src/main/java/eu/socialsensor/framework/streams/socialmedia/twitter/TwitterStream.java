@@ -13,9 +13,11 @@ import eu.socialsensor.framework.streams.StreamException;
 import eu.socialsensor.framework.subscribers.socialmedia.twitter.TwitterSubscriber;
 
 /**
- * The stream that handles the configuration of the twitter wrapper
- * @author manosetro
- * @email  manosetro@iti.gr
+ * Class responsible for setting up the connection to Twitter API
+ * for retrieving relevant Twitter content. Handles both the connection
+ * to Twitter REST API and Twitter Subscriber. 
+ * @author ailiakop
+ * @email  ailiakop@iti.gr
  */
 public class TwitterStream extends Stream {
 	

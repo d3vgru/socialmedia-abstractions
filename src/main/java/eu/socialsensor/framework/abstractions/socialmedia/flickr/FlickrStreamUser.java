@@ -3,11 +3,10 @@ package eu.socialsensor.framework.abstractions.socialmedia.flickr;
 import com.aetrion.flickr.people.User;
 
 import eu.socialsensor.framework.common.domain.SocialNetworkSource;
-import eu.socialsensor.framework.common.domain.Source;
 import eu.socialsensor.framework.common.domain.StreamUser;
 
 /**
- * Class that holds the information regarding the flickr user
+ * Class that holds the information of a flickr user
  * @author ailiakop
  * @email  ailiakop@iti.gr
  */

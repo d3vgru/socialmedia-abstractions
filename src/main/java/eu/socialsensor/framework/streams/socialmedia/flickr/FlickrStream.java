@@ -11,7 +11,8 @@ import eu.socialsensor.framework.streams.StreamException;
 
 
 /**
- * The stream that handles the configuration of the flickr wrapper
+ * Class responsible for setting up the connection to Flickr API
+ * for retrieving relevant Flickr content.
  * @author ailiakop
  * @email  ailiakop@iti.gr
  */

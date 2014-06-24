@@ -1,7 +1,5 @@
 package eu.socialsensor.framework.abstractions.newsfeed.rss;
 
-import java.util.UUID;
-
 import org.jsoup.Jsoup;
 
 import com.sun.syndication.feed.synd.SyndEntry;
@@ -9,6 +7,11 @@ import com.sun.syndication.feed.synd.SyndEntry;
 import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.NewsFeedSource;
 
+/**
+ * Class that holds the information of an RSS feed
+ * @author ailiakop
+ * @author ailiakop@iti.gr
+ */
 public class RSSItem extends Item{
 	
 	public RSSItem(SyndEntry rssEntry) {

@@ -35,7 +35,8 @@ import eu.socialsensor.framework.retrievers.socialmedia.SocialMediaRetriever;
 import eu.socialsensor.framework.streams.socialmedia.gplus.GooglePlusStream;
 
 /**
- * The retriever that implements the Google Plus wrapper
+ * Class responsible for retrieving Google+ content based on keywords or google+ users
+ * The retrieval process takes place through Google API
  * @author ailiakop
  * @email  ailiakop@iti.gr
  */
@@ -56,7 +57,6 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 	private int maxRequests;
 	
 	private long maxRunningTime;
-	private long currRunningTime = 0l;
 	
 	public String getKey() { 
 		return GooglePlusKey;
@@ -99,8 +99,6 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 			return totalRetrievedItems;
 		}
 				
-		//logger.info("#GooglePlus : Retrieving User Feed : "+uName);
-		
 		//Retrieve userID from Google+
 		String userID = null;
 		Plus.People.Search searchPeople = null;
@@ -230,8 +228,6 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 		if(tags.equals(""))
 			return totalRetrievedItems;
 		
-		//logger.info("#GooglePlus : Retrieving Keywords Feed :"+tags);
-		
 		Plus.Activities.Search searchActivities;
 		ActivityFeed activityFeed;
 		List<Activity> pageOfActivities;
@@ -333,12 +329,17 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 				return retrieveKeywordsFeeds(keyFeed);
 				
 			case LOCATION:
-				logger.error("#GooglePlus : Location Feed cannot be retreived from GooglePlus");
-				return null;
+				LocationFeed locationFeed = (LocationFeed) feed;
+				
+				return retrieveLocationFeeds(locationFeed);
 			
 			case LIST:
-				logger.error("#GooglePlus : List Feed cannot be retreived from GooglePlus");
-				return null;
+				ListFeed listFeed = (ListFeed) feed;
+				
+				return retrieveListsFeeds(listFeed);
+			default:
+				logger.error("Unkonwn Feed Type: " + feed.toJSONString());
+				break;
 		}
 		
 		return null;

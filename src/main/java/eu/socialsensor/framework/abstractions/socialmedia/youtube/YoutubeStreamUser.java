@@ -10,7 +10,7 @@ import eu.socialsensor.framework.common.domain.SocialNetworkSource;
 import eu.socialsensor.framework.common.domain.StreamUser;
 
 /**
- * Class that holds the information regarding the youtube user
+ * Class that holds the information of a youtube user
  * @author ailiakop
  * @email  ailiakop@iti.gr
  */

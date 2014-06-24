@@ -11,7 +11,8 @@ import eu.socialsensor.framework.streams.StreamException;
 
 
 /**
- * The stream that handles the configuration of the tumblr wrapper
+ * Class responsible for setting up the connection to Tumblr API
+ * for retrieving relevant Tumblr content.
  * @author ailiakop
  * @email  ailiakop@iti.gr
  */

@@ -13,7 +13,8 @@ import eu.socialsensor.framework.streams.StreamConfiguration;
 import eu.socialsensor.framework.streams.StreamException;
 
 /**
- * The stream that handles the configuration of the facebook wrapper
+ * Class responsible for setting up the connection to Facebook API
+ * for retrieving relevant Facebook content.
  * @author ailiakop
  * @email  ailiakop@iti.gr
  */

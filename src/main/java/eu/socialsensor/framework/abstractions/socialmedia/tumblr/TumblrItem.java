@@ -21,7 +21,7 @@ import eu.socialsensor.framework.common.domain.SocialNetworkSource;
 import eu.socialsensor.framework.common.domain.WebPage;
 
 /**
- * Class that holds the information regarding the tumblr post
+ * Class that holds the information of a tumblr post
  * @author ailiakop
  * @email  ailiakop@iti.gr
  */

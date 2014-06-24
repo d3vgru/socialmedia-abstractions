@@ -9,11 +9,11 @@ import eu.socialsensor.framework.streams.StreamConfiguration;
 import eu.socialsensor.framework.streams.StreamException;
 
 /**
- * The stream that handles the configuration of the google plus wrapper
+ * Class responsible for setting up the connection to Google API
+ * for retrieving relevant Google+ content.
  * @author ailiakop
  * @email  ailiakop@iti.gr
  */
-
 public class GooglePlusStream extends Stream {
 	public static final SocialNetworkSource SOURCE = SocialNetworkSource.GooglePlus;
 	

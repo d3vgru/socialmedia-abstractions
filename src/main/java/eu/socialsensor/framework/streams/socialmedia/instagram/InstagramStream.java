@@ -9,7 +9,8 @@ import eu.socialsensor.framework.streams.StreamConfiguration;
 import eu.socialsensor.framework.streams.StreamException;
 
 /**
- * The stream that handles the configuration of the instagram wrapper
+ * Class responsible for setting up the connection to Instagram API
+ * for retrieving relevant Instagram content.
  * @author ailiakop
  * @email  ailiakop@iti.gr
  */

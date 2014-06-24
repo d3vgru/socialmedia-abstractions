@@ -23,16 +23,14 @@ import eu.socialsensor.framework.common.domain.SocialNetworkSource;
 import eu.socialsensor.framework.common.domain.WebPage;
 
 /**
- * Class that holds the information regarding the facebook post
+ * Class that holds the information of a facebook post
  * @author ailiakop
  * @author ailiakop@iti.gr
  *
  */
 public class FacebookItem extends Item {
 	
-	/**
-	 * 
-	 */
+	
 	private static final long serialVersionUID = 2267260425325527385L;
 
 	public FacebookItem(String id, Operation operation) {
@@ -52,9 +50,9 @@ public class FacebookItem extends Item {
 		streamId = SocialNetworkSource.Facebook.toString();
 		//Timestamp of the creation of the post
 		publicationTime = post.getCreatedTime().getTime();
-		
+		//post's descritpion
 		description = post.getDescription();
-		
+		//is this the original or a shared fb post
 		original = true;
 		
 		//Message that post contains

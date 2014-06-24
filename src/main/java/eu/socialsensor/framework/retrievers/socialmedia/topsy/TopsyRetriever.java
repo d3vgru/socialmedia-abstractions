@@ -1,9 +1,10 @@
 package eu.socialsensor.framework.retrievers.socialmedia.topsy;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+
+import org.apache.log4j.Logger;
 
 import com.maruti.otterapi.Otter4JavaException;
 import com.maruti.otterapi.TopsyConfig;
@@ -23,16 +24,22 @@ import eu.socialsensor.framework.common.domain.feeds.SourceFeed;
 import eu.socialsensor.framework.retrievers.socialmedia.SocialMediaRetriever;
 import eu.socialsensor.framework.streams.socialmedia.topsy.TopsyStream;
 
+/**
+ * Class responsible for retrieving Topsy image content based on keywords
+ * The retrieval process takes place through Topsy API.
+ * @author ailiakop
+ * @email  ailiakop@iti.gr
+ */
+
 public class TopsyRetriever implements SocialMediaRetriever{
-	
-	private String apiKey = null;
+	private Logger logger = Logger.getLogger(TopsyRetriever.class);
 	
 	private TopsyStream topsyStream;
 	
 	private TopsyConfig topsyConfig;
 	
 	public TopsyRetriever(String apiKey,TopsyStream topsyStream){
-		this.apiKey = apiKey;
+		
 		this.topsyStream = topsyStream;
 		
 		topsyConfig = new TopsyConfig();
@@ -120,7 +127,9 @@ public class TopsyRetriever implements SocialMediaRetriever{
 			case LIST:
 				ListFeed listFeed = (ListFeed) feed;
 				return retrieveListsFeeds(listFeed);
-			
+			default:
+				logger.error("Unkonwn Feed Type: " + feed.toJSONString());
+				break;
 		}
 	
 		return 0;

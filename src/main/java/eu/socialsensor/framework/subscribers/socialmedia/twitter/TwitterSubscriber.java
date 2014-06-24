@@ -36,6 +36,14 @@ import eu.socialsensor.framework.streams.Stream;
 import eu.socialsensor.framework.streams.StreamException;
 import eu.socialsensor.framework.subscribers.socialmedia.Subscriber;
 
+/**
+ * Class for retrieving real-time Twitter content by subscribing to Twitter. 
+ * Twitter content can be based on keywords,twitter users or locations or be 
+ * a random sampling of currently posted statuses. 
+ * The retrieval process takes place through Twitter API (twitter4j)
+ * @author ailiakop
+ *
+ */
 public class TwitterSubscriber implements Subscriber {
 	private Logger  logger = Logger.getLogger(TwitterSubscriber.class);
 	

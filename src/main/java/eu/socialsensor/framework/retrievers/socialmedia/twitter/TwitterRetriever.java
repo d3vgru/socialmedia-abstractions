@@ -32,6 +32,12 @@ import eu.socialsensor.framework.common.domain.feeds.SourceFeed;
 import eu.socialsensor.framework.retrievers.socialmedia.SocialMediaRetriever;
 import eu.socialsensor.framework.streams.socialmedia.twitter.TwitterStream;
 
+/**
+ * Class responsible for retrieving Twitter content based on keywords, twitter users or locations
+ * The retrieval process takes place through Twitter API (twitter4j)
+ * @author ailiakop
+ * @email  ailiakop@iti.gr
+ */
 public class TwitterRetriever implements SocialMediaRetriever {
 	
 	private Logger  logger = Logger.getLogger(TwitterRetriever.class);
@@ -309,9 +315,17 @@ public class TwitterRetriever implements SocialMediaRetriever {
 				return retrieveKeywordsFeeds(keyFeed);
 				
 			case LOCATION:
-				LocationFeed locFeed = (LocationFeed) feed;
+				LocationFeed locationFeed = (LocationFeed) feed;
 				
-				return retrieveLocationFeeds(locFeed);
+				return retrieveLocationFeeds(locationFeed);
+			
+			case LIST:
+				ListFeed listFeed = (ListFeed) feed;
+				
+				return retrieveListsFeeds(listFeed);
+			default:
+				logger.error("Unkonwn Feed Type: " + feed.toJSONString());
+				break;	
 			
 		}
 		return 0;

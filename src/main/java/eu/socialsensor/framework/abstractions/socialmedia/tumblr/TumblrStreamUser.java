@@ -6,7 +6,7 @@ import eu.socialsensor.framework.common.domain.SocialNetworkSource;
 import eu.socialsensor.framework.common.domain.StreamUser;
 
 /**
- * Class that holds the information regarding the tumblr user
+ * Class that holds the information of a tumblr user
  * @author ailiakop
  * @email  ailiakop@iti.gr
  */

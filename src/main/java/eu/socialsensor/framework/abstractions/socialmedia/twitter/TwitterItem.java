@@ -26,7 +26,7 @@ import twitter4j.User;
 import twitter4j.UserMentionEntity;
 
 /**
- * Class that holds the information regarding the twitter status
+ * Class that holds the information of a twitter status
  * @author manosetro
  * @email  manosetro@iti.gr
  */

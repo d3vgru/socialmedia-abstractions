@@ -15,7 +15,7 @@ import eu.socialsensor.framework.common.domain.MediaItem;
 import eu.socialsensor.framework.common.domain.SocialNetworkSource;
 
 /**
- * Class that holds the information regarding the instagram image
+ * Class that holds the information of a instagram image
  * @author ailiakop
  * @email  ailiakop@iti.gr
  */

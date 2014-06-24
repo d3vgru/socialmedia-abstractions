@@ -7,7 +7,7 @@ import eu.socialsensor.framework.common.domain.SocialNetworkSource;
 import eu.socialsensor.framework.common.domain.StreamUser;
 
 /**
- * Class that holds the information regarding the instagram user
+ * Class that holds the information of an instagram user
  * @author ailiakop
  * @email  ailiakop@iti.gr
  */
