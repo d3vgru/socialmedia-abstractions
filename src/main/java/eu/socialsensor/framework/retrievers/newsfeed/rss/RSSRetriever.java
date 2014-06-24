@@ -2,6 +2,7 @@ package eu.socialsensor.framework.retrievers.newsfeed.rss;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Date;
 import java.util.List;
 
 
@@ -31,7 +32,10 @@ public class RSSRetriever implements Retriever{
 	
 	@Override
 	public Integer retrieve(Feed feed){
+		
 		URLFeed ufeed = (URLFeed) feed;
+		System.out.println("["+new Date()+"]Retrieving RSS Feed: "+ufeed.getURL());
+		
 		Integer totalRetrievedItems = 0;
 		try {
 			
@@ -54,9 +58,8 @@ public class RSSRetriever implements Retriever{
 								&& Math.abs(System.currentTimeMillis() - rss.getPublishedDate().getTime())<oneMonthPeriod){
 							
 							RSSItem rssItem = new RSSItem(rss);
-							
 							rssStream.store(rssItem);
-							
+							Thread.sleep(100);
 							totalRetrievedItems++;
 						}
 					
