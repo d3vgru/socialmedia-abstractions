@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -15,6 +17,8 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.plus.Plus;
+import com.google.api.services.plus.Plus.People;
+import com.google.api.services.plus.Plus.People.Get;
 import com.google.api.services.plus.PlusRequestInitializer;
 import com.google.api.services.plus.model.Activity;
 import com.google.api.services.plus.model.ActivityFeed;
@@ -22,6 +26,7 @@ import com.google.api.services.plus.model.PeopleFeed;
 import com.google.api.services.plus.model.Person;
 
 import eu.socialsensor.framework.abstractions.socialmedia.gplus.GooglePlusItem;
+import eu.socialsensor.framework.abstractions.socialmedia.gplus.GooglePlusStreamUser;
 import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Keyword;
 import eu.socialsensor.framework.common.domain.MediaItem;
@@ -85,7 +90,9 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 		Integer totalRetrievedItems = 0;
 		
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
+		
 		Date lastItemDate = feed.getDateToRetrieve();
+		String label = feed.getLabel();
 		
 		int numberOfRequests = 0;
 		
@@ -93,6 +100,7 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 		
 		Source source = feed.getSource();
 		String uName = source.getName();
+		String userID = source.getId();
 		
 		if(uName == null){
 			logger.info("#GooglePlus : No source feed");
@@ -100,7 +108,7 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 		}
 				
 		//Retrieve userID from Google+
-		String userID = null;
+		StreamUser streamUser = null;
 		Plus.People.Search searchPeople = null;
 		List<Person> people;
 		List<Activity> pageOfActivities;
@@ -108,34 +116,39 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 		Plus.Activities.List userActivities;
 		
 		try {
-			searchPeople = plusSrv.people().search(uName);
-			searchPeople.setMaxResults(20L);
-			PeopleFeed peopleFeed = searchPeople.execute();
-			people = peopleFeed.getItems();
-			for(Person person : people){
-				if(person.getUrl().compareTo(userPrefix+uName) == 0){
-					userID = person.getId();
-					break;
+			if(userID == null) {
+				searchPeople = plusSrv.people().search(uName);
+				searchPeople.setMaxResults(20L);
+				PeopleFeed peopleFeed = searchPeople.execute();
+				people = peopleFeed.getItems();
+				for(Person person : people) {
+					if(person.getUrl().compareTo(userPrefix+uName) == 0) {
+						userID = person.getId();
+						streamUser = getStreamUser(userID);
+						break;
+					}
 				}
+			}
+			else {
+				streamUser = getStreamUser(userID);
 			}
 			
 			//Retrieve activity with userID
-			userActivities = plusSrv.activities().list(userID,"public");
+			logger.info("Get public feed of " + userID);
+			userActivities = plusSrv.activities().list(userID, "public");
 			userActivities.setMaxResults(20L);
 			activityFeed = userActivities.execute();
 			pageOfActivities = activityFeed.getItems();
 			numberOfRequests ++;
 			
-		} catch (IOException e1) {
+		} catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 			return totalRetrievedItems;
 		}
 		
 		while(pageOfActivities != null && !pageOfActivities.isEmpty()){
-			
 			try {
-				
 				for (Activity activity : pageOfActivities) {
 				
 					DateTime publicationTime = activity.getPublished();
@@ -153,6 +166,10 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 					
 					if(publicationDate.after(lastItemDate) && activity != null && activity.getId() != null){
 						GooglePlusItem googlePlusUpdate = new GooglePlusItem(activity);
+						googlePlusUpdate.setList(label);
+						
+						if(streamUser != null)
+							googlePlusUpdate.setStreamUser(streamUser);
 						
 						gpStream.store(googlePlusUpdate);
 						totalRetrievedItems++;
@@ -187,14 +204,20 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 //		logger.info("#GooglePlus : Handler fetched " + items.size() + " posts from " + uName + 
 //				" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
 //		
+		// The next request will retrieve only items of the last day
+		Date dateToRetrieve = new Date(System.currentTimeMillis() - (24*3600*1000));
+		feed.setDateToRetrieve(dateToRetrieve);
+		
 		return totalRetrievedItems;
 	}
+	
 	@Override
 	public Integer retrieveKeywordsFeeds(KeywordsFeed feed){
 		Integer totalRetrievedItems = 0;
 		
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
 		Date lastItemDate = feed.getDateToRetrieve();
+		String label = feed.getLabel();
 		
 		int totalRequests = 0;
 		
@@ -205,14 +228,14 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 		Keyword keyword = feed.getKeyword();
 		List<Keyword> keywords = feed.getKeywords();
 		
-		if(keywords == null && keyword == null){
+		if(keywords == null && keyword == null) {
 			logger.info("#GooglePlus : No keywords feed");
 			return totalRetrievedItems;
 		}
 		
 		String tags = "";
 		
-		if(keyword!=null){
+		if(keyword!=null) {
 			for(String key : keyword.getName().split(" "))
 				tags+=key.toLowerCase()+" ";
 		}
@@ -244,6 +267,8 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 			return totalRetrievedItems;
 		}
 		
+		Map<String, StreamUser> users = new HashMap<String, StreamUser>();
+		
 		while(pageOfActivities != null && !pageOfActivities.isEmpty()){
 			
 			for (Activity activity : pageOfActivities) {
@@ -263,8 +288,22 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 						return totalRetrievedItems;
 					}
 					
-					if(publicationDate.after(lastItemDate) && activity != null && activity.getId() != null){
+					if(publicationDate.after(lastItemDate) && activity != null && activity.getId() != null) {
 						GooglePlusItem googlePlusUpdate = new GooglePlusItem(activity);
+						googlePlusUpdate.setList(label);
+						
+						String userID = googlePlusUpdate.getStreamUser().getUserid();
+						StreamUser streamUser = null;
+						if(userID != null && !users.containsKey(userID)) {
+							streamUser = getStreamUser(userID);
+							users.put(userID, streamUser);	
+						}
+						else {
+							streamUser = users.get(userID);
+						}
+						if(streamUser != null)
+							googlePlusUpdate.setStreamUser(streamUser);
+						
 						gpStream.store(googlePlusUpdate);
 						totalRetrievedItems++;
 					}
@@ -297,6 +336,10 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 //		logger.info("#GooglePlus : KeywordsFeed "+feed.getId()+" is done retrieving for this session");
 //		logger.info("#GooglePlus : Handler fetched " + items.size() + " posts from " + tags + 
 //				" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
+		
+		// The next request will retrieve only items of the last day
+		Date dateToRetrieve = new Date(System.currentTimeMillis() - (24*3600*1000));
+		feed.setDateToRetrieve(dateToRetrieve);
 		
 		return totalRetrievedItems;
 		
@@ -347,7 +390,7 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 	
 	@Override
 	public void stop(){
-		if(plusSrv != null){
+		if(plusSrv != null) {
 			plusSrv = null;
 		}
 	}
@@ -355,10 +398,23 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 	public MediaItem getMediaItem(String id) {
 		return null;
 	}
+	
 	@Override
 	public StreamUser getStreamUser(String uid) {
+		
+		People peopleSrv = plusSrv.people();
+		try {
+			Get getRequest = peopleSrv.get(uid);
+			Person person = getRequest.execute();
+			
+			StreamUser streamUser = new GooglePlusStreamUser(person);
+			
+			return streamUser;
+		} catch (IOException e) {
+			logger.error("Exception for user " + uid);
+		}
+		
 		return null;
 	}
-
 	
 }

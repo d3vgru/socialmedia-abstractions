@@ -3,9 +3,16 @@ package eu.socialsensor.framework.abstractions.socialmedia.gplus;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import com.google.api.services.plus.model.Activity;
 import com.google.api.services.plus.model.Activity.Actor;
+import com.google.api.services.plus.model.Activity.PlusObject;
 import com.google.api.services.plus.model.Activity.PlusObject.Attachments;
 import com.google.api.services.plus.model.Activity.PlusObject.Attachments.Embed;
 import com.google.api.services.plus.model.Activity.PlusObject.Attachments.FullImage;
@@ -62,25 +69,63 @@ public class GooglePlusItem extends Item {
 			
 			location = new Location(latitude, longitude,activity.getPlaceName());
 		}
+		
+		PlusObject object = activity.getObject();
+		if(object == null)
+			return;
+		
+		description = object.getContent();
+		if(description != null) {
+			try {
+				List<String> tagsList = new ArrayList<String>();
+				Document doc = Jsoup.parse(description);
+				Elements elements = doc.getElementsByClass("ot-hashtag");
+				for(Element e : elements) {
+					String tag = e.text();
+					if(tag != null)
+						tagsList.add(tag.replaceAll("#", ""));
+				}
+				tags = tagsList.toArray(new String[tagsList.size()]);
+				
+			}
+			catch(Exception e) {
+				
+			}
+		}
+		
+		
 		//Popularity
-		if(activity.getObject().getPlusoners() != null)
-			likes = activity.getObject().getPlusoners().getTotalItems();
+		if(object.getPlusoners() != null)
+			likes = object.getPlusoners().getTotalItems();
 			
 		if(activity.getObject().getResharers() != null)
-			shares = activity.getObject().getResharers().getTotalItems();
+			shares = object.getResharers().getTotalItems();
 			
+		if(activity.getObject().getReplies() != null)
+			numOfComments = object.getReplies().getTotalItems();
+		
+		url = activity.getUrl();
+		if(url == null) {
+			url = object.getUrl();
+		}
 		
 		//Media Items - WebPages in a post
-	
 		webPages = new ArrayList<WebPage>();
 		String pageURL = activity.getUrl();
 		
-		for(Attachments attachment : activity.getObject().getAttachments()){
+		List<Attachments> attachmentsList = object.getAttachments();
+		if(attachmentsList == null)
+			attachmentsList = new ArrayList<Attachments>();
+		
+		for(Attachments attachment : attachmentsList) {
 			
 			String type = attachment.getObjectType();
-			if(attachment !=null && attachment.getId()!=null){
+			if(attachment != null) {
 				if(type.equals("video")) {
 		    		
+					if(attachment.getId() == null)
+						continue;
+					
 					Image image = attachment.getImage();
 					Embed embed = attachment.getEmbed();
 					
@@ -133,6 +178,9 @@ public class GooglePlusItem extends Item {
 		    	}	
 		    	else if(type.equals("photo")) {		
 		    		
+		    		if(attachment.getId() == null)
+						continue;
+		    		
 	    			FullImage image = attachment.getFullImage();
 	    			String imageUrl = image.getUrl();
 		    		Image thumbnail = attachment.getImage();
@@ -164,7 +212,10 @@ public class GooglePlusItem extends Item {
 						//Time of publication
 						mediaItem.setPublicationTime(publicationTime);
 						//Author
-						mediaItem.setUser(streamUser);
+						if(streamUser != null) {
+							mediaItem.setUserId(streamUser.getId());
+							mediaItem.setUser(streamUser);
+						}
 						//PageUrl
 						mediaItem.setPageUrl(pageURL);
 						//Thumbnail
@@ -186,8 +237,6 @@ public class GooglePlusItem extends Item {
 		        		mediaIds.add(mediaId);		
 		        		
 		    		}
-		    		
-		    		
 		    	}
 		    	else if(type.equals("album")) {		
 		    		
@@ -219,7 +268,10 @@ public class GooglePlusItem extends Item {
 							//Time of publication
 							mediaItem.setPublicationTime(publicationTime);
 							//Author
-							mediaItem.setUser(streamUser);
+							if(streamUser != null) {
+								mediaItem.setUserId(streamUser.getId());
+								mediaItem.setUser(streamUser);
+							}
 							//PageUrl
 							mediaItem.setPageUrl(pageURL);
 							//Thumbnail
@@ -248,11 +300,8 @@ public class GooglePlusItem extends Item {
 		    		}
 		    	}
 		    	else if(type.equals("article")) {		
-		    		
-		    		webPages = new ArrayList<WebPage>();
 		    		String link = attachment.getUrl();
 					if (link != null) {
-						
 						WebPage webPage = new WebPage(link, id);
 						webPage.setStreamId(streamId);
 						webPages.add(webPage);
@@ -261,14 +310,26 @@ public class GooglePlusItem extends Item {
 			}
 		}
 
+		List<URL> urls = new ArrayList<URL>();
+		for(WebPage wp : webPages) {
+			try {
+				urls.add(new URL(wp.getUrl()));
+			}
+			catch(Exception e) {
+				continue;
+			}
+		}
+		links = urls.toArray(new URL[urls.size()]);
+		
 	}
 	
-	public GooglePlusItem(Activity activity,GooglePlusStreamUser user) {
+	public GooglePlusItem(Activity activity, GooglePlusStreamUser user) {
 		this(activity);
 		
 		//User that posted the post
 		streamUser = user;
-		uid = streamUser.getId();
+		if(user != null)
+			uid = user.getId();
 		
 		
 	}
@@ -288,11 +349,14 @@ public class GooglePlusItem extends Item {
 		publicationTime = comment.getPublished().getValue();
 		description = "Comment";
 		//User that posted the post
-		streamUser = user;
-		uid = streamUser.getId();
+		if(user != null) {
+			streamUser = user;
+			uid = streamUser.getId();
+		}
 		//Popularity of the post
 		if(comment.getPlusoners() != null){
 			likes = new Long(comment.getPlusoners().size());
 		}
 	}
+
 }
