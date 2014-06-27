@@ -33,6 +33,8 @@ import eu.socialsensor.framework.common.domain.WebPage;
  */
 public class GooglePlusItem extends Item {
 	
+	private static final long serialVersionUID = 1077924633642822831L;
+
 	public GooglePlusItem(String id, Operation operation) {
 		super(SocialNetworkSource.GooglePlus.toString(), operation);
 		setId(SocialNetworkSource.GooglePlus+"#"+id);
@@ -89,7 +91,6 @@ public class GooglePlusItem extends Item {
 				
 			}
 			catch(Exception e) {
-				
 			}
 		}
 		
@@ -155,7 +156,10 @@ public class GooglePlusItem extends Item {
 						//Time of publication
 						mediaItem.setPublicationTime(publicationTime);
 						//Author
-						mediaItem.setUser(streamUser);
+						if(streamUser != null) {
+							mediaItem.setUser(streamUser);
+							mediaItem.setUserId(streamUser.getId());
+						}
 						//PageUrl
 						mediaItem.setPageUrl(pageURL);
 						//Thumbnail

@@ -105,7 +105,7 @@ public class FlickrItem extends Item {
 				mediaUrl = new URL(url);
 			}
 			
-			if(mediaUrl!=null) {
+			if(mediaUrl != null) {
 				//url
 				MediaItem mediaItem = new MediaItem(mediaUrl);
 				
@@ -122,7 +122,10 @@ public class FlickrItem extends Item {
 				//Time of publication
 				mediaItem.setPublicationTime(publicationTime);
 				//Author
-				mediaItem.setUser(streamUser);
+				if(streamUser != null) {
+					mediaItem.setUser(streamUser);
+					mediaItem.setUserId(streamUser.getId());
+				}
 				//PageUrl
 				mediaItem.setPageUrl(photo.getUrl());
 				//Thumbnail

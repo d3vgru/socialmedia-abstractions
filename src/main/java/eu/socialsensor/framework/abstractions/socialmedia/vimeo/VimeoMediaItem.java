@@ -15,6 +15,7 @@ import eu.socialsensor.framework.common.domain.MediaItem;
  */
 public class VimeoMediaItem extends MediaItem {
 	
+	private static final long serialVersionUID = -5822189263800534128L;
 	
 	private static SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
@@ -56,10 +57,10 @@ public class VimeoMediaItem extends MediaItem {
 		//Size
 		this.setSize(video.width, video.height);
 
+		this.setUserId("Vimeo#" + video.user_id);
 	}
 	
 	public static class VimeoVideo {
-		
 		@Key
 		public int id;
 		@Key
@@ -72,9 +73,6 @@ public class VimeoMediaItem extends MediaItem {
 		public int user_id;
 		@Key
 		public int height, width;
-	    //"user_name": "Thomas EID", 
-	    //"user_portrait_large": "http://b.vimeocdn.com/ps/104/806/1048064_100.jpg", 
-	    //"user_url": "http://vimeo.com/user1739776", 
 	}
 
 }

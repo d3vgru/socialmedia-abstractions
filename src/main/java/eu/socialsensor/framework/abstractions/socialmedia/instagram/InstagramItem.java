@@ -21,6 +21,8 @@ import eu.socialsensor.framework.common.domain.SocialNetworkSource;
  */
 public class InstagramItem extends Item {
 
+	private static final long serialVersionUID = -8872330316768925229L;
+
 	public InstagramItem(String id, Operation operation) {
 		super(SocialNetworkSource.Instagram.toString(), operation);
 		setId(SocialNetworkSource.Instagram+"#"+id);
@@ -109,7 +111,10 @@ public class InstagramItem extends Item {
 				//Time of publication
 				mediaItem.setPublicationTime(publicationTime);
 				//Author
-				mediaItem.setUser(streamUser);
+				if(streamUser != null) {
+					mediaItem.setUser(streamUser);
+					mediaItem.setUserId(streamUser.getId());
+				}
 				//PageUrl
 				mediaItem.setPageUrl(image.getLink());
 				//Thumbnail

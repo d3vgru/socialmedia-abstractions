@@ -57,7 +57,7 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 	
 	private GooglePlusStream gpStream;
 	
-	private int pageLimit = 10;
+	//private int pageLimit = 10;
 	private int maxResults;
 	private int maxRequests;
 	
@@ -142,7 +142,6 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 			numberOfRequests ++;
 			
 		} catch (Exception e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 			return totalRetrievedItems;
 		}
@@ -264,7 +263,6 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 			pageOfActivities = activityFeed.getItems();
 			totalRequests++;
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 			return totalRetrievedItems;
 		}
@@ -311,14 +309,13 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 						
 						totalRetrievedItems++;
 					}
-					
-					if(totalRetrievedItems>maxResults){
+					if(totalRetrievedItems > maxResults){
 						isFinished = true;
 						break;
 					}
-						
+		
 				}
-			
+		
 			 }
 			
 			 totalRequests++;
@@ -330,7 +327,6 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 			 try {
 				activityFeed = searchActivities.execute();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			 pageOfActivities = activityFeed.getItems();

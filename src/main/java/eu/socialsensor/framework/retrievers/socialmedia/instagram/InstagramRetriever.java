@@ -61,7 +61,6 @@ public class InstagramRetriever implements SocialMediaRetriever {
 	private int maxRequests;
 	
 	private long maxRunningTime;
-	private long currRunningTime = 0l;
 	
 	private MediaFeed mediaFeed = new MediaFeed();
 	private TagMediaFeed tagFeed = new TagMediaFeed();
@@ -97,8 +96,6 @@ public class InstagramRetriever implements SocialMediaRetriever {
 		String label = feed.getLabel();
 		
 		int numberOfRequests = 0;
-		
-		boolean isFinished = false;
 	
 		Source source = feed.getSource();
 		String uName = source.getName();
@@ -132,7 +129,6 @@ public class InstagramRetriever implements SocialMediaRetriever {
 						
 						if(lastItemDate.after(publicationDate) || totalRetrievedItems>maxResults 
 								|| numberOfRequests>maxRequests){
-    						isFinished = true;
 							break;
     					}
 						if(mfeed != null && mfeed.getId() != null){
@@ -153,7 +149,6 @@ public class InstagramRetriever implements SocialMediaRetriever {
 				return totalRetrievedItems;
 			} catch (MalformedURLException e) {
 				logger.error("#Instagram Exception: ", e);
-				//e.printStackTrace();
 				return totalRetrievedItems;
 			}
 		}	
@@ -424,7 +419,6 @@ public class InstagramRetriever implements SocialMediaRetriever {
 	
 	@Override
 	public Integer retrieveListsFeeds(ListFeed feed) {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 	

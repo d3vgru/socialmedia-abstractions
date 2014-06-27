@@ -9,12 +9,16 @@ import eu.socialsensor.framework.Configuration;
  */
 public class StreamConfiguration extends Configuration {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8712318419026334808L;
+
 	public static final String CLASS_PATH = "Classpath";
 	
 	private StreamHandler handler;
 	
 	public StreamHandler getHandler() {
-		// TODO Auto-generated method stub
 		return handler;
 	}
 	
