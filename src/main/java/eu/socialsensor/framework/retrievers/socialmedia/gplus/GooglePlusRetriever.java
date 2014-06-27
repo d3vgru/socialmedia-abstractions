@@ -171,7 +171,9 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 						if(streamUser != null)
 							googlePlusUpdate.setStreamUser(streamUser);
 						
-						gpStream.store(googlePlusUpdate);
+						if(gpStream != null)
+							gpStream.store(googlePlusUpdate);
+						
 						totalRetrievedItems++;
 					}
 					
@@ -304,7 +306,9 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 						if(streamUser != null)
 							googlePlusUpdate.setStreamUser(streamUser);
 						
-						gpStream.store(googlePlusUpdate);
+						if(gpStream != null)
+							gpStream.store(googlePlusUpdate);
+						
 						totalRetrievedItems++;
 					}
 					

@@ -108,7 +108,9 @@ public class FacebookRetriever implements SocialMediaRetriever {
 					FacebookItem facebookUpdate = new FacebookItem(post, facebookUser);
 					facebookUpdate.setList(label);
 					
-				    fbStream.store(facebookUpdate);
+					if(fbStream != null)
+						fbStream.store(facebookUpdate);
+					
 				    totalRetrievedItems++;
 				    
 				    Comments comments = post.getComments();
@@ -119,7 +121,8 @@ public class FacebookRetriever implements SocialMediaRetriever {
 			    		FacebookItem facebookComment = new FacebookItem(comment, post, null);
 			    		facebookComment.setList(label);
 			    		
-			    		fbStream.store(facebookComment);
+			    		if(fbStream != null)
+			    			fbStream.store(facebookComment);
 			    	} 
 				
 					/*
@@ -230,7 +233,9 @@ public class FacebookRetriever implements SocialMediaRetriever {
 							
 							FacebookItem facebookUpdate = new FacebookItem(post,facebookUser);
 							facebookUpdate.setList(label);
-							fbStream.store(facebookUpdate);
+							
+							if(fbStream != null)
+								fbStream.store(facebookUpdate);
 							totalRetrievedItems++;
 						}
 					}
@@ -292,7 +297,9 @@ public class FacebookRetriever implements SocialMediaRetriever {
 							FacebookStreamUser facebookUser = new FacebookStreamUser(user);
 							
 							FacebookItem facebookUpdate = new FacebookItem(post,facebookUser);
-							fbStream.store(facebookUpdate);
+							
+							if(fbStream != null)
+								fbStream.store(facebookUpdate);
 							
 							totalRetrievedItems++;
 						}
