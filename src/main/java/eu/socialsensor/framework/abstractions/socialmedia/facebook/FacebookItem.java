@@ -438,8 +438,10 @@ public class FacebookItem extends Item {
 				//Time of publication
 				mediaItem.setPublicationTime(publicationTime);
 				//Author
-				mediaItem.setUser(streamUser);
-				mediaItem.setUserId(streamUser.getId());
+				if(streamUser != null) {
+					mediaItem.setUser(streamUser);
+					mediaItem.setUserId(streamUser.getId());
+				}
 				
 				//PageUrl
 				String pageUrl = post.getLink();

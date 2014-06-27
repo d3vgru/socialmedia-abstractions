@@ -36,8 +36,6 @@ import eu.socialsensor.framework.monitors.RateLimitsMonitor;
 import eu.socialsensor.framework.retrievers.socialmedia.SocialMediaRetriever;
 import eu.socialsensor.framework.streams.socialmedia.facebook.FacebookStream;
 
-
-
 /**
  * Class responsible for retrieving facebook content based on keywords or facebook users/facebook pages
  * The retrieval process takes place through facebook graph API.
@@ -77,8 +75,10 @@ public class FacebookRetriever implements SocialMediaRetriever {
 	@Override
 	public Integer retrieveUserFeeds(SourceFeed feed){
 		Integer totalRetrievedItems = 0;
+		Integer totalRequests = 0;
 		
 		Date lastItemDate = feed.getDateToRetrieve();
+		String label = feed.getLabel();
 		
 		boolean isFinished = false;
 		
@@ -99,13 +99,15 @@ public class FacebookRetriever implements SocialMediaRetriever {
 		
 		for(List<Post> connectionPage : connection) {
 			rateLimitsMonitor.check();
-			
+			totalRequests++;
 			for(Post post : connectionPage) {	
 				
 				Date publicationDate = post.getCreatedTime();
 				
 				if(publicationDate.after(lastItemDate) && post!=null && post.getId() != null) {
 					FacebookItem facebookUpdate = new FacebookItem(post, facebookUser);
+					facebookUpdate.setList(label);
+					
 				    fbStream.store(facebookUpdate);
 				    totalRetrievedItems++;
 				    
@@ -115,6 +117,8 @@ public class FacebookRetriever implements SocialMediaRetriever {
 
 			    	for(Comment comment : comments.getData()) {
 			    		FacebookItem facebookComment = new FacebookItem(comment, post, null);
+			    		facebookComment.setList(label);
+			    		
 			    		fbStream.store(facebookComment);
 			    	} 
 				
@@ -135,7 +139,7 @@ public class FacebookRetriever implements SocialMediaRetriever {
 				    */
 				 }
 				
-				if(publicationDate.before(lastItemDate) || totalRetrievedItems>maxResults){
+				if(publicationDate.before(lastItemDate) || totalRetrievedItems>maxResults || totalRequests>maxRequests){
 					isFinished = true;
 					break;
 				}
@@ -146,6 +150,10 @@ public class FacebookRetriever implements SocialMediaRetriever {
 			
 		}
 
+		// The next request will retrieve only items of the last day
+		Date dateToRetrieve = new Date(System.currentTimeMillis() - (24*3600*1000));
+		feed.setDateToRetrieve(dateToRetrieve);
+		
 		//logger.info("#Facebook : Done retrieving for this session");
 //		logger.info("#Facebook : Handler fetched " + items.size() + " posts from " + uName + 
 //				" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
@@ -160,6 +168,7 @@ public class FacebookRetriever implements SocialMediaRetriever {
 		currRunningTime = System.currentTimeMillis();
 		
 		Date lastItemDate = feed.getDateToRetrieve();
+		String label = feed.getLabel();
 		
 		boolean isFinished = false;
 		
@@ -220,6 +229,7 @@ public class FacebookRetriever implements SocialMediaRetriever {
 							FacebookStreamUser facebookUser = new FacebookStreamUser(user);
 							
 							FacebookItem facebookUpdate = new FacebookItem(post,facebookUser);
+							facebookUpdate.setList(label);
 							fbStream.store(facebookUpdate);
 							totalRetrievedItems++;
 						}
@@ -247,8 +257,10 @@ public class FacebookRetriever implements SocialMediaRetriever {
 //		logger.info("#Facebook : Handler fetched " + items.size() + " posts from " + tags + 
 //			" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
 		
+		// The next request will retrieve only items of the last day
+		Date dateToRetrieve = new Date(System.currentTimeMillis() - (24*3600*1000));
+		feed.setDateToRetrieve(dateToRetrieve);
 		
-	
 		return totalRetrievedItems;
 	}
 	
