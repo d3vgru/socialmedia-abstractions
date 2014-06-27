@@ -1,6 +1,7 @@
 package eu.socialsensor.framework.abstractions.socialmedia.instagram;
 
 import org.jinstagram.entity.common.User;
+import org.jinstagram.entity.users.basicinfo.Counts;
 import org.jinstagram.entity.users.basicinfo.UserInfoData;
 
 import eu.socialsensor.framework.common.domain.SocialNetworkSource;
@@ -13,6 +14,11 @@ import eu.socialsensor.framework.common.domain.StreamUser;
  */
 public class InstagramStreamUser extends StreamUser {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -186352302816765493L;
+
 	public InstagramStreamUser(User user) {
 		super(SocialNetworkSource.Instagram.toString(), Operation.NEW);
 		if (user == null) return;
@@ -59,5 +65,13 @@ public class InstagramStreamUser extends StreamUser {
 		profileImage = user.getProfile_picture();
 		//The link to the user's profile
 		pageUrl = "http://instagram.com/" + username;
+		
+		Counts counts = user.getCounts();
+		if(counts != null) {
+			items = counts.getMedia();
+			friends = (long) counts.getFollows();
+			followers = (long) counts.getFollwed_by();
+		}
+		
 	}
 }

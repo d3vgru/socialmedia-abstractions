@@ -77,6 +77,7 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 	public Integer retrieveUserFeeds(SourceFeed feed){
 		Integer totalRetrievedItems = 0;
 		Date lastItemDate = feed.getDateToRetrieve();
+		String label = feed.getLabel();
 		
 		boolean isFinished = false;
 		
@@ -90,6 +91,7 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 			return totalRetrievedItems;
 		}
 				
+		StreamUser streamUser = getStreamUser(uName);
 		logger.info("#YouTube : Retrieving User Feed : "+uName);
 		
 		URL channelUrl = null;
@@ -116,10 +118,16 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 					Date publicationDate = publishedDateTime.toDate();
 					
 					if(publicationDate.after(lastItemDate) && (video != null && video.getId() != null)) {
-						YoutubeItem videoItem = new YoutubeItem(video);
+						YoutubeItem ytItem = new YoutubeItem(video);
+						ytItem.setList(label);
+						
+						if(streamUser != null) {
+							ytItem.setUserId(streamUser.getId());
+							ytItem.setStreamUser(streamUser);
+						}
 						
 						if(ytStream != null) {
-							ytStream.store(videoItem);
+							ytStream.store(ytItem);
 						}
 						
 						totalRetrievedItems++;
@@ -155,6 +163,7 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 		Integer totalRetrievedItems = 0;
 		
 		Date lastItemDate = feed.getDateToRetrieve();
+		String label = feed.getLabel();
 		
 		int startIndex = 1;
 		int maxResults = 25;
@@ -224,10 +233,20 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 					Date publicationDate = publishedDateTime.toDate();
 					
 					if(publicationDate.after(lastItemDate) && (video != null && video.getId() != null)){
-						YoutubeItem videoItem = new YoutubeItem(video);
+						YoutubeItem ytItem = new YoutubeItem(video);
+						ytItem.setList(label);
+						
+						StreamUser tempStreamUser = ytItem.getStreamUser();
+						if(tempStreamUser != null) {
+							StreamUser user = this.getStreamUser(tempStreamUser);
+							if(user != null) {
+								ytItem.setUserId(user.getId());
+								ytItem.setStreamUser(user);
+							}
+						}
 						
 						if(ytStream != null) {
-							ytStream.store(videoItem);
+							ytStream.store(ytItem);
 						}
 						
 						totalRetrievedItems++;
@@ -252,6 +271,9 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 //		logger.info("#YouTube : Done retrieving for this session");
 //		logger.info("#YouTube : Handler fetched " + items.size() + " videos from " + tags + 
 //				" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
+		
+		Date dateToRetrieve = new Date(System.currentTimeMillis() - (24*3600*1000));
+		feed.setDateToRetrieve(dateToRetrieve);
 		
 		return totalRetrievedItems;
 	}
@@ -422,4 +444,23 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 		return null;
 	}
 
+	private StreamUser getStreamUser(StreamUser u) {
+		URL profileUrl;
+		try {
+			profileUrl = new URL(u.getLinkToProfile());
+			UserProfileEntry userProfile = service.getEntry(profileUrl , UserProfileEntry.class);
+			
+			StreamUser user = new YoutubeStreamUser(userProfile);
+			
+			return user;
+		} catch (MalformedURLException e) {
+			logger.error(e);
+		} catch (IOException e) {
+			logger.error(e);
+		} catch (ServiceException e) {
+			logger.error(e);
+		}
+		
+		return null;
+	}
 }

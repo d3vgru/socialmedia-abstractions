@@ -94,6 +94,7 @@ public class InstagramRetriever implements SocialMediaRetriever {
 		Integer totalRetrievedItems = 0;
 		
 		Date lastItemDate = feed.getDateToRetrieve();
+		String label = feed.getLabel();
 		
 		int numberOfRequests = 0;
 		
@@ -136,6 +137,7 @@ public class InstagramRetriever implements SocialMediaRetriever {
     					}
 						if(mfeed != null && mfeed.getId() != null){
 							InstagramItem instagramUpdate = new InstagramItem(mfeed);
+							instagramUpdate.setList(label);
 							
 							if(igStream != null) {
 								igStream.store(instagramUpdate);
@@ -151,10 +153,13 @@ public class InstagramRetriever implements SocialMediaRetriever {
 				return totalRetrievedItems;
 			} catch (MalformedURLException e) {
 				logger.error("#Instagram Exception: ", e);
-				e.printStackTrace();
+				//e.printStackTrace();
 				return totalRetrievedItems;
 			}
 		}	
+		// The next request will retrieve only items of the last day
+		Date dateToRetrieve = new Date(System.currentTimeMillis() - (24*3600*1000));
+		feed.setDateToRetrieve(dateToRetrieve);
 		
 //		logger.info("#Instagram : Handler fetched " + totalRetrievedItems + " photos from " + uName + 
 //				" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
@@ -167,6 +172,7 @@ public class InstagramRetriever implements SocialMediaRetriever {
 		Integer totalRetrievedItems = 0;
 		
 		Date lastItemDate = feed.getDateToRetrieve();
+		String label = feed.getLabel();
 		
 		boolean isFinished = false;
 		
@@ -217,7 +223,23 @@ public class InstagramRetriever implements SocialMediaRetriever {
 				int createdTime = Integer.parseInt(mfeed.getCreatedTime());
 				Date publicationDate = new Date((long) createdTime * 1000);
 				
-				if(publicationDate.before(lastItemDate) || totalRetrievedItems>maxResults || numberOfRequests>maxRequests || (System.currentTimeMillis() - currRunningTime) > maxRunningTime){
+				if(publicationDate.before(lastItemDate)){
+					logger.info("Since date reached: " + lastItemDate);
+					isFinished = true;
+					break;
+				}
+				if(totalRetrievedItems > maxResults) {
+					logger.info("totalRetrievedItems: " + lastItemDate + " > " + maxResults);
+					isFinished = true;
+					break;
+				}
+				if(numberOfRequests > maxRequests) {
+					logger.info("numberOfRequests: " + numberOfRequests + " > " + maxRequests);
+					isFinished = true;
+					break;
+				}
+				if((System.currentTimeMillis() - currRunningTime) > maxRunningTime) {
+					logger.info("maxRunningTime reached.");
 					isFinished = true;
 					break;
 				}
@@ -226,8 +248,10 @@ public class InstagramRetriever implements SocialMediaRetriever {
 					InstagramItem instagramItem;
 					try {
 						instagramItem = new InstagramItem(mfeed);
-					} catch (MalformedURLException e) {
+						instagramItem.setList(label);
 						
+					} catch (MalformedURLException e) {
+						logger.error(e);
 						return totalRetrievedItems;
 					}
 
@@ -237,11 +261,10 @@ public class InstagramRetriever implements SocialMediaRetriever {
 					totalRetrievedItems++;
 					
 				}
-		
 			}
 				
 			//continue retrieving other pages
-			if(!isFinished){
+			if(!isFinished) {
 				while(pagination.hasNextPage()){
 					
 					try{
@@ -264,6 +287,7 @@ public class InstagramRetriever implements SocialMediaRetriever {
 								
 								if(mfeed != null && mfeed.getId() != null){
 									InstagramItem instagramItem = new InstagramItem(mfeed);
+									instagramItem.setList(label);
 									
 									if(igStream != null) {
 										igStream.store(instagramItem);
@@ -293,6 +317,10 @@ public class InstagramRetriever implements SocialMediaRetriever {
 //		logger.info("#Instagram : Done retrieving for this session");
 //		logger.info("#Instagram : Handler fetched " + items.size() + " posts from " + tags + 
 //				" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
+		
+		// The next request will retrieve only items of the last day
+		Date dateToRetrieve = new Date(System.currentTimeMillis() - (24*3600*1000));
+		feed.setDateToRetrieve(dateToRetrieve);
 		
 		return totalRetrievedItems;
 	}
@@ -386,6 +414,10 @@ public class InstagramRetriever implements SocialMediaRetriever {
     	//logger.info("#Instagram : Done retrieving for this session");
 		//logger.info("#Instagram : Handler fetched " + totalRetrievedItems + " posts from (" + latitude+","+longtitude+")" + 
 		//		" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
+		
+		// The next request will retrieve only items of the last day
+		Date dateToRetrieve = new Date(System.currentTimeMillis() - (24*3600*1000));
+		feed.setDateToRetrieve(dateToRetrieve);
 		
     	return totalRetrievedItems;
     }
