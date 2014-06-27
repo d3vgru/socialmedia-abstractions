@@ -1,6 +1,6 @@
 package eu.socialsensor.framework.abstractions.socialmedia.flickr;
 
-import com.aetrion.flickr.people.User;
+import com.flickr4java.flickr.people.User;
 
 import eu.socialsensor.framework.common.domain.SocialNetworkSource;
 import eu.socialsensor.framework.common.domain.StreamUser;
@@ -11,6 +11,11 @@ import eu.socialsensor.framework.common.domain.StreamUser;
  * @email  ailiakop@iti.gr
  */
 public class FlickrStreamUser extends StreamUser {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6511210498213084201L;
 
 	public FlickrStreamUser(User user) {
 		super(SocialNetworkSource.Flickr.toString(), Operation.NEW);
@@ -27,9 +32,24 @@ public class FlickrStreamUser extends StreamUser {
 		//streamId
 		streamId = SocialNetworkSource.Flickr.toString();
 		//Profile picture of the user
-		profileImage = user.getBuddyIconUrl();
+		int iconFarm = user.getIconFarm();
+		int iconServer = user.getIconServer();
+		if(iconServer > 0) {
+			profileImage = "http://farm" + iconFarm + ".staticflickr.com/" + iconServer 
+					+ "/buddyicons/" + user.getId() + ".jpg";
+		}
+		else {
+			profileImage = user.getBuddyIconUrl();
+		}
+		
+			
 		//Location
 		location = user.getLocation();
+		
+		pageUrl = "https://www.flickr.com/photos/" + userid;
+			
+		items = user.getPhotosCount();
+		
 	}
 
 

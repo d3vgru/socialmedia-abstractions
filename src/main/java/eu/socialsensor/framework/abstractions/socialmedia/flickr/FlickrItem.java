@@ -2,17 +2,20 @@ package eu.socialsensor.framework.abstractions.socialmedia.flickr;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
-import com.aetrion.flickr.people.User;
-import com.aetrion.flickr.photos.GeoData;
-import com.aetrion.flickr.photos.Photo;
-import com.aetrion.flickr.tags.Tag;
+import com.flickr4java.flickr.people.User;
+import com.flickr4java.flickr.photos.GeoData;
+import com.flickr4java.flickr.photos.Photo;
+import com.flickr4java.flickr.tags.Tag;
 
 import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.Location;
 import eu.socialsensor.framework.common.domain.MediaItem;
 import eu.socialsensor.framework.common.domain.SocialNetworkSource;
+import eu.socialsensor.framework.common.domain.StreamUser;
 
 /**
  * Class that holds the information of a flickr photo
@@ -21,11 +24,17 @@ import eu.socialsensor.framework.common.domain.SocialNetworkSource;
  */
 public class FlickrItem extends Item {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4323341976887218659L;
+
 	public FlickrItem(String id, Operation operation) {
 		super(SocialNetworkSource.Flickr.toString(), operation);
 		setId(SocialNetworkSource.Flickr+"#"+id);
 	}
 	
+	@SuppressWarnings("deprecation")
 	public FlickrItem(Photo photo) {
 		super(SocialNetworkSource.Flickr.toString(), Operation.NEW);
 		if (photo == null || photo.getId() == null) return;
@@ -46,21 +55,24 @@ public class FlickrItem extends Item {
 		//Description of the photo
 		description = photo.getDescription();
 		//Tags of the photo
-		@SuppressWarnings("unchecked")
 		Collection<Tag> photoTags = photo.getTags();
 		if (photoTags != null) {
-			tags = new String[photoTags.size()];
-			int i = 0;
+			List<String> tagsList = new ArrayList<String>();
 			for(Tag tag : photoTags) {
-				tags[i++] = tag.getValue();
+				String tagStr = tag.getValue();
+				if(tagStr != null && !tagStr.contains(":"))
+					tagsList.add(tagStr);
 			}
+			tags = tagsList.toArray(new String[tagsList.size()]);
 		}
+		
 		//User that posted the photo
         User user = photo.getOwner();
         if(user != null) {
-                streamUser = new FlickrStreamUser(user);
-                uid = streamUser.getId();
+        	streamUser = new FlickrStreamUser(user);
+        	uid = streamUser.getId();
         }
+        
 		//Location
 		if(photo.hasGeoData()){
 			
@@ -75,6 +87,7 @@ public class FlickrItem extends Item {
 		url = photo.getUrl();
 		
 		//Popularity
+		numOfComments = (long) photo.getComments();
 		
 		//Getting the photo
 		try {
@@ -92,7 +105,7 @@ public class FlickrItem extends Item {
 				mediaUrl = new URL(url);
 			}
 			
-			if(mediaUrl!=null){
+			if(mediaUrl!=null) {
 				//url
 				MediaItem mediaItem = new MediaItem(mediaUrl);
 				
@@ -137,7 +150,7 @@ public class FlickrItem extends Item {
 		}
 	}
 
-	public FlickrItem(Photo photo, FlickrStreamUser streamUser) {
+	public FlickrItem(Photo photo, StreamUser streamUser) {
 		this(photo);
 
 		//User that posted the photo
