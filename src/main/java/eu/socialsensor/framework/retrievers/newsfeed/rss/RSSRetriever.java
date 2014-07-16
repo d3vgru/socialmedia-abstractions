@@ -30,13 +30,13 @@ public class RSSRetriever implements Retriever{
 	
 	long oneMonthPeriod = 2592000000L;
 	
-	public RSSRetriever(RSSStream rssStream){
+	public RSSRetriever(RSSStream rssStream) {
 		
 		this.rssStream = rssStream;
 	}
 	
 	@Override
-	public Integer retrieve(Feed feed){
+	public Integer retrieve(Feed feed) {
 		
 		URLFeed ufeed = (URLFeed) feed;
 		System.out.println("["+new Date()+"]Retrieving RSS Feed: "+ufeed.getURL());
@@ -63,7 +63,8 @@ public class RSSRetriever implements Retriever{
 								&& Math.abs(System.currentTimeMillis() - rss.getPublishedDate().getTime())<oneMonthPeriod){
 							
 							RSSItem rssItem = new RSSItem(rss);
-							rssStream.store(rssItem);
+							if(rssStream != null)
+								rssStream.store(rssItem);
 							Thread.sleep(100);
 							totalRetrievedItems++;
 						}

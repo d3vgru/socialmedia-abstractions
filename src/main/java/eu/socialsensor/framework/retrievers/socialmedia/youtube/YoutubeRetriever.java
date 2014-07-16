@@ -434,11 +434,14 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 			
 			return user;
 		} catch (MalformedURLException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error(e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error(e);
 		} catch (ServiceException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error(e);
 		}
 		
 		return null;

@@ -73,7 +73,7 @@ public class FacebookRetriever implements SocialMediaRetriever {
 	
 
 	@Override
-	public Integer retrieveUserFeeds(SourceFeed feed){
+	public Integer retrieveUserFeeds(SourceFeed feed) {
 		Integer totalRetrievedItems = 0;
 		Integer totalRequests = 0;
 		
@@ -91,8 +91,15 @@ public class FacebookRetriever implements SocialMediaRetriever {
 		}
 		String userFeed = source.getName()+"/feed";
 		
-		Connection<Post> connection = facebookClient.fetchConnection(userFeed , Post.class);
-		User page = facebookClient.fetchObject(userName, User.class);
+		Connection<Post> connection;
+		User page;
+		try {
+			connection = facebookClient.fetchConnection(userFeed , Post.class);
+			page = facebookClient.fetchObject(userName, User.class);
+		}
+		catch(Exception e) {
+			return totalRetrievedItems;
+		}
 		
 		FacebookStreamUser facebookUser = new FacebookStreamUser(page);
 		System.out.println(facebookUser);
