@@ -54,7 +54,8 @@ public class TwitterSubscriber implements Subscriber {
 	private Stream stream;
 	
 	public enum AccessLevel {
-		PUBLIC(400, 5000, 25);
+		PUBLIC(400, 5000, 25),
+		EXTENDED(400, 75000, 25);
 		
 		int filterMaxKeywords;
 		int filterMaxFollows;
@@ -82,7 +83,7 @@ public class TwitterSubscriber implements Subscriber {
 
 	}
 	
-	private AccessLevel accessLevel = AccessLevel.PUBLIC;
+	private AccessLevel accessLevel = AccessLevel.EXTENDED;
 	private StatusListener listener = null;
 	private twitter4j.TwitterStream twitterStream  = null;
 
