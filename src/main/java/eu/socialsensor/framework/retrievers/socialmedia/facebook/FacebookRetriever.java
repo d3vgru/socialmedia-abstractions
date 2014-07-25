@@ -226,16 +226,28 @@ public class FacebookRetriever implements SocialMediaRetriever {
 					Date publicationDate = post.getCreatedTime();
 					try {
 						if(publicationDate.after(lastItemDate) && post!=null && post.getId()!=null) {
+							
+							FacebookItem fbItem;
+							
 							//Get the user of the post
-							CategorizedFacebookType c_user = post.getFrom();
-							User user = facebookClient.fetchObject(c_user.getId(), User.class);
-							FacebookStreamUser facebookUser = new FacebookStreamUser(user);
+							CategorizedFacebookType cUser = post.getFrom();
+							if(cUser != null) {
+								User user = facebookClient.fetchObject(cUser.getId(), User.class);
+								FacebookStreamUser facebookUser = new FacebookStreamUser(user);
+								
+								fbItem = new FacebookItem(post, facebookUser);
+								fbItem.setList(label);
+							}
+							else {
+								fbItem = new FacebookItem(post);
+								fbItem.setList(label);
+							}
 							
-							FacebookItem facebookUpdate = new FacebookItem(post,facebookUser);
-							facebookUpdate.setList(label);
 							
-							if(fbStream != null)
-								fbStream.store(facebookUpdate);
+							
+							if(fbStream != null && fbItem != null)
+								fbStream.store(fbItem);
+							
 							totalRetrievedItems++;
 						}
 					}
