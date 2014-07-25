@@ -73,8 +73,9 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 		this.maxRunningTime = maxRunningTime;
 		this.ytStream = ytStream;
 	}
+	
 	@Override
-	public Integer retrieveUserFeeds(SourceFeed feed){
+	public Integer retrieveUserFeeds(SourceFeed feed) {
 		Integer totalRetrievedItems = 0;
 		Date lastItemDate = feed.getDateToRetrieve();
 		String label = feed.getLabel();
@@ -106,9 +107,7 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 			
 			try {
 				VideoFeed videoFeed = service.getFeed(channelUrl, VideoFeed.class);
-				
 				//service.getEntry(channelUrl, UserProfileEntry.class);
-				
 				numberOfRequests ++ ;
 				
 				for(VideoEntry  video : videoFeed.getEntries()) {
@@ -147,7 +146,7 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 				channelUrl = nextLink==null ? null : new URL(nextLink.getHref());
 				
 			} catch (Exception e) {
-				logger.error("#YouTube Exception : "+e);
+				logger.error("#YouTube Exception : " + e);
 				return totalRetrievedItems;
 			} 
 		

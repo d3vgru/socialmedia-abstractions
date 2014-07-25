@@ -141,12 +141,12 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 			pageOfActivities = activityFeed.getItems();
 			numberOfRequests ++;
 			
-		} catch (Exception e1) {
-			e1.printStackTrace();
+		} catch (Exception e) {
+			logger.error(e);
 			return totalRetrievedItems;
 		}
 		
-		while(pageOfActivities != null && !pageOfActivities.isEmpty()){
+		while(pageOfActivities != null && !pageOfActivities.isEmpty()) {
 			try {
 				for (Activity activity : pageOfActivities) {
 				
@@ -263,7 +263,7 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 			pageOfActivities = activityFeed.getItems();
 			totalRequests++;
 		} catch (IOException e1) {
-			e1.printStackTrace();
+			//e1.printStackTrace();
 			return totalRetrievedItems;
 		}
 		
@@ -327,7 +327,7 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 			 try {
 				activityFeed = searchActivities.execute();
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error(e);
 			}
 			 pageOfActivities = activityFeed.getItems();
 		

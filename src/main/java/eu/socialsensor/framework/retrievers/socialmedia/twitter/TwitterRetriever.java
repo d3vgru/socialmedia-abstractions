@@ -150,13 +150,11 @@ public class TwitterRetriever implements SocialMediaRetriever {
 				
 				paging.setPage(++page);
 			} catch (TwitterException e) {
-				e.printStackTrace();
+				logger.error(e);
 				break;
 			}
 		}
-
 		feed.setDateToRetrieve(newSinceDate);
-		
 		return totalRetrievedItems;
 	}
 	
@@ -244,10 +242,9 @@ public class TwitterRetriever implements SocialMediaRetriever {
 						if(twStream != null) {
 							twStream.store(twitterItem);
 						}
-						
+				
 						totalRetrievedItems++;
 					}
-
 				}
 				
 				if(totalRetrievedItems > maxResults) {
@@ -276,7 +273,7 @@ public class TwitterRetriever implements SocialMediaRetriever {
 			}
 			
 		} catch (TwitterException e) {
-			e.printStackTrace();
+			logger.error(e);
 		}	
 	
 		feed.setDateToRetrieve(newSinceDate);
@@ -358,7 +355,6 @@ public class TwitterRetriever implements SocialMediaRetriever {
 				if(query == null)
 					break;
 			} catch (TwitterException e) {
-				e.printStackTrace();
 				logger.error(e);
 				break;
 			}
@@ -405,8 +401,8 @@ public class TwitterRetriever implements SocialMediaRetriever {
 					
 				paging.setPage(++page);
 			} catch (TwitterException e) {
-				e.printStackTrace();
 				logger.error(e);	
+				break;
 			}
 		}
 		return totalRetrievedItems;
@@ -423,27 +419,22 @@ public class TwitterRetriever implements SocialMediaRetriever {
 				
 				return retrieveUserFeeds(userFeed);
 				
-			
 			case KEYWORDS:
 				KeywordsFeed keyFeed = (KeywordsFeed) feed;
-				
 				return retrieveKeywordsFeeds(keyFeed);
-				
+			
 			case LOCATION:
-				LocationFeed locationFeed = (LocationFeed) feed;
-				
+				LocationFeed locationFeed = (LocationFeed) feed;	
 				return retrieveLocationFeeds(locationFeed);
 			
 			case LIST:
 				ListFeed listFeed = (ListFeed) feed;
-				
 				return retrieveListsFeeds(listFeed);
+				
 			default:
 				logger.error("Unkonwn Feed Type: " + feed.toJSONString());
-				break;	
-			
+				return 0;	
 		}
-		return 0;
 	}
 	
 	@Override
@@ -469,6 +460,7 @@ public class TwitterRetriever implements SocialMediaRetriever {
 			return streamUser;
 		}
 		catch(Exception e) {
+			logger.error(e);
 			return null;
 		}
 	}

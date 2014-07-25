@@ -172,7 +172,6 @@ public abstract class Stream implements Runnable {
 	public synchronized void poll(List<Feed> feeds) throws StreamException {
 		
 		Integer numOfRetrievedItems = 0;
-		
 		totalRetrievedItems.clear();
 		
 		if(retriever != null) {
@@ -183,8 +182,7 @@ public abstract class Stream implements Runnable {
 			}
 			
 			logger.info("poll for " + feeds.size() + " feeds");
-			for(Feed feed : feeds){
-			
+			for(Feed feed : feeds) {
 				numOfRetrievedItems += retriever.retrieve(feed);
 			}
 			

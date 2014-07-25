@@ -334,7 +334,6 @@ public class TwitterSubscriber implements Subscriber {
 							// store
 							if((++items)%5000==0) {
 								logger.info(items + " incoming items from twitter. " + deletion + " deletions.");
-								logger.info("Total retrieved items: " + stream.getTotalRetrievedItems().size());
 							}
 							stream.store(new TwitterItem(status));
 						}

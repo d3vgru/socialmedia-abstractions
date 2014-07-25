@@ -102,8 +102,6 @@ public class FacebookRetriever implements SocialMediaRetriever {
 		}
 		
 		FacebookStreamUser facebookUser = new FacebookStreamUser(page);
-		System.out.println(facebookUser);
-		
 		for(List<Post> connectionPage : connection) {
 			rateLimitsMonitor.check();
 			totalRequests++;
@@ -115,23 +113,23 @@ public class FacebookRetriever implements SocialMediaRetriever {
 					FacebookItem facebookUpdate = new FacebookItem(post, facebookUser);
 					facebookUpdate.setList(label);
 					
-					if(fbStream != null)
+					if(fbStream != null) {
 						fbStream.store(facebookUpdate);
+					}
 					
 				    totalRetrievedItems++;
 				    
 				    Comments comments = post.getComments();
-				    if(comments == null)
-			    		continue;
-
-			    	for(Comment comment : comments.getData()) {
-			    		FacebookItem facebookComment = new FacebookItem(comment, post, null);
-			    		facebookComment.setList(label);
+				    if(comments != null) {
+				    	for(Comment comment : comments.getData()) {
+			    			FacebookItem facebookComment = new FacebookItem(comment, post, null);
+			    			facebookComment.setList(label);
 			    		
-			    		if(fbStream != null)
-			    			fbStream.store(facebookComment);
-			    	} 
-				
+			    			if(fbStream != null)
+			    				fbStream.store(facebookComment);
+			    		} 
+				    }
+				    
 					/*
 					// Test Code
 				    Connection<Comments> commentsConn = facebookClient.fetchConnection(post.getId()+"/comments", Comments.class);
@@ -172,7 +170,7 @@ public class FacebookRetriever implements SocialMediaRetriever {
 	}
 	
 	@Override
-	public Integer retrieveKeywordsFeeds(KeywordsFeed feed){
+	public Integer retrieveKeywordsFeeds(KeywordsFeed feed) {
 		Integer totalRetrievedItems = 0;
 		
 		currRunningTime = System.currentTimeMillis();
@@ -189,9 +187,7 @@ public class FacebookRetriever implements SocialMediaRetriever {
 			logger.info("#Facebook : No keywords feed");
 			return totalRetrievedItems;
 		}
-		
-		
-		
+
 		String tags = "";
 		
 		if(keyword != null){
@@ -211,27 +207,24 @@ public class FacebookRetriever implements SocialMediaRetriever {
 			return totalRetrievedItems;
 		
 		Connection<Post> connection = null;
-		try{
-			
-			
-			connection = facebookClient.fetchConnection("search",Post.class,
-					Parameter.with("q",tags),Parameter.with("type","post"));
-			
-			
-		}catch(FacebookResponseStatusException e1){
-			
+		try {
+			connection = facebookClient.fetchConnection("search", Post.class, Parameter.with("q", tags), Parameter.with("type", "post"));
+		}catch(FacebookResponseStatusException e) {
+			logger.error(e);
 			return totalRetrievedItems;
 		}
-		catch(Exception e2){
+		catch(Exception e) {
+			logger.error(e);
 			return totalRetrievedItems;
 		}
-		try{
+		
+		try {
 			for(List<Post> connectionPage : connection) {
 				
 				for(Post post : connectionPage) {	
 					
 					Date publicationDate = post.getCreatedTime();
-					try{
+					try {
 						if(publicationDate.after(lastItemDate) && post!=null && post.getId()!=null){
 							//Get the user of the post
 							CategorizedFacebookType c_user = post.getFrom();
@@ -246,7 +239,8 @@ public class FacebookRetriever implements SocialMediaRetriever {
 							totalRetrievedItems++;
 						}
 					}
-					catch(Exception e){
+					catch(Exception e) {
+						logger.error(e);
 						break;
 					}
 					
@@ -261,7 +255,8 @@ public class FacebookRetriever implements SocialMediaRetriever {
 				
 			}
 		}
-		catch(FacebookNetworkException e1){
+		catch(FacebookNetworkException e){
+			logger.error(e);
 			return totalRetrievedItems;
 		}
 		
@@ -277,9 +272,10 @@ public class FacebookRetriever implements SocialMediaRetriever {
 	}
 	
 	
-	public Integer retrieveLocationFeeds(LocationFeed feed){
+	public Integer retrieveLocationFeeds(LocationFeed feed) {
 		return 0;
 	}
+	
 	/**
 	 * Retrieve from certain facebook pages after a specific date
 	 * @param date
@@ -296,8 +292,8 @@ public class FacebookRetriever implements SocialMediaRetriever {
 				for(Post post : connectionPage) {	
 					
 					Date publicationDate = post.getCreatedTime();
-					try{
-						if(publicationDate.after(date) && post!=null && post.getId()!=null){
+					try {
+						if(publicationDate.after(date) && post!=null && post.getId()!=null) {
 							//Get the user of the post
 							CategorizedFacebookType c_user = post.getFrom();
 							User user = facebookClient.fetchObject(c_user.getId(), User.class);
@@ -311,7 +307,8 @@ public class FacebookRetriever implements SocialMediaRetriever {
 							totalRetrievedItems++;
 						}
 					}
-					catch(Exception e){
+					catch(Exception e) {
+						logger.error(e);
 						break;
 					}
 					
@@ -337,7 +334,7 @@ public class FacebookRetriever implements SocialMediaRetriever {
 	@Override
 	public Integer retrieve (Feed feed) {
 		
-		switch(feed.getFeedtype()){
+		switch(feed.getFeedtype()) {
 			case SOURCE:
 				SourceFeed userFeed = (SourceFeed) feed;
 				
@@ -411,7 +408,7 @@ public class FacebookRetriever implements SocialMediaRetriever {
 			
 			
 		} catch (MalformedURLException e) {
-			e.printStackTrace();
+			logger.error(e);
 		}
 		
 		return mediaItem;
@@ -425,11 +422,9 @@ public class FacebookRetriever implements SocialMediaRetriever {
 			return facebookUser;
 		}
 		catch(Exception e) {
+			logger.error(e);
 			return null;
 		}
 	}
-	
-	public static void main(String...args) {
-		
-	}
+
 }
