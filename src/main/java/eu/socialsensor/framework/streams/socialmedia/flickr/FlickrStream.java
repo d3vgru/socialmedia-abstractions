@@ -52,4 +52,9 @@ public class FlickrStream extends Stream {
 		
 	}
 	
+	@Override
+	public String getName() {
+		return "Flickr";
+	}
+	
 }

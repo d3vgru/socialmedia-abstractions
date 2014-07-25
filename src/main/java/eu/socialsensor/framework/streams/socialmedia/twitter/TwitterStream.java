@@ -4,7 +4,6 @@ import org.apache.log4j.Logger;
 
 import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
-
 import eu.socialsensor.framework.common.domain.SocialNetworkSource;
 import eu.socialsensor.framework.retrievers.socialmedia.twitter.TwitterRetriever;
 import eu.socialsensor.framework.streams.Stream;
@@ -73,6 +72,11 @@ public class TwitterStream extends Stream {
 			
 			retriever = new TwitterRetriever(conf, Integer.parseInt(maxRequests), Integer.parseInt(maxResults),Long.parseLong(maxRunningTime),this);
 		}	
+	}
+	
+	@Override
+	public String getName() {
+		return "Twitter";
 	}
 }
 

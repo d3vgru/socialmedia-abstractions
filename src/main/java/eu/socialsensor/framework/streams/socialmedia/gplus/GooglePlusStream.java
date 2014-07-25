@@ -45,4 +45,8 @@ public class GooglePlusStream extends Stream {
 		
 	}
 	
+	@Override
+	public String getName() {
+		return "GooglePlus";
+	}
 }

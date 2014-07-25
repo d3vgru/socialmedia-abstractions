@@ -46,6 +46,12 @@ public class InstagramStream extends Stream {
 		retriever = new InstagramRetriever(secret, token,Integer.parseInt(maxResults),Integer.parseInt(maxRequests),Long.parseLong(maxRunningTime),this);
 	
 	}
+
+
+	@Override
+	public String getName() {
+		return "Instagram";
+	}
 	
 }
 

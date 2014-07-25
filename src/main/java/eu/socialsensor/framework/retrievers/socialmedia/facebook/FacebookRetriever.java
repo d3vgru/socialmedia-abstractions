@@ -225,7 +225,7 @@ public class FacebookRetriever implements SocialMediaRetriever {
 					
 					Date publicationDate = post.getCreatedTime();
 					try {
-						if(publicationDate.after(lastItemDate) && post!=null && post.getId()!=null){
+						if(publicationDate.after(lastItemDate) && post!=null && post.getId()!=null) {
 							//Get the user of the post
 							CategorizedFacebookType c_user = post.getFrom();
 							User user = facebookClient.fetchObject(c_user.getId(), User.class);
@@ -260,9 +260,8 @@ public class FacebookRetriever implements SocialMediaRetriever {
 			return totalRetrievedItems;
 		}
 		
-//		logger.info("#Facebook : Done retrieving for this session");
-//		logger.info("#Facebook : Handler fetched " + items.size() + " posts from " + tags + 
-//			" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
+		logger.info("#Facebook : Handler fetched " + totalRetrievedItems + " posts from " + tags + 
+			" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
 		
 		// The next request will retrieve only items of the last day
 		Date dateToRetrieve = new Date(System.currentTimeMillis() - (24*3600*1000));

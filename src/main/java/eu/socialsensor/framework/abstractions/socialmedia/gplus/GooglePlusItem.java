@@ -120,8 +120,12 @@ public class GooglePlusItem extends Item {
 		
 		for(Attachments attachment : attachmentsList) {
 			
-			String type = attachment.getObjectType();
 			if(attachment != null) {
+				String type = attachment.getObjectType();
+				
+				if(type == null)
+					continue;
+				
 				if(type.equals("video")) {
 		    		
 					if(attachment.getId() == null)

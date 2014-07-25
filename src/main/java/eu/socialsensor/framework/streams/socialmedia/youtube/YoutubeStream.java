@@ -54,4 +54,10 @@ public class YoutubeStream extends Stream {
 		retriever = new YoutubeRetriever(clientId, developerKey,Integer.parseInt(maxResults),Integer.parseInt(maxRequests),Long.parseLong(maxRunningTime),this);
 
 	}
+	
+	@Override
+	public String getName() {
+		return "YouTube";
+	}
+	
 }

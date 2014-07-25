@@ -66,4 +66,9 @@ public class FacebookStream extends Stream {
 
 	}
 
+	@Override
+	public String getName() {
+		return "Facebook";
+	}
+	
 }

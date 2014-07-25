@@ -56,7 +56,7 @@ public abstract class Stream implements Runnable {
 	protected boolean isSubscriber = false;
 	
 	private Map<String, Set<String>> usersToLists;
-	private Map<String,Category> usersToCategory;
+	private Map<String, Category> usersToCategory;
 	
 	/**
 	 * Opens a stream for updates delivery
@@ -181,12 +181,12 @@ public abstract class Stream implements Runnable {
 				return;
 			}
 			
-			logger.info("poll for " + feeds.size() + " feeds");
+			logger.info(getName() + ": poll for " + feeds.size() + " feeds");
 			for(Feed feed : feeds) {
 				numOfRetrievedItems += retriever.retrieve(feed);
 			}
 			
-			logger.info("Retrieved items for " + this.getClass().getName()+ " are : " + numOfRetrievedItems);
+			logger.info("Retrieved items for " + getName() + " are : " + numOfRetrievedItems);
 		}
 		
 	}
@@ -278,7 +278,7 @@ public abstract class Stream implements Runnable {
 	 * @param item
 	 * @return
 	 */
-	private Category getUserCategory(Item item){
+	private Category getUserCategory(Item item) {
 		
 		if(usersToCategory == null){
 			logger.error("User categories is null");
@@ -343,4 +343,6 @@ public abstract class Stream implements Runnable {
 			}
 		}
 	}
+	
+	public abstract String getName();
 }

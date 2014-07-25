@@ -40,4 +40,9 @@ public class TopsyStream extends Stream{
 		retriever = new TopsyRetriever(key,this);
 		
 	}
+	
+	@Override
+	public String getName() {
+		return "Topsy";
+	}
 }

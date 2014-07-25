@@ -51,4 +51,9 @@ public class TumblrStream extends Stream {
 		
 	}
 
+	@Override
+	public String getName() {
+		return "Tumblr";
+	}
+	
 }

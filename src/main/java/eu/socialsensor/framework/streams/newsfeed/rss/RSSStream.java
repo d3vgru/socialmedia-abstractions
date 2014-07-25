@@ -17,11 +17,13 @@ public class RSSStream extends Stream{
 
 	@Override
 	public void open(StreamConfiguration config){
-		
-	
 		retriever = new RSSRetriever(this);
-		
-		
+	}
+
+
+	@Override
+	public String getName() {
+		return "RSS";
 	}
 
 }
