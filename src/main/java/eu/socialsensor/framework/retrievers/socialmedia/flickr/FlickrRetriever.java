@@ -67,6 +67,18 @@ public class FlickrRetriever implements SocialMediaRetriever {
 		return flickrSecret;
 	}
 
+	public FlickrRetriever(String flickrKey, String flickrSecret) {
+		
+		this.flickrKey = flickrKey;
+		this.flickrSecret = flickrSecret;
+		
+		userMap = new HashMap<String, StreamUser>();
+		
+		Flickr.debugStream = false;
+		
+		this.flickr = new Flickr(flickrKey, flickrSecret, new REST());
+	}
+	
 	public FlickrRetriever(String flickrKey, String flickrSecret,Integer maxResults,Integer maxRequests,long maxRunningTime,FlickrStream flStream) {
 		this.flStream = flStream;
 		

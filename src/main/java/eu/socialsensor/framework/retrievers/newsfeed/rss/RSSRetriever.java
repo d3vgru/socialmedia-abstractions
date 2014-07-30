@@ -1,14 +1,20 @@
 package eu.socialsensor.framework.retrievers.newsfeed.rss;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
 import java.util.List;
 
 
+
+
+
+
+import org.apache.log4j.Logger;
+
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
-import com.sun.syndication.io.FeedException;
 import com.sun.syndication.io.SyndFeedInput;
 import com.sun.syndication.io.XmlReader;
 
@@ -26,12 +32,12 @@ import eu.socialsensor.framework.streams.newsfeed.rss.RSSStream;
  */
 public class RSSRetriever implements Retriever{
 	
-	RSSStream rssStream;
+	public final Logger logger = Logger.getLogger(RSSRetriever.class);
 	
-	long oneMonthPeriod = 2592000000L;
+	private RSSStream rssStream;
+	private long oneMonthPeriod = 2592000000L;
 	
 	public RSSRetriever(RSSStream rssStream) {
-		
 		this.rssStream = rssStream;
 	}
 	
@@ -39,68 +45,68 @@ public class RSSRetriever implements Retriever{
 	public Integer retrieve(Feed feed) {
 		
 		URLFeed ufeed = (URLFeed) feed;
-		System.out.println("["+new Date()+"]Retrieving RSS Feed: "+ufeed.getURL());
+		System.out.println("["+new Date()+"] Retrieving RSS Feed: " + ufeed.getURL());
 		
 		Integer totalRetrievedItems = 0;
+		if(ufeed.getURL().equals(""))
+			return totalRetrievedItems;
+			
+		URL url = null;
 		try {
-			
-			URL url  = new URL(ufeed.getURL());
-			if(ufeed.getURL().equals(""))
-				return totalRetrievedItems;
-			
-		    XmlReader reader = new XmlReader(url);
-		    
-		    try{
-		    	SyndFeed rssData = new SyndFeedInput().build(reader);
-		    	@SuppressWarnings("unchecked")
-				List<SyndEntry> rssEntries = rssData.getEntries();
-				
-				for (SyndEntry rss:rssEntries){
-					
-					if(rss.getLink() != null){
-						
-						if(rss.getPublishedDate() != null && rss.getPublishedDate().getTime()>0 
-								&& Math.abs(System.currentTimeMillis() - rss.getPublishedDate().getTime())<oneMonthPeriod){
-							
-							RSSItem rssItem = new RSSItem(rss);
-							if(rssStream != null)
-								rssStream.store(rssItem);
-							Thread.sleep(100);
-							totalRetrievedItems++;
-						}
-					
-					}
-					
-					
-				}
-				
-				
-		    }catch(NullPointerException e2){
-		    	return totalRetrievedItems;
-		    }
-		    
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			return 0;
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			return 0;
-		} catch (FeedException e) {
-			// TODO Auto-generated catch block
-			return 0;
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			return 0;
+			url = new URL(ufeed.getURL());
+		} catch (MalformedURLException e) {
+			logger.error(e);
+			return totalRetrievedItems;
 		}
+			
+		XmlReader reader;
+		try {
+			reader = new XmlReader(url);
+			SyndFeed rssData = new SyndFeedInput().build(reader);
+			
+			@SuppressWarnings("unchecked")
+			List<SyndEntry> rssEntries = rssData.getEntries();
+			
+		
+			for (SyndEntry rss : rssEntries) {		
+				if(rss.getLink() != null) {
+							
+					if(rss.getPublishedDate() != null && rss.getPublishedDate().getTime()>0 && 
+							Math.abs(System.currentTimeMillis() - rss.getPublishedDate().getTime())<oneMonthPeriod) {
+								
+						RSSItem rssItem = new RSSItem(rss);
+								
+						String label = feed.getLabel();
+						rssItem.setList(label);
+								
+						if(rssStream != null)
+							rssStream.store(rssItem);
+						
+						totalRetrievedItems++;
+						
+						try {
+							Thread.sleep(100);
+						} catch (InterruptedException e) {
+							logger.error(e);
+							continue;
+						}
+					}
+				}
+			}
+		} catch (IOException e) {
+			logger.error(e);
+			return totalRetrievedItems;
+		} catch (Exception e) {
+			logger.error(e);
+			return totalRetrievedItems;
+		}
+	
 		return totalRetrievedItems;
 	}
 
 	
 	@Override
-	public void stop(){
+	public void stop() {
 	
 	}
-	
-
-	
 }
