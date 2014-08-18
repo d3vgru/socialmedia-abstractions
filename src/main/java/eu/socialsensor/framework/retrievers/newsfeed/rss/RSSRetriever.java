@@ -78,7 +78,7 @@ public class RSSRetriever implements Retriever{
 								
 						String label = feed.getLabel();
 						rssItem.setList(label);
-								
+						
 						if(rssStream != null)
 							rssStream.store(rssItem);
 						

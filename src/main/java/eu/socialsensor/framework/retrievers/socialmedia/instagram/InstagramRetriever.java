@@ -156,8 +156,8 @@ public class InstagramRetriever implements SocialMediaRetriever {
 		Date dateToRetrieve = new Date(System.currentTimeMillis() - (24*3600*1000));
 		feed.setDateToRetrieve(dateToRetrieve);
 		
-//		logger.info("#Instagram : Handler fetched " + totalRetrievedItems + " photos from " + uName + 
-//				" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
+		logger.info("#Instagram : Handler fetched " + totalRetrievedItems + " photos from " + uName + 
+				" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
 		
 		return totalRetrievedItems;
 	}
@@ -309,9 +309,8 @@ public class InstagramRetriever implements SocialMediaRetriever {
 			
 		}
 
-//		logger.info("#Instagram : Done retrieving for this session");
-//		logger.info("#Instagram : Handler fetched " + items.size() + " posts from " + tags + 
-//				" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
+		logger.info("#Instagram : Handler fetched " + totalRetrievedItems + " posts from " + tags + 
+				" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
 		
 		// The next request will retrieve only items of the last day
 		Date dateToRetrieve = new Date(System.currentTimeMillis() - (24*3600*1000));

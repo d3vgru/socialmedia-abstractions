@@ -152,13 +152,14 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 		
 		}
 	
-//		logger.info("#YouTube : Handler fetched " + totalRetrievedItems + " videos from " + uName + 
-//				" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
-//		
+		logger.info("#YouTube : Handler fetched " + totalRetrievedItems + " videos from " + uName + 
+				" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
+		
 		return totalRetrievedItems;
 	}
+	
 	@Override
-	public Integer retrieveKeywordsFeeds(KeywordsFeed feed){
+	public Integer retrieveKeywordsFeeds(KeywordsFeed feed) {
 		Integer totalRetrievedItems = 0;
 		
 		Date lastItemDate = feed.getDateToRetrieve();
@@ -267,9 +268,8 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 		
 		}
 	
-//		logger.info("#YouTube : Done retrieving for this session");
-//		logger.info("#YouTube : Handler fetched " + items.size() + " videos from " + tags + 
-//				" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
+		logger.info("#YouTube : Handler fetched " + totalRetrievedItems + " videos from " + tags + 
+				" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
 		
 		Date dateToRetrieve = new Date(System.currentTimeMillis() - (24*3600*1000));
 		feed.setDateToRetrieve(dateToRetrieve);
@@ -279,7 +279,6 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 	
 	@Override
 	public Integer retrieveLocationFeeds(LocationFeed feed){
-		
 		return 0;
     }
 	
