@@ -189,12 +189,13 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 				if(key.length()>1)
 					tags += key.toLowerCase()+" ";
 		}
-		else if(keywords != null){
-			for(Keyword key : keywords){
+		else if(keywords != null) {
+			for(Keyword key : keywords) {
 				String [] words = key.getName().split(" ");
-				for(String word : words)
+				for(String word : words) {
 					if(!tags.contains(word) && word.length()>1)
 						tags += word.toLowerCase()+" ";
+				}
 			}
 		}
 		//one call - 25 results
@@ -216,9 +217,8 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 		
 		VideoFeed videoFeed = new VideoFeed();
 		
-		while(true){
-		
-			try{
+		while(true) {
+			try {
 				query.setStartIndex(startIndex);
 				videoFeed = service.query(query, VideoFeed.class);
 				
@@ -259,7 +259,8 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 				}
 			
 			}
-			catch(Exception e){
+			catch(Exception e) {
+				logger.error("YouTube Retriever exception: " + e.getMessage());
 				return totalRetrievedItems;
 			}
 			

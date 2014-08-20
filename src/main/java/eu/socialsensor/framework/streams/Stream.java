@@ -183,7 +183,13 @@ public abstract class Stream implements Runnable {
 			
 			logger.info(getName() + ": poll for " + feeds.size() + " feeds");
 			for(Feed feed : feeds) {
-				numOfRetrievedItems += retriever.retrieve(feed);
+				try {
+					numOfRetrievedItems += retriever.retrieve(feed);
+				}
+				catch(Exception e) {
+					logger.error("Exception for feed " + feed.getId() + " of type " + feed.getFeedtype());
+					logger.error(e.getMessage());
+				}
 			}
 			
 			logger.info("Retrieved items for " + getName() + " are : " + numOfRetrievedItems);

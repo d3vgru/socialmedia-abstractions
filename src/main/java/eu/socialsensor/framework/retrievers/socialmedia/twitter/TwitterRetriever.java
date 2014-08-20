@@ -16,7 +16,7 @@ import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.User;
 import twitter4j.conf.Configuration;
-
+import twitter4j.conf.ConfigurationBuilder;
 import eu.socialsensor.framework.abstractions.socialmedia.twitter.TwitterItem;
 import eu.socialsensor.framework.abstractions.socialmedia.twitter.TwitterStreamUser;
 import eu.socialsensor.framework.common.domain.Feed;
@@ -273,7 +273,7 @@ public class TwitterRetriever implements SocialMediaRetriever {
 			}
 			
 		} catch (TwitterException e) {
-			logger.error(e);
+			logger.error(e.getMessage());
 		}	
 	
 		feed.setDateToRetrieve(newSinceDate);
@@ -373,8 +373,7 @@ public class TwitterRetriever implements SocialMediaRetriever {
 			
 		String ownerScreenName = feed.getListOwner();
 		String slug = feed.getListSlug();
-			
-			
+				
 		int page = 1;
 		Paging paging = new Paging(page, 100);
 		while(true) {
@@ -394,7 +393,7 @@ public class TwitterRetriever implements SocialMediaRetriever {
 					}
 				}
 					
-				if(totalRetrievedItems > maxResults || numberOfRequests > maxRequests 
+				if(totalRetrievedItems >= maxResults || numberOfRequests >= maxRequests 
 						|| (System.currentTimeMillis() - currRunningTime)>maxRunningTime) {
 					break;
 				}
@@ -411,7 +410,7 @@ public class TwitterRetriever implements SocialMediaRetriever {
 	@Override
 	public Integer retrieve(Feed feed) {
 		
-		switch(feed.getFeedtype()){
+		switch(feed.getFeedtype()) {
 			case SOURCE:
 				SourceFeed userFeed = (SourceFeed) feed;
 				if(!userFeed.getSource().getNetwork().equals("Twitter"))

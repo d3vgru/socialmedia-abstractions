@@ -252,7 +252,7 @@ public class FacebookRetriever implements SocialMediaRetriever {
 						}
 					}
 					catch(Exception e) {
-						logger.error(e);
+						logger.error(e.getMessage());
 						break;
 					}
 					

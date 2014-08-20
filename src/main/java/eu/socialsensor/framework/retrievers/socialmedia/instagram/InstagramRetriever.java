@@ -184,17 +184,19 @@ public class InstagramRetriever implements SocialMediaRetriever {
 		}
 		
 		String tags = "";
-		if(keyword != null){
-			for(String key : keyword.getName().split(" ")) 
+		if(keyword != null) {
+			for(String key : keyword.getName().split(" ")) {
 				if(key.length()>1)
 					tags += key.toLowerCase();
+			}
 		}
-		else if(keywords != null){
-			for(Keyword key : keywords){
+		else if(keywords != null) {
+			for(Keyword key : keywords) {
 				String [] words = key.getName().split(" ");
-				for(String word : words)
+				for(String word : words) {
 					if(!tags.contains(word) && word.length()>1)
 						tags += word.toLowerCase();
+				}
 			}
 		}
 		tags = tags.replaceAll(" ", "");
@@ -246,7 +248,7 @@ public class InstagramRetriever implements SocialMediaRetriever {
 						instagramItem.setList(label);
 						
 					} catch (MalformedURLException e) {
-						logger.error(e);
+						logger.error("Instagram retriever exception: " + e.getMessage());
 						return totalRetrievedItems;
 					}
 
@@ -262,7 +264,7 @@ public class InstagramRetriever implements SocialMediaRetriever {
 			if(!isFinished) {
 				while(pagination.hasNextPage()){
 					
-					try{
+					try {
 						if(numberOfRequests>=maxRequests)
 							break;
 						
@@ -295,12 +297,11 @@ public class InstagramRetriever implements SocialMediaRetriever {
 							if(isFinished)
 								break;
 						}
-					}catch(InstagramException e){
-						
-						logger.error("#Second Instagram Exception : "+e);
+					}
+					catch(InstagramException e) {	
+						logger.error("#Second Instagram Exception: " + e.getMessage());
 						return totalRetrievedItems;
 					} catch (MalformedURLException e1) {
-					
 						return totalRetrievedItems;
 					}
 

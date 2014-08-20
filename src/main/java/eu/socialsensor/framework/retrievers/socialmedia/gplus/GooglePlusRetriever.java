@@ -327,7 +327,7 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 			 try {
 				activityFeed = searchActivities.execute();
 			} catch (IOException e) {
-				logger.error(e);
+				logger.error("GPlus Retriever Exception: " + e.getMessage());
 			}
 			 pageOfActivities = activityFeed.getItems();
 		
