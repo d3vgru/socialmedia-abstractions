@@ -1,5 +1,8 @@
-package eu.socialsensor.framework.retrievers.socialmedia.twitpic;
+package eu.socialsensor.framework.retrievers.socialmedia;
 
+
+import java.util.ArrayList;
+import java.util.List;
 
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpRequest;
@@ -12,32 +15,31 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.JsonObjectParser;
 import com.google.api.client.json.jackson2.JacksonFactory;
 
-import eu.socialsensor.framework.abstractions.socialmedia.twitpic.TwitPicMediaItem.TwitPicImage;
-import eu.socialsensor.framework.abstractions.socialmedia.twitpic.TwitPicMediaItem;
+import eu.socialsensor.framework.abstractions.socialmedia.vimeo.VimeoMediaItem;
+import eu.socialsensor.framework.abstractions.socialmedia.vimeo.VimeoMediaItem.VimeoVideo;
 import eu.socialsensor.framework.common.domain.Feed;
+import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.MediaItem;
 import eu.socialsensor.framework.common.domain.StreamUser;
 import eu.socialsensor.framework.common.domain.feeds.KeywordsFeed;
 import eu.socialsensor.framework.common.domain.feeds.ListFeed;
 import eu.socialsensor.framework.common.domain.feeds.LocationFeed;
 import eu.socialsensor.framework.common.domain.feeds.SourceFeed;
-import eu.socialsensor.framework.retrievers.socialmedia.SocialMediaRetriever;
 
 /**
- * The retriever that implements the Twitpic simplified retriever
+ * The retriever that implements the Vimeo simplified retriever 
  * @author manosetro
  * @email  manosetro@iti.gr
  */
-public class TwitpicRetriever implements SocialMediaRetriever {
+public class VimeoRetriever implements SocialMediaRetriever {
 
-	private static String requestPrefix = "http://api.twitpic.com/2/media/show.json?id=";
-	
 	static final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
 	static final JsonFactory JSON_FACTORY = new JacksonFactory();
 	
 	private HttpRequestFactory requestFactory;
-
-	public TwitpicRetriever() {
+	private String requestPrefix = "http://vimeo.com/api/v2/video/";
+	
+	public VimeoRetriever() {
 		requestFactory = HTTP_TRANSPORT.createRequestFactory(
 				new HttpRequestInitializer() {
 					@Override
@@ -47,48 +49,50 @@ public class TwitpicRetriever implements SocialMediaRetriever {
 				});
 	}
 	
-	public MediaItem getMediaItem(String shortId) {
-		
-		GenericUrl requestUrl = new GenericUrl(requestPrefix + shortId);
+	public MediaItem getMediaItem(String id) {
+	
+		GenericUrl url = new GenericUrl(requestPrefix + id + ".json");
 		
 		HttpRequest request;
 		try {
-			request = requestFactory.buildGetRequest(requestUrl);
+			request = requestFactory.buildGetRequest(url);
 			HttpResponse response = request.execute();
-			TwitPicImage image = response.parseAs(TwitPicImage.class);
-			if(image != null) {
-				MediaItem mediaItem = new TwitPicMediaItem(image);
+			VimeoVideo[] videos = response.parseAs(VimeoVideo[].class);
+			if(videos != null && videos.length>0) {
+				MediaItem mediaItem = new VimeoMediaItem(videos[0]);
 				return mediaItem;
 			}
 		} catch (Exception e) {
+			//e.printStackTrace();
 		}
-		
 		return null;
+		 
+		
 	}
 
 	@Override
-	public Integer retrieve(Feed feed) {
-		return null;
+	public List<Item> retrieve(Feed feed) {
+		return new ArrayList<Item>();
 	}
 
 	@Override
 	public void stop() {
-		
+		// TODO Auto-generated method stub	
 	}
 
 	@Override
-	public Integer retrieveKeywordsFeeds(KeywordsFeed feed) throws Exception {
-		return null;
+	public List<Item> retrieveKeywordsFeeds(KeywordsFeed feed) throws Exception {
+		return new ArrayList<Item>();
 	}
 
 	@Override
-	public Integer retrieveUserFeeds(SourceFeed feed) throws Exception {
-		return null;
+	public List<Item> retrieveUserFeeds(SourceFeed feed) throws Exception {
+		return new ArrayList<Item>();
 	}
 
 	@Override
-	public Integer retrieveLocationFeeds(LocationFeed feed) throws Exception {
-		return null;
+	public List<Item> retrieveLocationFeeds(LocationFeed feed) throws Exception {
+		return new ArrayList<Item>();
 	}
 
 	@Override
@@ -98,9 +102,8 @@ public class TwitpicRetriever implements SocialMediaRetriever {
 	}
 
 	@Override
-	public Integer retrieveListsFeeds(ListFeed feed) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Item> retrieveListsFeeds(ListFeed feed) {
+		return new ArrayList<Item>();
 	}
 
 }

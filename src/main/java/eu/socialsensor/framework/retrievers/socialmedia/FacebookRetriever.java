@@ -1,7 +1,8 @@
-package eu.socialsensor.framework.retrievers.socialmedia.facebook;
+package eu.socialsensor.framework.retrievers.socialmedia;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -24,6 +25,7 @@ import com.restfb.types.User;
 import eu.socialsensor.framework.abstractions.socialmedia.facebook.FacebookItem;
 import eu.socialsensor.framework.abstractions.socialmedia.facebook.FacebookStreamUser;
 import eu.socialsensor.framework.common.domain.Feed;
+import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.Keyword;
 import eu.socialsensor.framework.common.domain.MediaItem;
 import eu.socialsensor.framework.common.domain.Source;
@@ -32,9 +34,8 @@ import eu.socialsensor.framework.common.domain.feeds.KeywordsFeed;
 import eu.socialsensor.framework.common.domain.feeds.ListFeed;
 import eu.socialsensor.framework.common.domain.feeds.LocationFeed;
 import eu.socialsensor.framework.common.domain.feeds.SourceFeed;
-import eu.socialsensor.framework.monitors.RateLimitsMonitor;
-import eu.socialsensor.framework.retrievers.socialmedia.SocialMediaRetriever;
-import eu.socialsensor.framework.streams.socialmedia.facebook.FacebookStream;
+import eu.socialsensor.framework.retrievers.RateLimitsMonitor;
+
 
 /**
  * Class responsible for retrieving facebook content based on keywords or facebook users/facebook pages
@@ -48,7 +49,6 @@ public class FacebookRetriever implements SocialMediaRetriever {
 	private RateLimitsMonitor rateLimitsMonitor;
 			
 	private FacebookClient facebookClient;
-	private FacebookStream fbStream;
 	
 	private int maxResults;
 	private int maxRequests;
@@ -62,9 +62,8 @@ public class FacebookRetriever implements SocialMediaRetriever {
 		this.facebookClient = new DefaultFacebookClient(facebookAccessToken);
 	}
 	
-	public FacebookRetriever(FacebookClient facebookClient, int maxRequests, long minInterval,Integer maxResults, long maxRunningTime,FacebookStream fbStream) {
+	public FacebookRetriever(FacebookClient facebookClient, int maxRequests, long minInterval,Integer maxResults, long maxRunningTime) {
 		this.facebookClient = facebookClient;		
-		this.fbStream = fbStream;
 		this.rateLimitsMonitor = new RateLimitsMonitor(maxRequests, minInterval);
 		this.maxResults = maxResults;
 		this.maxRequests = maxRequests;
@@ -73,8 +72,10 @@ public class FacebookRetriever implements SocialMediaRetriever {
 	
 
 	@Override
-	public Integer retrieveUserFeeds(SourceFeed feed) {
-		Integer totalRetrievedItems = 0;
+	public List<Item> retrieveUserFeeds(SourceFeed feed) {
+		
+		List<Item> items = new ArrayList<Item>();
+
 		Integer totalRequests = 0;
 		
 		Date lastItemDate = feed.getDateToRetrieve();
@@ -87,7 +88,7 @@ public class FacebookRetriever implements SocialMediaRetriever {
 		String userName = source.getName();
 		if(userName == null){
 			logger.info("#Facebook : No source feed");
-			return totalRetrievedItems;
+			return items;
 		}
 		String userFeed = source.getName()+"/feed";
 		
@@ -98,7 +99,7 @@ public class FacebookRetriever implements SocialMediaRetriever {
 			page = facebookClient.fetchObject(userName, User.class);
 		}
 		catch(Exception e) {
-			return totalRetrievedItems;
+			return items;
 		}
 		
 		FacebookStreamUser facebookUser = new FacebookStreamUser(page);
@@ -113,20 +114,15 @@ public class FacebookRetriever implements SocialMediaRetriever {
 					FacebookItem facebookUpdate = new FacebookItem(post, facebookUser);
 					facebookUpdate.setList(label);
 					
-					if(fbStream != null) {
-						fbStream.store(facebookUpdate);
-					}
+					items.add(facebookUpdate);
 					
-				    totalRetrievedItems++;
-				    
 				    Comments comments = post.getComments();
 				    if(comments != null) {
 				    	for(Comment comment : comments.getData()) {
 			    			FacebookItem facebookComment = new FacebookItem(comment, post, null);
 			    			facebookComment.setList(label);
-			    		
-			    			if(fbStream != null)
-			    				fbStream.store(facebookComment);
+			    			
+			    			items.add(facebookComment);
 			    		} 
 				    }
 				    
@@ -147,7 +143,7 @@ public class FacebookRetriever implements SocialMediaRetriever {
 				    */
 				 }
 				
-				if(publicationDate.before(lastItemDate) || totalRetrievedItems>maxResults || totalRequests>maxRequests){
+				if(publicationDate.before(lastItemDate) || items.size()>maxResults || totalRequests>maxRequests){
 					isFinished = true;
 					break;
 				}
@@ -166,12 +162,13 @@ public class FacebookRetriever implements SocialMediaRetriever {
 //		logger.info("#Facebook : Handler fetched " + items.size() + " posts from " + uName + 
 //				" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
 		
-		return totalRetrievedItems;
+		return items;
 	}
 	
 	@Override
-	public Integer retrieveKeywordsFeeds(KeywordsFeed feed) {
-		Integer totalRetrievedItems = 0;
+	public List<Item> retrieveKeywordsFeeds(KeywordsFeed feed) {
+		
+		List<Item> items = new ArrayList<Item>();
 		
 		currRunningTime = System.currentTimeMillis();
 		
@@ -185,7 +182,7 @@ public class FacebookRetriever implements SocialMediaRetriever {
 		
 		if(keywords == null && keyword == null){
 			logger.info("#Facebook : No keywords feed");
-			return totalRetrievedItems;
+			return items;
 		}
 
 		String tags = "";
@@ -204,18 +201,18 @@ public class FacebookRetriever implements SocialMediaRetriever {
 		}
 		
 		if(tags.equals(""))
-			return totalRetrievedItems;
+			return items;
 		
 		Connection<Post> connection = null;
 		try {
 			connection = facebookClient.fetchConnection("search", Post.class, Parameter.with("q", tags), Parameter.with("type", "post"));
 		}catch(FacebookResponseStatusException e) {
 			logger.error(e);
-			return totalRetrievedItems;
+			return items;
 		}
 		catch(Exception e) {
 			logger.error(e);
-			return totalRetrievedItems;
+			return items;
 		}
 		
 		try {
@@ -243,12 +240,7 @@ public class FacebookRetriever implements SocialMediaRetriever {
 								fbItem.setList(label);
 							}
 							
-							
-							
-							if(fbStream != null && fbItem != null)
-								fbStream.store(fbItem);
-							
-							totalRetrievedItems++;
+							items.add(fbItem);
 						}
 					}
 					catch(Exception e) {
@@ -256,7 +248,7 @@ public class FacebookRetriever implements SocialMediaRetriever {
 						break;
 					}
 					
-					if(publicationDate.before(lastItemDate) || totalRetrievedItems>maxResults || (System.currentTimeMillis() - currRunningTime) > maxRunningTime){
+					if(publicationDate.before(lastItemDate) || items.size()>maxResults || (System.currentTimeMillis() - currRunningTime) > maxRunningTime){
 						isFinished = true;
 						break;
 					}
@@ -269,22 +261,22 @@ public class FacebookRetriever implements SocialMediaRetriever {
 		}
 		catch(FacebookNetworkException e){
 			logger.error(e);
-			return totalRetrievedItems;
+			return items;
 		}
 		
-		logger.info("#Facebook : Handler fetched " + totalRetrievedItems + " posts from " + tags + 
+		logger.info("#Facebook : Handler fetched " + items.size() + " posts from " + tags + 
 			" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
 		
 		// The next request will retrieve only items of the last day
 		Date dateToRetrieve = new Date(System.currentTimeMillis() - (24*3600*1000));
 		feed.setDateToRetrieve(dateToRetrieve);
 		
-		return totalRetrievedItems;
+		return items;
 	}
 	
 	
-	public Integer retrieveLocationFeeds(LocationFeed feed) {
-		return 0;
+	public List<Item> retrieveLocationFeeds(LocationFeed feed) {
+		return new ArrayList<Item>();
 	}
 	
 	/**
@@ -312,9 +304,6 @@ public class FacebookRetriever implements SocialMediaRetriever {
 							
 							FacebookItem facebookUpdate = new FacebookItem(post,facebookUser);
 							
-							if(fbStream != null)
-								fbStream.store(facebookUpdate);
-							
 							totalRetrievedItems++;
 						}
 					}
@@ -338,19 +327,19 @@ public class FacebookRetriever implements SocialMediaRetriever {
 	}
 	
 	@Override
-	public Integer retrieveListsFeeds(ListFeed feed) {
-		return 0;
+	public List<Item> retrieveListsFeeds(ListFeed feed) {
+		return new ArrayList<Item>();
 	}
 	
 	@Override
-	public Integer retrieve (Feed feed) {
+	public List<Item> retrieve (Feed feed) {
 		
 		switch(feed.getFeedtype()) {
 			case SOURCE:
 				SourceFeed userFeed = (SourceFeed) feed;
 				
 				if(!userFeed.getSource().getNetwork().equals("Facebook"))
-					return 0;
+					return new ArrayList<Item>();
 				
 				return retrieveUserFeeds(userFeed);
 				
@@ -374,7 +363,7 @@ public class FacebookRetriever implements SocialMediaRetriever {
 				break;
 			
 		}
-		return 0;
+		return new ArrayList<Item>();
 	}
 	
 	@Override

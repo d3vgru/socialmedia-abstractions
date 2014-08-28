@@ -1,5 +1,6 @@
-package eu.socialsensor.framework.retrievers.socialmedia.twitter;
+package eu.socialsensor.framework.retrievers.socialmedia;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -16,10 +17,10 @@ import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.User;
 import twitter4j.conf.Configuration;
-import twitter4j.conf.ConfigurationBuilder;
 import eu.socialsensor.framework.abstractions.socialmedia.twitter.TwitterItem;
 import eu.socialsensor.framework.abstractions.socialmedia.twitter.TwitterStreamUser;
 import eu.socialsensor.framework.common.domain.Feed;
+import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.Keyword;
 import eu.socialsensor.framework.common.domain.Location;
 import eu.socialsensor.framework.common.domain.MediaItem;
@@ -29,8 +30,6 @@ import eu.socialsensor.framework.common.domain.feeds.KeywordsFeed;
 import eu.socialsensor.framework.common.domain.feeds.ListFeed;
 import eu.socialsensor.framework.common.domain.feeds.LocationFeed;
 import eu.socialsensor.framework.common.domain.feeds.SourceFeed;
-import eu.socialsensor.framework.retrievers.socialmedia.SocialMediaRetriever;
-import eu.socialsensor.framework.streams.socialmedia.twitter.TwitterStream;
 
 /**
  * Class responsible for retrieving Twitter content based on keywords, twitter users or locations
@@ -44,20 +43,17 @@ public class TwitterRetriever implements SocialMediaRetriever {
 	
 	private Twitter twitter = null;
 	private TwitterFactory tf = null;
-	
-	private TwitterStream twStream;
-	
+		
 	private int maxResults = 500;
 	private int maxRequests = 1;
 	
 	private long maxRunningTime = 0l;
 	
-	public TwitterRetriever(Configuration conf, Integer maxRequests,Integer maxResults, Long maxRunningTime, TwitterStream twStream) {
+	public TwitterRetriever(Configuration conf, Integer maxRequests,Integer maxResults, Long maxRunningTime) {
 		
 		this.tf = new TwitterFactory(conf);
 		twitter = tf.getInstance();
 		
-		this.twStream = twStream;
 		if(maxResults != null)
 			this.maxResults = maxResults;
 		
@@ -68,16 +64,18 @@ public class TwitterRetriever implements SocialMediaRetriever {
 	}
 	
 	@Override
-	public Integer retrieveUserFeeds(SourceFeed feed) {
+	public List<Item> retrieveUserFeeds(SourceFeed feed) {
+		
+		List<Item> items = new ArrayList<Item>();
 		
 		int count = 200;
 		long currRunningTime = System.currentTimeMillis();
 		
-		Integer totalRetrievedItems = 0, numberOfRequests = 0;
+		Integer numberOfRequests = 0;
 		
 		Source source = feed.getSource();
 		if(source == null)
-			return totalRetrievedItems;
+			return items;
 		
 		Date sinceDate = feed.getDateToRetrieve();
 		Date newSinceDate = sinceDate;
@@ -121,17 +119,13 @@ public class TwitterRetriever implements SocialMediaRetriever {
 						
 						TwitterItem twitterItem = new TwitterItem(status);
 						twitterItem.setList(label);
-
-						if(twStream != null) {
-							twStream.store(twitterItem);
-						}
 						
-						totalRetrievedItems++;
+						items.add(twitterItem);
 					}
 				}
 				
-				if(totalRetrievedItems > maxResults) {
-					logger.info("totalRetrievedItems: " + totalRetrievedItems + " > " + maxResults);
+				if(items.size() > maxResults) {
+					logger.info("totalRetrievedItems: " + items.size() + " > " + maxResults);
 					break;
 				}
 				if(numberOfRequests >= maxRequests) {
@@ -155,15 +149,18 @@ public class TwitterRetriever implements SocialMediaRetriever {
 			}
 		}
 		feed.setDateToRetrieve(newSinceDate);
-		return totalRetrievedItems;
+		return items;
+		
 	}
 	
 	@Override
-	public Integer retrieveKeywordsFeeds(KeywordsFeed feed) {
+	public List<Item> retrieveKeywordsFeeds(KeywordsFeed feed) {
+		
+		List<Item> items = new ArrayList<Item>();
+		
 		int count = 100;
 		int numberOfRequests = 0;
-	
-		Integer totalRetrievedItems = 0;
+
 		Date sinceDate = feed.getDateToRetrieve();
 		Date newSinceDate = sinceDate;
 		
@@ -176,7 +173,7 @@ public class TwitterRetriever implements SocialMediaRetriever {
 		
 		if(keywords == null && keyword == null){
 			logger.info("#Twitter : No keywords feed");
-			return totalRetrievedItems;
+			return items;
 		}
 		
 		
@@ -196,7 +193,7 @@ public class TwitterRetriever implements SocialMediaRetriever {
 		}
 		
 		if(tags.equals("")) 
-			return totalRetrievedItems;
+			return items;
 		
 		//Set the query
 		logger.info("Query String: " + tags);
@@ -239,16 +236,12 @@ public class TwitterRetriever implements SocialMediaRetriever {
 						TwitterItem twitterItem = new TwitterItem(status);
 						twitterItem.setList(label);
 						
-						if(twStream != null) {
-							twStream.store(twitterItem);
-						}
-				
-						totalRetrievedItems++;
+						items.add(twitterItem);
 					}
 				}
 				
-				if(totalRetrievedItems > maxResults) {
-					logger.info("totalRetrievedItems: " + totalRetrievedItems + " > " + maxResults);
+				if(items.size() > maxResults) {
+					logger.info("totalRetrievedItems: " + items.size() + " > " + maxResults);
 					break;
 				}
 				if(numberOfRequests >= maxRequests) {
@@ -277,20 +270,22 @@ public class TwitterRetriever implements SocialMediaRetriever {
 		}	
 	
 		feed.setDateToRetrieve(newSinceDate);
-		return totalRetrievedItems;
+		return items;
 	}
 	
 	@Override
-	public Integer retrieveLocationFeeds(LocationFeed feed) {
+	public List<Item> retrieveLocationFeeds(LocationFeed feed) {
+		
+		List<Item> items = new ArrayList<Item>();
 		
 		int count = 100;
 		
-		Integer totalRetrievedItems = 0, numberOfRequests = 0;
+		Integer numberOfRequests = 0;
 		Date sinceDate = feed.getDateToRetrieve();
 		
 		Location location = feed.getLocation();
 		if(location == null)
-			return totalRetrievedItems;
+			return items;
 		
 		long currRunningTime = System.currentTimeMillis();
 		
@@ -325,8 +320,8 @@ public class TwitterRetriever implements SocialMediaRetriever {
 						}
 						
 						TwitterItem twitterItem = new TwitterItem(status);
-						twStream.store(twitterItem);
-						totalRetrievedItems++;
+						
+						items.add(twitterItem);
 					}
 				}
 				
@@ -334,8 +329,8 @@ public class TwitterRetriever implements SocialMediaRetriever {
 					logger.info("There is not next query.");
 					break;
 				}
-				if(totalRetrievedItems > maxResults) {
-					logger.info("totalRetrievedItems: " + totalRetrievedItems + " > " + maxResults);
+				if(items.size() > maxResults) {
+					logger.info("totalRetrievedItems: " + items.size() + " > " + maxResults);
 					break;
 				}
 				if(numberOfRequests > maxRequests) {
@@ -360,13 +355,15 @@ public class TwitterRetriever implements SocialMediaRetriever {
 			}
 		}
 		
-		return totalRetrievedItems;
+		return items;
 	}
 	
 	@Override
-	public Integer retrieveListsFeeds(ListFeed feed) {
+	public List<Item> retrieveListsFeeds(ListFeed feed) {
 		
-		Integer totalRetrievedItems = 0, numberOfRequests = 0;
+		List<Item> items = new ArrayList<Item>();
+		
+		Integer numberOfRequests = 0;
 		long currRunningTime = System.currentTimeMillis();
 
 		String label = feed.getLabel();
@@ -385,15 +382,11 @@ public class TwitterRetriever implements SocialMediaRetriever {
 						TwitterItem twitterItem = new TwitterItem(status);
 						twitterItem.setList(label);
 						
-						if(twStream != null) {
-							twStream.store(twitterItem);
-						}
-						
-						totalRetrievedItems++;
+						items.add(twitterItem);
 					}
 				}
 					
-				if(totalRetrievedItems >= maxResults || numberOfRequests >= maxRequests 
+				if(items.size() >= maxResults || numberOfRequests >= maxRequests 
 						|| (System.currentTimeMillis() - currRunningTime)>maxRunningTime) {
 					break;
 				}
@@ -404,17 +397,17 @@ public class TwitterRetriever implements SocialMediaRetriever {
 				break;
 			}
 		}
-		return totalRetrievedItems;
+		return items;
 	}
 	
 	@Override
-	public Integer retrieve(Feed feed) {
+	public List<Item> retrieve(Feed feed) {
 		
 		switch(feed.getFeedtype()) {
 			case SOURCE:
 				SourceFeed userFeed = (SourceFeed) feed;
 				if(!userFeed.getSource().getNetwork().equals("Twitter"))
-					return 0;
+					return new ArrayList<Item>();
 				
 				return retrieveUserFeeds(userFeed);
 				
@@ -432,7 +425,7 @@ public class TwitterRetriever implements SocialMediaRetriever {
 				
 			default:
 				logger.error("Unkonwn Feed Type: " + feed.toJSONString());
-				return 0;	
+				return new ArrayList<Item>();
 		}
 	}
 	

@@ -1,7 +1,10 @@
 package eu.socialsensor.framework.retrievers;
 
 
+import java.util.List;
+
 import eu.socialsensor.framework.common.domain.Feed;
+import eu.socialsensor.framework.common.domain.Item;
 
 public interface Retriever {
 	/**
@@ -10,7 +13,7 @@ public interface Retriever {
 	 * @param feed
 	 * @return
 	 */
-	public Integer retrieve(Feed feed);
+	public List<Item> retrieve(Feed feed);
 	
 	/**
 	 * Stops the retriever

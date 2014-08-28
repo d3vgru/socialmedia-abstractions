@@ -1,4 +1,4 @@
-package eu.socialsensor.framework;
+package eu.socialsensor.sfc.builder;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -25,7 +25,6 @@ public class Configuration implements Iterable<String>, JSONable {
 	 * 
 	 */
 	private static final long serialVersionUID = 5070483137103099259L;
-	public static final String CLASS_PATH = "Classpath";
 	
 	@Expose
 	@SerializedName(value = "parameters")

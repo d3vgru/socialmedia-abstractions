@@ -1,8 +1,9 @@
-package eu.socialsensor.framework.retrievers.socialmedia.tumblr;
+package eu.socialsensor.framework.retrievers.socialmedia;
 
 import java.net.MalformedURLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -20,6 +21,7 @@ import com.tumblr.jumblr.types.Post;
 import eu.socialsensor.framework.abstractions.socialmedia.tumblr.TumblrItem;
 import eu.socialsensor.framework.abstractions.socialmedia.tumblr.TumblrStreamUser;
 import eu.socialsensor.framework.common.domain.Feed;
+import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.Keyword;
 import eu.socialsensor.framework.common.domain.MediaItem;
 import eu.socialsensor.framework.common.domain.Source;
@@ -28,8 +30,6 @@ import eu.socialsensor.framework.common.domain.feeds.KeywordsFeed;
 import eu.socialsensor.framework.common.domain.feeds.ListFeed;
 import eu.socialsensor.framework.common.domain.feeds.LocationFeed;
 import eu.socialsensor.framework.common.domain.feeds.SourceFeed;
-import eu.socialsensor.framework.retrievers.socialmedia.SocialMediaRetriever;
-import eu.socialsensor.framework.streams.socialmedia.tumblr.TumblrStream;
 
 /**
  * Class responsible for retrieving Tumblr content based on keywords or tumblr users
@@ -41,8 +41,6 @@ public class TumblrRetriever implements SocialMediaRetriever{
 	private Logger logger = Logger.getLogger(TumblrRetriever.class);
 	
 	private JumblrClient client;
-	
-	private TumblrStream tlStream;
 
 	private int maxResults;
 	private int maxRequests;
@@ -50,21 +48,19 @@ public class TumblrRetriever implements SocialMediaRetriever{
 	private long maxRunningTime;
 	
 
-	public TumblrRetriever(String consumerKey, String consumerSecret,Integer maxResults,Integer maxRequests,Long maxRunningTime,TumblrStream tlStream) {
+	public TumblrRetriever(String consumerKey, String consumerSecret,Integer maxResults,Integer maxRequests,Long maxRunningTime) {
 		
 		this.maxResults = maxResults;
 		this.maxRequests = maxRequests;
 		this.maxRunningTime = maxRunningTime;
-		
-		this.tlStream = tlStream;
 		
 		client = new JumblrClient(consumerKey,consumerSecret);
 	}
 
 	
 	@Override
-	public Integer retrieveUserFeeds(SourceFeed feed){
-		Integer totalRetrievedItems = 0;
+	public List<Item> retrieveUserFeeds(SourceFeed feed){
+		List<Item> items = new ArrayList<Item>();
 		
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
 		Date lastItemDate = feed.getDateToRetrieve();
@@ -112,7 +108,7 @@ public class TumblrRetriever implements SocialMediaRetriever{
 						publicationDate = (Date) formatter.parse(retrievedDate);
 						
 					} catch (ParseException e) {
-						return totalRetrievedItems;
+						return items;
 					}
 					
 					if(publicationDate.after(lastItemDate) && post != null && post.getId() != null){
@@ -122,16 +118,15 @@ public class TumblrRetriever implements SocialMediaRetriever{
 							tumblrItem = new TumblrItem(post,tumblrStreamUser);
 						} catch (MalformedURLException e) {
 							
-							return totalRetrievedItems;
+							return items;
 						}
 						
-						tlStream.store(tumblrItem);
-						totalRetrievedItems++;
+						items.add(tumblrItem);
 						
 					}
 				
 				}
-				if(totalRetrievedItems>maxResults || numberOfRequests>maxRequests){
+				if(items.size()>maxResults || numberOfRequests>maxRequests){
 					isFinished = true;
 					break;
 				}
@@ -146,11 +141,13 @@ public class TumblrRetriever implements SocialMediaRetriever{
 //		logger.info("#Tumblr : Handler fetched " +totalRetrievedItems + " posts from " + uName + 
 //				" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
 		
-		return totalRetrievedItems;
+		return items;
 	}
+	
 	@Override
-	public Integer retrieveKeywordsFeeds(KeywordsFeed feed){
-		Integer totalRetrievedItems = 0;
+	public List<Item> retrieveKeywordsFeeds(KeywordsFeed feed){
+		
+		List<Item> items = new ArrayList<Item>();
 		
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
 		Date currentDate = new Date(System.currentTimeMillis());
@@ -169,10 +166,8 @@ public class TumblrRetriever implements SocialMediaRetriever{
 		
 		if(keywords == null && keyword == null){
 			logger.info("#Tumblr : No keywords feed");
-			return totalRetrievedItems;
+			return items;
 		}
-		
-		int it=0;
 		
 		String tags = "";
 		if(keyword != null){
@@ -190,7 +185,7 @@ public class TumblrRetriever implements SocialMediaRetriever{
 		}
 		
 		if(tags.equals(""))
-			return totalRetrievedItems;
+			return items;
 		
 		while(indexDate.after(lastItemDate) || indexDate.equals(lastItemDate)){
 			
@@ -202,11 +197,10 @@ public class TumblrRetriever implements SocialMediaRetriever{
 			try{
 				posts = client.tagged(tags);
 			}catch(JumblrException e){
-				return totalRetrievedItems;
+				return items;
 			}catch(OAuthConnectionException e1){
-				return totalRetrievedItems;
+				return items;
 			}
-			it++;
 			
 			if(posts == null || posts.isEmpty())
 				break;
@@ -224,8 +218,7 @@ public class TumblrRetriever implements SocialMediaRetriever{
 						publicationDate = (Date) formatter.parse(retrievedDate);
 						
 					} catch (ParseException e) {
-						
-						return totalRetrievedItems;
+						return items;
 					}
 					
 					if(publicationDate.after(lastItemDate) && post != null && post.getId() != null){
@@ -237,21 +230,19 @@ public class TumblrRetriever implements SocialMediaRetriever{
 						TumblrItem tumblrItem = null;
 						try {
 							tumblrItem = new TumblrItem(post,tumblrStreamUser);
-							
-							
 						} catch (MalformedURLException e) {
-							
-							return totalRetrievedItems;
+							return items;
 						}
+						
 						if(tumblrItem != null){
-							tlStream.store(tumblrItem);
-							totalRetrievedItems++;
+							items.add(tumblrItem);
 						}
+						
 					}
 				
 				}
 				
-				if(totalRetrievedItems>maxResults || numberOfRequests>=maxRequests || (System.currentTimeMillis() - currRunningTime) > maxRunningTime){
+				if(items.size()>maxResults || numberOfRequests>=maxRequests || (System.currentTimeMillis() - currRunningTime) > maxRunningTime){
 					isFinished = true;
 					break;
 				}
@@ -268,29 +259,27 @@ public class TumblrRetriever implements SocialMediaRetriever{
 //		logger.info("#Tumblr : Handler fetched " + items.size() + " posts from " + tags + 
 //				" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
 		
-		return totalRetrievedItems;
+		return items;
 		
 	}
 	@Override
-	public Integer retrieveLocationFeeds(LocationFeed feed) throws JumblrException {
-		
-		return 0;
+	public List<Item> retrieveLocationFeeds(LocationFeed feed) throws JumblrException {
+		return new ArrayList<Item>();
     }
 
 	@Override
-	public Integer retrieveListsFeeds(ListFeed feed) {
-		// TODO Auto-generated method stub
-		return 0;
+	public List<Item> retrieveListsFeeds(ListFeed feed) {
+		return new ArrayList<Item>();
 	}
 	
 	@Override
-	public Integer retrieve (Feed feed) {
+	public List<Item> retrieve (Feed feed) {
 	
 		switch(feed.getFeedtype()){
 			case SOURCE:
 				SourceFeed userFeed = (SourceFeed) feed;
 				if(!userFeed.getSource().getNetwork().equals("Tumblr"))
-					return 0;
+					return new ArrayList<Item>();
 				
 				return retrieveUserFeeds(userFeed);
 				
@@ -315,10 +304,11 @@ public class TumblrRetriever implements SocialMediaRetriever{
 				break;
 		}
 	
-		return 0;
+		return new ArrayList<Item>();
 	}
+	
 	@Override
-	public void stop(){
+	public void stop() {
 		if(client != null){
 			client = null;
 		}

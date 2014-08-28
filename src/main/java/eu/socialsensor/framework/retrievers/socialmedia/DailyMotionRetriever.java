@@ -1,4 +1,7 @@
-package eu.socialsensor.framework.retrievers.socialmedia.dailymotion;
+package eu.socialsensor.framework.retrievers.socialmedia;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpRequest;
@@ -14,13 +17,13 @@ import com.google.api.client.util.Key;
 import eu.socialsensor.framework.abstractions.socialmedia.dailymotion.DailyMotionMediaItem;
 import eu.socialsensor.framework.abstractions.socialmedia.dailymotion.DailyMotionMediaItem.DailyMotionVideo;
 import eu.socialsensor.framework.common.domain.Feed;
+import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.MediaItem;
 import eu.socialsensor.framework.common.domain.StreamUser;
 import eu.socialsensor.framework.common.domain.feeds.KeywordsFeed;
 import eu.socialsensor.framework.common.domain.feeds.ListFeed;
 import eu.socialsensor.framework.common.domain.feeds.LocationFeed;
 import eu.socialsensor.framework.common.domain.feeds.SourceFeed;
-import eu.socialsensor.framework.retrievers.socialmedia.SocialMediaRetriever;
 
 /**
  * The retriever that implements the Daily Motion wrapper
@@ -85,9 +88,9 @@ public class DailyMotionRetriever implements SocialMediaRetriever {
 	}
 
 	@Override
-	public Integer retrieve(Feed feed) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Item> retrieve(Feed feed) {
+		List<Item> items = new ArrayList<Item>();
+		return items;
 	}
 
 	@Override
@@ -97,21 +100,18 @@ public class DailyMotionRetriever implements SocialMediaRetriever {
 	}
 
 	@Override
-	public Integer retrieveKeywordsFeeds(KeywordsFeed feed) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Item> retrieveKeywordsFeeds(KeywordsFeed feed) throws Exception {
+		return new ArrayList<Item>();
 	}
 
 	@Override
-	public Integer retrieveUserFeeds(SourceFeed feed) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Item> retrieveUserFeeds(SourceFeed feed) throws Exception {
+		return new ArrayList<Item>();
 	}
 
 	@Override
-	public Integer retrieveLocationFeeds(LocationFeed feed) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Item> retrieveLocationFeeds(LocationFeed feed) throws Exception {
+		return new ArrayList<Item>();
 	}
 
 	@Override
@@ -121,7 +121,7 @@ public class DailyMotionRetriever implements SocialMediaRetriever {
 	}
 
 	@Override
-	public Integer retrieveListsFeeds(ListFeed feed) {
-		return 0;
+	public List<Item> retrieveListsFeeds(ListFeed feed) {
+		return new ArrayList<Item>();
 	}
 }

@@ -1,15 +1,11 @@
-package eu.socialsensor.framework.retrievers.newsfeed.rss;
+package eu.socialsensor.framework.retrievers.newsfeed;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-
-
-
-
 
 import org.apache.log4j.Logger;
 
@@ -20,9 +16,9 @@ import com.sun.syndication.io.XmlReader;
 
 import eu.socialsensor.framework.abstractions.newsfeed.rss.RSSItem;
 import eu.socialsensor.framework.common.domain.Feed;
+import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.feeds.URLFeed;
 import eu.socialsensor.framework.retrievers.Retriever;
-import eu.socialsensor.framework.streams.newsfeed.rss.RSSStream;
 
 /**
  * Class for retrieving rss feeds from official sources
@@ -30,33 +26,30 @@ import eu.socialsensor.framework.streams.newsfeed.rss.RSSStream;
  * @author ailiakop
  * @email ailiakop@iti.gr
  */
-public class RSSRetriever implements Retriever{
+public class RSSRetriever implements Retriever {
 	
 	public final Logger logger = Logger.getLogger(RSSRetriever.class);
 	
-	private RSSStream rssStream;
 	private long oneMonthPeriod = 2592000000L;
 	
-	public RSSRetriever(RSSStream rssStream) {
-		this.rssStream = rssStream;
-	}
-	
 	@Override
-	public Integer retrieve(Feed feed) {
+	public List<Item> retrieve(Feed feed) {
+		
+		List<Item> items = new ArrayList<Item>();
 		
 		URLFeed ufeed = (URLFeed) feed;
 		System.out.println("["+new Date()+"] Retrieving RSS Feed: " + ufeed.getURL());
 		
 		Integer totalRetrievedItems = 0;
 		if(ufeed.getURL().equals(""))
-			return totalRetrievedItems;
+			return items;
 			
 		URL url = null;
 		try {
 			url = new URL(ufeed.getURL());
 		} catch (MalformedURLException e) {
 			logger.error(e);
-			return totalRetrievedItems;
+			return items;
 		}
 			
 		XmlReader reader;
@@ -79,9 +72,7 @@ public class RSSRetriever implements Retriever{
 						String label = feed.getLabel();
 						rssItem.setList(label);
 						
-						if(rssStream != null)
-							rssStream.store(rssItem);
-						
+						items.add(rssItem);	
 						totalRetrievedItems++;
 						
 						try {
@@ -95,13 +86,13 @@ public class RSSRetriever implements Retriever{
 			}
 		} catch (IOException e) {
 			logger.error(e);
-			return totalRetrievedItems;
+			return items;
 		} catch (Exception e) {
 			logger.error(e);
-			return totalRetrievedItems;
+			return items;
 		}
 	
-		return totalRetrievedItems;
+		return items;
 	}
 
 	

@@ -1,4 +1,4 @@
-package eu.socialsensor.framework.monitors;
+package eu.socialsensor.framework.retrievers;
 
 import org.apache.log4j.Logger;
 

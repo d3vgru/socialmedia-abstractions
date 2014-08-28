@@ -1,4 +1,4 @@
-package eu.socialsensor.framework.retrievers.socialmedia.flickr;
+package eu.socialsensor.framework.retrievers.socialmedia;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -23,6 +23,7 @@ import com.flickr4java.flickr.photos.SearchParameters;
 import eu.socialsensor.framework.abstractions.socialmedia.flickr.FlickrItem;
 import eu.socialsensor.framework.abstractions.socialmedia.flickr.FlickrStreamUser;
 import eu.socialsensor.framework.common.domain.Feed;
+import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.Keyword;
 import eu.socialsensor.framework.common.domain.MediaItem;
 import eu.socialsensor.framework.common.domain.Source;
@@ -31,8 +32,7 @@ import eu.socialsensor.framework.common.domain.feeds.KeywordsFeed;
 import eu.socialsensor.framework.common.domain.feeds.ListFeed;
 import eu.socialsensor.framework.common.domain.feeds.LocationFeed;
 import eu.socialsensor.framework.common.domain.feeds.SourceFeed;
-import eu.socialsensor.framework.retrievers.socialmedia.SocialMediaRetriever;
-import eu.socialsensor.framework.streams.socialmedia.flickr.FlickrStream;
+
 
 /**
  * Class responsible for retrieving Flickr content based on keywords,users or location coordinates
@@ -48,8 +48,6 @@ public class FlickrRetriever implements SocialMediaRetriever {
 	
 	private String flickrKey;
 	private String flickrSecret;
-	
-	private FlickrStream flStream;
 	
 	private int maxResults;
 	private int maxRequests;
@@ -79,8 +77,7 @@ public class FlickrRetriever implements SocialMediaRetriever {
 		this.flickr = new Flickr(flickrKey, flickrSecret, new REST());
 	}
 	
-	public FlickrRetriever(String flickrKey, String flickrSecret,Integer maxResults,Integer maxRequests,long maxRunningTime,FlickrStream flStream) {
-		this.flStream = flStream;
+	public FlickrRetriever(String flickrKey, String flickrSecret,Integer maxResults,Integer maxRequests,long maxRunningTime) {
 		
 		this.flickrKey = flickrKey;
 		this.flickrSecret = flickrSecret;
@@ -96,9 +93,10 @@ public class FlickrRetriever implements SocialMediaRetriever {
 	}
 	
 	@Override
-	public Integer retrieveUserFeeds(SourceFeed feed) {
+	public List<Item> retrieveUserFeeds(SourceFeed feed) {
 		
-		Integer totalRetrievedItems = 0;
+		List<Item> items = new ArrayList<Item>();
+		
 		long currRunningTime = System.currentTimeMillis();
 		
 		Date dateToRetrieve = feed.getDateToRetrieve();
@@ -115,7 +113,7 @@ public class FlickrRetriever implements SocialMediaRetriever {
 		
 		if(userID == null){
 			logger.info("#Flickr : No source feed");
-			return totalRetrievedItems;
+			return items;
 		}
 		
 		PhotosInterface photosInteface = flickr.getPhotosInterface();
@@ -157,9 +155,7 @@ public class FlickrRetriever implements SocialMediaRetriever {
 				FlickrItem flickrItem = new FlickrItem(photo, streamUser);
 				flickrItem.setList(label);
 				
-				flStream.store(flickrItem);
-				
-				totalRetrievedItems++;
+				items.add(flickrItem);
 			}
 		}
 		
@@ -171,13 +167,13 @@ public class FlickrRetriever implements SocialMediaRetriever {
 		dateToRetrieve = new Date(System.currentTimeMillis() - (24*3600*1000));
 		feed.setDateToRetrieve(dateToRetrieve);
 		
-		return totalRetrievedItems;
+		return items;
 	}
 	
 	@Override
-	public Integer retrieveKeywordsFeeds(KeywordsFeed feed) {
+	public List<Item> retrieveKeywordsFeeds(KeywordsFeed feed) {
 		
-		Integer totalRetrievedItems = 0;
+		List<Item> items = new ArrayList<Item>();
 		
 		Date dateToRetrieve = feed.getDateToRetrieve();
 		String label = feed.getLabel();
@@ -193,7 +189,7 @@ public class FlickrRetriever implements SocialMediaRetriever {
 		
 		if(keywords == null && keyword == null){
 			logger.info("#Flickr : No keywords feed");
-			return totalRetrievedItems;
+			return items;
 		}
 		
 		List<String> tags = new ArrayList<String>();
@@ -219,7 +215,7 @@ public class FlickrRetriever implements SocialMediaRetriever {
 			}
 		}
 		if(text.equals(""))
-			return totalRetrievedItems;
+			return items;
 		
 		PhotosInterface photosInteface = flickr.getPhotosInterface();
 		SearchParameters params = new SearchParameters();
@@ -259,9 +255,8 @@ public class FlickrRetriever implements SocialMediaRetriever {
 				FlickrItem flickrItem = new FlickrItem(photo, streamUser);
 				flickrItem.setList(label);
 				
-				flStream.store(flickrItem);
+				items.add(flickrItem);
 				
-				totalRetrievedItems++;
 			}
 		}
 			
@@ -272,13 +267,14 @@ public class FlickrRetriever implements SocialMediaRetriever {
 		dateToRetrieve = new Date(System.currentTimeMillis() - (24*3600*1000));
 		feed.setDateToRetrieve(dateToRetrieve);
 		
-		return totalRetrievedItems;
+		return items;
 	}
 	
 	@Override
-	public Integer retrieveLocationFeeds(LocationFeed feed){
+	public List<Item> retrieveLocationFeeds(LocationFeed feed){
 		
-		Integer totalRetrievedItems = 0;
+		List<Item> items = new ArrayList<Item>();
+		
 		long currRunningTime = System.currentTimeMillis();
 		
 		Date dateToRetrieve = feed.getDateToRetrieve();
@@ -287,7 +283,7 @@ public class FlickrRetriever implements SocialMediaRetriever {
 		Double[][] bbox = feed.getLocation().getbbox();
 		
 		if(bbox == null || bbox.length==0)
-			return totalRetrievedItems;
+			return items;
 		
 		int page=1, pages=1;
 		int numberOfRequests = 0;
@@ -332,31 +328,29 @@ public class FlickrRetriever implements SocialMediaRetriever {
 				FlickrItem flickrItem = new FlickrItem(photo, streamUser);
 				flickrItem.setList(label);
 				
-				flStream.store(flickrItem);
-				
-				totalRetrievedItems++;
+				items.add(flickrItem);
 			}
 		}
 		
-		logger.info("#Flickr : Handler fetched " + totalRetrievedItems + " photos "+ 
+		logger.info("#Flickr : Handler fetched " + items.size() + " photos "+ 
 				" [ " + dateToRetrieve + " - " + new Date(System.currentTimeMillis()) + " ]");
 		
-		return totalRetrievedItems;
+		return items;
     }
 	
 	@Override
-	public Integer retrieveListsFeeds(ListFeed feed) {
-		return 0;
+	public List<Item> retrieveListsFeeds(ListFeed feed) {
+		return new ArrayList<Item>();
 	}
 	
 	@Override
-	public Integer retrieve (Feed feed) {
+	public List<Item> retrieve (Feed feed) {
 		
 		switch(feed.getFeedtype()) {
 			case SOURCE:
 				SourceFeed userFeed = (SourceFeed) feed;
 				if(!userFeed.getSource().getNetwork().equals("Flickr"))
-					return 0;
+					return new ArrayList<Item>();
 				
 				return retrieveUserFeeds(userFeed);
 				
@@ -380,7 +374,7 @@ public class FlickrRetriever implements SocialMediaRetriever {
 			
 		}
 	
-		return 0;
+		return new ArrayList<Item>();
 	}
 	
 	@Override

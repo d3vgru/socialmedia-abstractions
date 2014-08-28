@@ -1,5 +1,8 @@
 package eu.socialsensor.framework.retrievers.socialmedia;
 
+import java.util.List;
+
+import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.MediaItem;
 import eu.socialsensor.framework.common.domain.StreamUser;
 import eu.socialsensor.framework.common.domain.feeds.KeywordsFeed;
@@ -27,7 +30,7 @@ public interface SocialMediaRetriever extends Retriever {
 	 * @return
 	 * @throws Exception
 	 */
-	public Integer retrieveKeywordsFeeds(KeywordsFeed feed) throws Exception;
+	public List<Item> retrieveKeywordsFeeds(KeywordsFeed feed) throws Exception;
 	
 	/**
 	 * Retrieves a user feed that contains the user/users in 
@@ -36,7 +39,7 @@ public interface SocialMediaRetriever extends Retriever {
 	 * @return
 	 * @throws Exception
 	 */
-	public Integer retrieveUserFeeds(SourceFeed feed) throws Exception;
+	public List<Item> retrieveUserFeeds(SourceFeed feed) throws Exception;
 	
 	/**
 	 * Retrieves a location feed that contains the coordinates of the location
@@ -45,7 +48,7 @@ public interface SocialMediaRetriever extends Retriever {
 	 * @return
 	 * @throws Exception
 	 */
-	public Integer retrieveLocationFeeds(LocationFeed feed) throws Exception;
+	public List<Item> retrieveLocationFeeds(LocationFeed feed) throws Exception;
 
 	/**
 	 * Retrieves a list feed that contains the owner of a list an a slug 
@@ -54,7 +57,7 @@ public interface SocialMediaRetriever extends Retriever {
 	 * @return
 	 * @throws Exception
 	 */
-	public Integer retrieveListsFeeds(ListFeed feed);
+	public List<Item> retrieveListsFeeds(ListFeed feed);
 	
 	/**
 	 * Retrieves the info for a specific user on the basis

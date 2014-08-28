@@ -1,6 +1,6 @@
-package eu.socialsensor.framework.retrievers.socialmedia.topsy;
+package eu.socialsensor.framework.retrievers.socialmedia;
 
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -15,14 +15,13 @@ import com.maruti.otterapi.search.SearchResponse;
 
 import eu.socialsensor.framework.abstractions.socialmedia.topsy.TopsyItem;
 import eu.socialsensor.framework.common.domain.Feed;
+import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.MediaItem;
 import eu.socialsensor.framework.common.domain.StreamUser;
 import eu.socialsensor.framework.common.domain.feeds.KeywordsFeed;
 import eu.socialsensor.framework.common.domain.feeds.ListFeed;
 import eu.socialsensor.framework.common.domain.feeds.LocationFeed;
 import eu.socialsensor.framework.common.domain.feeds.SourceFeed;
-import eu.socialsensor.framework.retrievers.socialmedia.SocialMediaRetriever;
-import eu.socialsensor.framework.streams.socialmedia.topsy.TopsyStream;
 
 /**
  * Class responsible for retrieving Topsy image content based on keywords
@@ -34,13 +33,10 @@ import eu.socialsensor.framework.streams.socialmedia.topsy.TopsyStream;
 public class TopsyRetriever implements SocialMediaRetriever{
 	private Logger logger = Logger.getLogger(TopsyRetriever.class);
 	
-	private TopsyStream topsyStream;
-	
 	private TopsyConfig topsyConfig;
 	
-	public TopsyRetriever(String apiKey,TopsyStream topsyStream){
+	public TopsyRetriever(String apiKey) {
 		
-		this.topsyStream = topsyStream;
 		
 		topsyConfig = new TopsyConfig();
 		topsyConfig.setApiKey(apiKey);
@@ -48,16 +44,18 @@ public class TopsyRetriever implements SocialMediaRetriever{
 	}
 	
 	@Override
-	public Integer retrieveUserFeeds(SourceFeed feed){
-		return null;
+	public List<Item> retrieveUserFeeds(SourceFeed feed){
+		return new ArrayList<Item>();
 	}
 	
 	@Override
-	public Integer retrieveKeywordsFeeds(KeywordsFeed feed){
-		int totalRetrievedItems = 0;
+	public List<Item> retrieveKeywordsFeeds(KeywordsFeed feed){
+		
+		List<Item> items = new ArrayList<Item>();
+		
 		Date dateToRetrieve = feed.getDateToRetrieve();
 		
-		SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z");
+		//SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z");
 		
 		Search searchTopsy = new Search();
 		searchTopsy.setTopsyConfig(topsyConfig);
@@ -71,42 +69,34 @@ public class TopsyRetriever implements SocialMediaRetriever{
 			for(Post post : posts){
 				String since = post.getFirstpost_date();
 			
-				if(since != null){
-					
+				if(since != null) {
 					Long publicationDate = Long.parseLong(since) * 1000;
-				
-					if(publicationDate > dateToRetrieve.getTime()){
-						TopsyItem topsyItem = new TopsyItem(post);
-						topsyStream.store(topsyItem);
-						totalRetrievedItems++;
+					if(publicationDate > dateToRetrieve.getTime()) {
+						TopsyItem topsyItem = new TopsyItem(post);						
+						items.add(topsyItem);
 					}
-					
 				}
-				
-			}
-				
-			
+	
+			}			
 		} catch (Otter4JavaException e) {
 			e.printStackTrace();
 		}
 
-		
-		return totalRetrievedItems;
+		return items;
 	}
 	
 	@Override
-	public Integer retrieveLocationFeeds(LocationFeed feed){
-		return null;
+	public List<Item> retrieveLocationFeeds(LocationFeed feed){
+		return new ArrayList<Item>();
 	}
 	
 	@Override
-	public Integer retrieveListsFeeds(ListFeed feed) {
-		// TODO Auto-generated method stub
-		return 0;
+	public List<Item> retrieveListsFeeds(ListFeed feed) {
+		return new ArrayList<Item>();
 	}
 	
 	@Override
-	public Integer retrieve (Feed feed) {
+	public List<Item> retrieve (Feed feed) {
 		
 		switch(feed.getFeedtype()) {
 			case SOURCE:
@@ -132,7 +122,7 @@ public class TopsyRetriever implements SocialMediaRetriever{
 				break;
 		}
 	
-		return 0;
+		return new ArrayList<Item>();
 	}
 	
 	@Override
