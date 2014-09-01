@@ -71,7 +71,8 @@ public class FacebookStreamUser extends StreamUser {
 			location = user.getLocation().getName();
 		
 		//Is the user a verified user
-		verified = user.getVerified();
+		if(user.getVerified() != null)
+			verified = user.getVerified();
 		
 		
 	}
