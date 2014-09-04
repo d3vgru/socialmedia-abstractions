@@ -76,11 +76,11 @@
 			<version>14.0.1</version>
 		</dependency>
 		<!-- Flickr -->
-    	<dependency>
-  			<groupId>com.flickr4java</groupId>
-  			<artifactId>flickr</artifactId>
-  			<version>2.5</version>
-		</dependency>
+		<dependency>
+				<groupId>com.flickr4java</groupId>
+				<artifactId>flickr4java</artifactId>
+				<version>2.11</version>
+			</dependency>
 		<!-- Instagram -->
 		<dependency>
    			<groupId>com.sachinhandiekar</groupId>

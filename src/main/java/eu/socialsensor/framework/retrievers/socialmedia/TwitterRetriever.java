@@ -40,6 +40,7 @@ import eu.socialsensor.framework.common.domain.feeds.SourceFeed;
 public class TwitterRetriever implements SocialMediaRetriever {
 	
 	private Logger  logger = Logger.getLogger(TwitterRetriever.class);
+	private boolean loggingEnabled = false;
 	
 	private Twitter twitter = null;
 	private TwitterFactory tf = null;
@@ -95,7 +96,8 @@ public class TwitterRetriever implements SocialMediaRetriever {
 					response = twitter.getUserTimeline(Integer.parseInt(userId), paging);
 				}
 				else if(screenName != null) {
-					logger.info("Retrieve timeline for " + screenName + ". Page: " + paging);
+					if(loggingEnabled)
+						logger.info("Retrieve timeline for " + screenName + ". Page: " + paging);
 					response = twitter.getUserTimeline(screenName, paging);
 				}
 				else {
@@ -125,20 +127,23 @@ public class TwitterRetriever implements SocialMediaRetriever {
 				}
 				
 				if(items.size() > maxResults) {
-					logger.info("totalRetrievedItems: " + items.size() + " > " + maxResults);
+					if(loggingEnabled)
+						if(loggingEnabled)logger.info("totalRetrievedItems: " + items.size() + " > " + maxResults);
 					break;
 				}
 				if(numberOfRequests >= maxRequests) {
-					logger.info("numberOfRequests: " + numberOfRequests + " > " + maxRequests);
+					if(loggingEnabled)	
+						if(loggingEnabled)logger.info("numberOfRequests: " + numberOfRequests + " > " + maxRequests);
 					break;
 				}
 				if((System.currentTimeMillis() - currRunningTime)>maxRunningTime) {
-					logger.info("Max running time reached. " + (
-							System.currentTimeMillis() - currRunningTime) + ">" + maxRunningTime);
+					if(loggingEnabled)
+						logger.info("Max running time reached. " + (System.currentTimeMillis() - currRunningTime) + ">" + maxRunningTime);
 					break;
 				}
 				if(sinceDateReached) {
-					logger.info("Since date reached: " + sinceDate);
+					if(loggingEnabled)
+						if(loggingEnabled)logger.info("Since date reached: " + sinceDate);
 					break;
 				}
 				
@@ -171,8 +176,8 @@ public class TwitterRetriever implements SocialMediaRetriever {
 		Keyword keyword = feed.getKeyword();
 		List<Keyword> keywords = feed.getKeywords();
 		
-		if(keywords == null && keyword == null){
-			logger.info("#Twitter : No keywords feed");
+		if(keywords == null && keyword == null) {
+			logger.error("#Twitter : No keywords feed");
 			return items;
 		}
 		
@@ -196,7 +201,8 @@ public class TwitterRetriever implements SocialMediaRetriever {
 			return items;
 		
 		//Set the query
-		logger.info("Query String: " + tags);
+		if(loggingEnabled)
+			logger.info("Query String: " + tags);
 		Query query = new Query(tags);
 	
 		query.count(count);
@@ -204,20 +210,23 @@ public class TwitterRetriever implements SocialMediaRetriever {
 
 		boolean sinceDateReached = false;
 		try {
-			logger.info("Request for " + query);
-			QueryResult response = twitter.search(query);
+			if(loggingEnabled)
+				logger.info("Request for " + query);
 			
+			QueryResult response = twitter.search(query);
 			while(response != null) {
 				numberOfRequests++;
 				
 				List<Status> statuses = response.getTweets();
 				
 				if(statuses == null || statuses.isEmpty()) {
-					logger.info("No more results.");	
+					if(loggingEnabled)
+						logger.info("No more results.");	
 					break;
 				}
 				
-				logger.info(statuses.size() + " statuses retrieved.");	
+				if(loggingEnabled)
+					logger.info(statuses.size() + " statuses retrieved.");	
 				
 				for(Status status : statuses) {
 					if(status != null) {
@@ -241,11 +250,13 @@ public class TwitterRetriever implements SocialMediaRetriever {
 				}
 				
 				if(items.size() > maxResults) {
-					logger.info("totalRetrievedItems: " + items.size() + " > " + maxResults);
+					if(loggingEnabled)
+						logger.info("totalRetrievedItems: " + items.size() + " > " + maxResults);
 					break;
 				}
 				if(numberOfRequests >= maxRequests) {
-					logger.info("numberOfRequests: " + numberOfRequests + " > " + maxRequests);
+					if(loggingEnabled)
+						logger.info("numberOfRequests: " + numberOfRequests + " > " + maxRequests);
 					break;
 				}
 				if((System.currentTimeMillis() - currRunningTime)>maxRunningTime) {
@@ -253,7 +264,8 @@ public class TwitterRetriever implements SocialMediaRetriever {
 					break;
 				}
 				if(sinceDateReached) {
-					logger.info("Since date reached: " + sinceDate);
+					if(loggingEnabled)
+						logger.info("Since date reached: " + sinceDate);
 					break;
 				}
 			
@@ -261,11 +273,12 @@ public class TwitterRetriever implements SocialMediaRetriever {
 				if(query == null)
 					break;
 				
-				logger.info("Request for " + query);
+				if(loggingEnabled)
+					logger.info("Request for " + query);
 				response = twitter.search(query);
 			}
 			
-		} catch (TwitterException e) {
+		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}	
 	
@@ -326,23 +339,28 @@ public class TwitterRetriever implements SocialMediaRetriever {
 				}
 				
 				if(!response.hasNext()) {
-					logger.info("There is not next query.");
+					if(loggingEnabled)
+						logger.info("There is not next query.");
 					break;
 				}
 				if(items.size() > maxResults) {
-					logger.info("totalRetrievedItems: " + items.size() + " > " + maxResults);
+					if(loggingEnabled)
+						logger.info("totalRetrievedItems: " + items.size() + " > " + maxResults);
 					break;
 				}
 				if(numberOfRequests > maxRequests) {
-					logger.info("numberOfRequests: " + numberOfRequests + " > " + maxRequests);
+					if(loggingEnabled)
+						logger.info("numberOfRequests: " + numberOfRequests + " > " + maxRequests);
 					break;
 				}
 				if((System.currentTimeMillis() - currRunningTime)>maxRunningTime) {
-					logger.info("Max running time reached. " + (System.currentTimeMillis() - currRunningTime) + ">" + maxRunningTime);
+					if(loggingEnabled)
+						logger.info("Max running time reached. " + (System.currentTimeMillis() - currRunningTime) + ">" + maxRunningTime);
 					break;
 				}
 				if(sinceDateReached) {
-					logger.info("Since date reached: " + sinceDate);
+					if(loggingEnabled)
+						logger.info("Since date reached: " + sinceDate);
 					break;
 				}
 				

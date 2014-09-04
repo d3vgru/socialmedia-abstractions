@@ -52,6 +52,7 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 	private final String uploadsActivityFeedUrlSuffix = "/uploads";
 	
 	private Logger logger = Logger.getLogger(YoutubeRetriever.class);
+	private boolean loggingEnabled = false;
 	
 	private YouTubeService service;
 	
@@ -87,18 +88,19 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 		int numberOfRequests = 0;
 		
 		if(uName == null){
-			logger.info("#YouTube : No source feed");
+			logger.error("#YouTube : No source feed");
 			return items;
 		}
 				
 		StreamUser streamUser = getStreamUser(uName);
-		logger.info("#YouTube : Retrieving User Feed : "+uName);
+		if(loggingEnabled)
+			logger.info("#YouTube : Retrieving User Feed : "+uName);
 		
 		URL channelUrl = null;
 		try {
 			channelUrl = getChannelUrl(uName);
 		} catch (MalformedURLException e) {
-			logger.error("#YouTube Exception : "+e);
+			logger.error("#YouTube Exception : " + e.getMessage());
 			return items;
 		}
 		
@@ -141,15 +143,17 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 				channelUrl = nextLink==null ? null : new URL(nextLink.getHref());
 				
 			} catch (Exception e) {
-				logger.error("#YouTube Exception : " + e);
+				logger.error("#YouTube Exception : " + e.getMessage());
 				return items;
 			} 
 		
 		}
 	
-		logger.info("#YouTube : Handler fetched " + items.size() + " videos from " + uName + 
-				" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
-		
+		if(loggingEnabled) {
+			logger.info("#YouTube : Handler fetched " + items.size() + " videos from " + uName + 
+					" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
+		}
+	
 		return items;
 	}
 	
@@ -174,7 +178,7 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 		List<Keyword> keywords = feed.getKeywords();
 		
 		if(keywords == null && keyword != null){
-			logger.info("#YouTube : No keywords feed");
+			logger.error("#YouTube : No keywords feed");
 			return items;
 		}
 	
@@ -261,8 +265,10 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 		
 		}
 	
-		logger.info("#YouTube : Handler fetched " + items.size() + " videos from " + tags + 
-				" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
+		if(loggingEnabled) {
+			logger.info("#YouTube : Handler fetched " + items.size() + " videos from " + tags + 
+					" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
+		}
 		
 		Date dateToRetrieve = new Date(System.currentTimeMillis() - (24*3600*1000));
 		feed.setDateToRetrieve(dateToRetrieve);
@@ -408,7 +414,7 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 				}
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error(e.getMessage());
 		} 
 		return null;
 	}
@@ -425,13 +431,13 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 			return user;
 		} catch (MalformedURLException e) {
 			//e.printStackTrace();
-			logger.error(e);
+			logger.error(e.getMessage());
 		} catch (IOException e) {
 			//e.printStackTrace();
-			logger.error(e);
+			logger.error(e.getMessage());
 		} catch (ServiceException e) {
 			//e.printStackTrace();
-			logger.error(e);
+			logger.error(e.getMessage());
 		}
 		
 		return null;
@@ -447,11 +453,11 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 			
 			return user;
 		} catch (MalformedURLException e) {
-			logger.error(e);
+			logger.error(e.getMessage());
 		} catch (IOException e) {
-			logger.error(e);
+			logger.error(e.getMessage());
 		} catch (ServiceException e) {
-			logger.error(e);
+			logger.error(e.getMessage());
 		}
 		
 		return null;

@@ -34,7 +34,6 @@ import eu.socialsensor.framework.common.domain.feeds.KeywordsFeed;
 import eu.socialsensor.framework.common.domain.feeds.ListFeed;
 import eu.socialsensor.framework.common.domain.feeds.LocationFeed;
 import eu.socialsensor.framework.common.domain.feeds.SourceFeed;
-import eu.socialsensor.framework.retrievers.RateLimitsMonitor;
 
 
 /**
@@ -46,7 +45,7 @@ import eu.socialsensor.framework.retrievers.RateLimitsMonitor;
  */
 public class FacebookRetriever implements SocialMediaRetriever {
 	
-	private RateLimitsMonitor rateLimitsMonitor;
+	//private RateLimitsMonitor rateLimitsMonitor;
 			
 	private FacebookClient facebookClient;
 	
@@ -57,14 +56,15 @@ public class FacebookRetriever implements SocialMediaRetriever {
 	private long currRunningTime = 0L;
 	
 	private Logger  logger = Logger.getLogger(FacebookRetriever.class);
+	private boolean loggingEnabled = false;
 	
 	public FacebookRetriever(String  facebookAccessToken) {
 		this.facebookClient = new DefaultFacebookClient(facebookAccessToken);
 	}
 	
-	public FacebookRetriever(FacebookClient facebookClient, int maxRequests, long minInterval,Integer maxResults, long maxRunningTime) {
+	public FacebookRetriever(FacebookClient facebookClient, int maxRequests, long minInterval, Integer maxResults, long maxRunningTime) {
 		this.facebookClient = facebookClient;		
-		this.rateLimitsMonitor = new RateLimitsMonitor(maxRequests, minInterval);
+		//this.rateLimitsMonitor = new RateLimitsMonitor(maxRequests, minInterval);
 		this.maxResults = maxResults;
 		this.maxRequests = maxRequests;
 		this.maxRunningTime = maxRunningTime;
@@ -86,8 +86,8 @@ public class FacebookRetriever implements SocialMediaRetriever {
 		Source source = feed.getSource();
 		
 		String userName = source.getName();
-		if(userName == null){
-			logger.info("#Facebook : No source feed");
+		if(userName == null) {
+			logger.error("#Facebook : No source feed");
 			return items;
 		}
 		String userFeed = source.getName()+"/feed";
@@ -104,7 +104,7 @@ public class FacebookRetriever implements SocialMediaRetriever {
 		
 		FacebookStreamUser facebookUser = new FacebookStreamUser(page);
 		for(List<Post> connectionPage : connection) {
-			rateLimitsMonitor.check();
+			//rateLimitsMonitor.check();
 			totalRequests++;
 			for(Post post : connectionPage) {	
 				
@@ -180,23 +180,30 @@ public class FacebookRetriever implements SocialMediaRetriever {
 		Keyword keyword = feed.getKeyword();
 		List<Keyword> keywords = feed.getKeywords();
 		
-		if(keywords == null && keyword == null){
-			logger.info("#Facebook : No keywords feed");
+		if(keywords == null && keyword == null) {
+			logger.error("#Facebook : No keywords feed");
 			return items;
 		}
 
 		String tags = "";
-		
-		if(keyword != null){
-			
-			tags += keyword.getName().toLowerCase();
+		if(keyword != null) {
+			String name = keyword.getName();
+			String [] words = name.split("\\s+");
+			for(String word : words) {
+				if(!tags.contains(word) && word.length() > 2) {
+					tags += word.toLowerCase()+" ";
+				}
+			}
+			//tags += keyword.getName().toLowerCase();
 		}
-		else if(keywords != null){
-			for(Keyword key : keywords){
+		else if(keywords != null) {
+			for(Keyword key : keywords) {
 				String [] words = key.getName().split(" ");
-				for(String word : words)
-					if(!tags.contains(word) && word.length()>1)
+				for(String word : words) {
+					if(!tags.contains(word) && word.length() > 1) {
 						tags += word.toLowerCase()+" ";
+					}
+				}
 			}
 		}
 		
@@ -207,17 +214,16 @@ public class FacebookRetriever implements SocialMediaRetriever {
 		try {
 			connection = facebookClient.fetchConnection("search", Post.class, Parameter.with("q", tags), Parameter.with("type", "post"));
 		}catch(FacebookResponseStatusException e) {
-			logger.error(e);
+			logger.error(e.getMessage());
 			return items;
 		}
 		catch(Exception e) {
-			logger.error(e);
+			logger.error(e.getMessage());
 			return items;
 		}
 		
 		try {
 			for(List<Post> connectionPage : connection) {
-				
 				for(Post post : connectionPage) {	
 					
 					Date publicationDate = post.getCreatedTime();
@@ -260,12 +266,14 @@ public class FacebookRetriever implements SocialMediaRetriever {
 			}
 		}
 		catch(FacebookNetworkException e){
-			logger.error(e);
+			logger.error(e.getMessage());
 			return items;
 		}
 		
-		logger.info("#Facebook : Handler fetched " + items.size() + " posts from " + tags + 
-			" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
+		if(loggingEnabled) {
+			logger.info("#Facebook : Handler fetched " + items.size() + " posts from " + tags + 
+					" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
+		}
 		
 		// The next request will retrieve only items of the last day
 		Date dateToRetrieve = new Date(System.currentTimeMillis() - (24*3600*1000));
@@ -282,12 +290,13 @@ public class FacebookRetriever implements SocialMediaRetriever {
 	/**
 	 * Retrieve from certain facebook pages after a specific date
 	 * @param date
-	 */
-	public void retrieveFromPages(List<String> retrievedPages,Date date) {
-		Integer totalRetrievedItems = 0;
+	public void retrieveFromPages(List<String> retrievedPages, Date date) {
+		
+		List<Item> items = new ArrayList<Item>();
+		
 		boolean isFinished = true;
 		
-		for(String page : retrievedPages){
+		for(String page : retrievedPages) {
 			Connection<Post> connection = facebookClient.fetchConnection(page+"/posts" , Post.class);
 			
 			for(List<Post> connectionPage : connection) {
@@ -302,9 +311,9 @@ public class FacebookRetriever implements SocialMediaRetriever {
 							User user = facebookClient.fetchObject(c_user.getId(), User.class);
 							FacebookStreamUser facebookUser = new FacebookStreamUser(user);
 							
-							FacebookItem facebookUpdate = new FacebookItem(post,facebookUser);
+							FacebookItem facebookUpdate = new FacebookItem(post, facebookUser);
 							
-							totalRetrievedItems++;
+							items.add(facebookUpdate);
 						}
 					}
 					catch(Exception e) {
@@ -312,7 +321,7 @@ public class FacebookRetriever implements SocialMediaRetriever {
 						break;
 					}
 					
-					if(publicationDate.before(date) || totalRetrievedItems>maxResults){
+					if(publicationDate.before(date) || items.size()>maxResults){
 						isFinished = true;
 						break;
 					}
@@ -325,6 +334,7 @@ public class FacebookRetriever implements SocialMediaRetriever {
 			
 		}
 	}
+	*/
 	
 	@Override
 	public List<Item> retrieveListsFeeds(ListFeed feed) {

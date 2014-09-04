@@ -77,7 +77,7 @@ public class FlickrRetriever implements SocialMediaRetriever {
 		this.flickr = new Flickr(flickrKey, flickrSecret, new REST());
 	}
 	
-	public FlickrRetriever(String flickrKey, String flickrSecret,Integer maxResults,Integer maxRequests,long maxRunningTime) {
+	public FlickrRetriever(String flickrKey, String flickrSecret, Integer maxResults, Integer maxRequests, long maxRunningTime) {
 		
 		this.flickrKey = flickrKey;
 		this.flickrSecret = flickrSecret;
@@ -111,7 +111,7 @@ public class FlickrRetriever implements SocialMediaRetriever {
 		Source source = feed.getSource();
 		String userID = source.getId();
 		
-		if(userID == null){
+		if(userID == null) {
 			logger.info("#Flickr : No source feed");
 			return items;
 		}
@@ -148,7 +148,6 @@ public class FlickrRetriever implements SocialMediaRetriever {
 				StreamUser streamUser = userMap.get(userid);
 				if(streamUser == null) {
 					streamUser = getStreamUser(userid);
-
 					userMap.put(userid, streamUser);
 				}
 
@@ -187,35 +186,39 @@ public class FlickrRetriever implements SocialMediaRetriever {
 		Keyword keyword = feed.getKeyword();
 		List<Keyword> keywords = feed.getKeywords();
 		
-		if(keywords == null && keyword == null){
-			logger.info("#Flickr : No keywords feed");
+		if(keywords == null && keyword == null) {
+			logger.error("#Flickr : Text is emtpy");
 			return items;
 		}
 		
 		List<String> tags = new ArrayList<String>();
 		String text = "";
 		
-		if(keyword != null){
-			for(String key : keyword.getName().split(" ")){
-				if(key.length()>1){
-					tags.add(key.toLowerCase());
-					text+=key.toLowerCase()+" ";
+		if(keyword != null) {
+			String[] parts = keyword.getName().split("\\s+");
+			for(String key : parts) {
+				if(key.length()>1) {
+					tags.add(key.toLowerCase().replace("\"", ""));
+					text += key.toLowerCase()+" ";
 				}
 			}	
 		}
-		else if(keywords != null){
-			for(Keyword key : keywords){
-				String [] words = key.getName().split(" ");
-				for(String word : words)
+		else if(keywords != null) {
+			for(Keyword key : keywords) {
+				String [] words = key.getName().split("\\s+");
+				for(String word : words) {
 					if(!tags.contains(word) && word.length()>1) {
 						tags.add(word);
 						text += (word + " ");
 					}
-						
+				}
 			}
 		}
-		if(text.equals(""))
+		
+		if(text.equals("")) {
+			logger.error("#Flickr : Text is emtpy");
 			return items;
+		}
 		
 		PhotosInterface photosInteface = flickr.getPhotosInterface();
 		SearchParameters params = new SearchParameters();
@@ -233,6 +236,7 @@ public class FlickrRetriever implements SocialMediaRetriever {
 			try {
 				photos = photosInteface.search(params , PER_PAGE, page++);
 			} catch (FlickrException e) {
+				logger.error("Exception: " + e.getMessage());
 				break;
 			}
 			
@@ -256,7 +260,6 @@ public class FlickrRetriever implements SocialMediaRetriever {
 				flickrItem.setList(label);
 				
 				items.add(flickrItem);
-				
 			}
 		}
 			
