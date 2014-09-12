@@ -25,7 +25,14 @@ import eu.socialsensor.framework.common.domain.WebPage;
  * @author ailiakop
  * @email  ailiakop@iti.gr
  */
-public class TumblrItem extends Item{
+public class TumblrItem extends Item {
+	
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6421124470696047372L;
+	
 	private Logger logger = Logger.getLogger(TumblrItem.class);
 	
 	public TumblrItem(String id, Operation operation) {
@@ -33,7 +40,7 @@ public class TumblrItem extends Item{
 		setId(SocialNetworkSource.Tumblr + "#" + id);
 	}
 
-	public TumblrItem(Post post) throws MalformedURLException{
+	public TumblrItem(Post post) throws MalformedURLException {
 		
 		super(SocialNetworkSource.Tumblr.toString(), Operation.NEW);
 		
@@ -44,36 +51,45 @@ public class TumblrItem extends Item{
 		
 		//Id
 		id = SocialNetworkSource.Tumblr + "#" + post.getId();
+		
 		//SocialNetwork Name
 		streamId = SocialNetworkSource.Tumblr.toString();
+		
 		//Timestamp of the creation of the post
 		publicationTime = post.getTimestamp()*1000;
+		
+		url = post.getPostUrl();
+		
 		//Tags
 		tags = new String[post.getTags().size()];
 		int i=0;
 		for(String tag : post.getTags()){
 			tags[i++] = tag;
 		}
+		
 		//Media Items - WebPages in a post
 		String pageURL = post.getPostUrl();
 		
 		int number = 0;
-		if(post.getType().equals("photo")){
+		if(post.getType().equals("photo")) {
 			PhotoPost phPost;
 			phPost = (PhotoPost) post;
 			
 			List<Photo> photos = phPost.getPhotos();
 			if(photos == null)
 				return;
-			try{
-				for(Photo photo : photos){
+			
+			try {
+				for(Photo photo : photos) {
+					
+					String caption = photo.getCaption();
 					number++;
 				
 					List<PhotoSize> allSizes = photo.getSizes();
 					String photoUrl = allSizes.get(0).getUrl();
 					String thumbnail = allSizes.get(allSizes.size()-1).getUrl();
 					
-					if(photoUrl != null){
+					if(photoUrl != null) {
 						
 						URL url = new URL(photoUrl);
 						//url
@@ -100,7 +116,7 @@ public class TumblrItem extends Item{
 						//Title
 						mediaItem.setTitle(title);
 						//Description
-						mediaItem.setDescription(description);
+						mediaItem.setDescription(caption);
 						//Tags
 						mediaItem.setTags(tags);
 					
@@ -109,13 +125,15 @@ public class TumblrItem extends Item{
 						
 					}
 				}
-			}catch (MalformedURLException e1) {
-				logger.error("Photo URL is distorted : "+e1);
-			}catch (Exception e2){
-				logger.error("Exception : "+e2);
+			}
+			catch (MalformedURLException e1) {
+				logger.error("Photo URL is distorted: " + e1);
+			}
+			catch (Exception e2) {
+				logger.error("Exception: " + e2);
 			}
 		}
-		else if(post.getType().equals("video")){
+		else if(post.getType().equals("video")) {
 			VideoPost vidPost = (VideoPost) post;
 			List<Video> videos = vidPost.getVideos();
 		

@@ -37,7 +37,8 @@ import eu.socialsensor.framework.common.domain.feeds.SourceFeed;
  * @author ailiakop
  * @email  ailiakop@iti.gr
  */
-public class TumblrRetriever implements SocialMediaRetriever{
+public class TumblrRetriever implements SocialMediaRetriever {
+	
 	private Logger logger = Logger.getLogger(TumblrRetriever.class);
 	
 	private JumblrClient client;
@@ -48,7 +49,7 @@ public class TumblrRetriever implements SocialMediaRetriever{
 	private long maxRunningTime;
 	
 
-	public TumblrRetriever(String consumerKey, String consumerSecret,Integer maxResults,Integer maxRequests,Long maxRunningTime) {
+	public TumblrRetriever(String consumerKey, String consumerSecret, Integer maxResults, Integer maxRequests, Long maxRunningTime) {
 		
 		this.maxResults = maxResults;
 		this.maxRequests = maxRequests;
@@ -171,16 +172,20 @@ public class TumblrRetriever implements SocialMediaRetriever{
 		
 		String tags = "";
 		if(keyword != null){
-			for(String key : keyword.getName().split(" "))
-				if(key.length()>1)
+			for(String key : keyword.getName().split("\\s+")) {
+				if(key.length()>1) {
 					tags+=key.toLowerCase()+" ";
+				}
+			}
 		}
-		else if(keywords != null){
-			for(Keyword key : keywords){
-				String [] words = key.getName().split(" ");
-				for(String word : words)
-					if(!tags.contains(word) && word.length()>1)
+		else if(keywords != null) {
+			for(Keyword key : keywords) {
+				String [] words = key.getName().split("\\s+");
+				for(String word : words) {
+					if(!tags.contains(word) && word.length()>1) {
 						tags += word.toLowerCase()+" ";
+					}
+				}
 			}
 		}
 		
@@ -229,7 +234,7 @@ public class TumblrRetriever implements SocialMediaRetriever{
 						
 						TumblrItem tumblrItem = null;
 						try {
-							tumblrItem = new TumblrItem(post,tumblrStreamUser);
+							tumblrItem = new TumblrItem(post, tumblrStreamUser);
 						} catch (MalformedURLException e) {
 							return items;
 						}
