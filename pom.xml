@@ -120,37 +120,7 @@
 			<groupId>org.rometools</groupId>
 			<artifactId>rome-modules</artifactId>
 			<version>1.0</version>
-		</dependency>  
-		
-	<!--			
-	<dependency>
-             Required at build time and to use HTTPClientFetcher //rometools
-            <groupId>commons-httpclient</groupId>
-            <artifactId>commons-httpclient</artifactId>
-            <version>3.0.1</version>
-            <optional />
-        </dependency>
-		<dependency>
-            Required at build time and to use HTTPClientFetcher //rometools
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
-            <version>1.0.4</version>
-            <optional/>
-        </dependency>
-        <dependency>
-            Required at build time and to use HTTPClientFetcher //rometools
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging-api</artifactId>
-            <version>1.0.4</version>
-            <optional />
-        </dependency> -->
-        
-         <!-- <dependency>
-			<groupId>org.rometools</groupId>
-			<artifactId>rome-fetcher</artifactId>
-			<version>1.2</version>
-		</dependency>      -->
-		
+		</dependency>  		
 		
     	<dependency>
 			<groupId>joda-time</groupId>
@@ -168,6 +138,7 @@
 			<artifactId>jdom</artifactId>
 			<version>2.0.0</version>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.jsoup</groupId>
 			<artifactId>jsoup</artifactId>
