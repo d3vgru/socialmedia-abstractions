@@ -14,7 +14,13 @@ import eu.socialsensor.framework.common.domain.SocialNetworkSource;
  * @author ailiakop
  * @email ailiakop@iti.gr
  */
-public class TopsyItem extends Item{
+public class TopsyItem extends Item {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6163805464886524821L;
+
 	public TopsyItem(String id, Operation operation) {
 		super(SocialNetworkSource.Topsy.toString(), operation);
 		setId(SocialNetworkSource.Topsy + "#" + id);

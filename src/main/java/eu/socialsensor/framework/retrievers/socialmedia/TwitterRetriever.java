@@ -50,16 +50,18 @@ public class TwitterRetriever implements SocialMediaRetriever {
 	
 	private long maxRunningTime = 0l;
 	
-	public TwitterRetriever(Configuration conf, Integer maxRequests,Integer maxResults, Long maxRunningTime) {
+	public TwitterRetriever(Configuration conf, Integer maxRequests, Integer maxResults, Long maxRunningTime) {
 		
 		this.tf = new TwitterFactory(conf);
 		twitter = tf.getInstance();
 		
-		if(maxResults != null)
+		if(maxResults != null) {
 			this.maxResults = maxResults;
-		
-		if(maxRequests != null)
+		}
+	
+		if(maxRequests != null) {
 			this.maxRequests = maxRequests;
+		}
 		
 		this.maxRunningTime = maxRunningTime;
 	}

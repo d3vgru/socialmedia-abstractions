@@ -27,7 +27,6 @@ import eu.socialsensor.framework.common.domain.WebPage;
  */
 public class TumblrItem extends Item {
 	
-	
 	/**
 	 * 
 	 */
@@ -144,7 +143,7 @@ public class TumblrItem extends Item {
 			
 			String postfix = "";
 			String prefix = "src=";
-			String compl = "";
+			//String compl = "";
 			String prefix_id = "embed/";
 			String postfix_id = "?";
 			

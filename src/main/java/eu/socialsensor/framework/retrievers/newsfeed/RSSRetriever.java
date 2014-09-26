@@ -100,4 +100,12 @@ public class RSSRetriever implements Retriever {
 	public void stop() {
 	
 	}
+	
+	public static void main(String...args) {
+		RSSRetriever retriever = new RSSRetriever();
+		
+		Feed feed = new URLFeed("http://ecowatch.com/feed/", new Date(System.currentTimeMillis()-3600000), "ecowatch");
+		
+		retriever.retrieve(feed);
+	}
 }

@@ -12,8 +12,13 @@ import eu.socialsensor.framework.common.domain.NewsFeedSource;
  * @author ailiakop
  * @author ailiakop@iti.gr
  */
-public class RSSItem extends Item{
+public class RSSItem extends Item {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1413164596016357110L;
+
 	public RSSItem(SyndEntry rssEntry) {
 		super(NewsFeedSource.RSS.toString(), Operation.NEW);
 		

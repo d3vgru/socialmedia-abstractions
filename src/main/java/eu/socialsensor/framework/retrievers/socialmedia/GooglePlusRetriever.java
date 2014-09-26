@@ -99,7 +99,7 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 		String uName = source.getName();
 		String userID = source.getId();
 		
-		if(uName == null){
+		if(uName == null && userID == null) {
 			logger.info("#GooglePlus : No source feed");
 			return items;
 		}
@@ -160,30 +160,30 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 						return items;
 					}
 					
-					if(publicationDate.after(lastItemDate) && activity != null && activity.getId() != null){
+					if(publicationDate.after(lastItemDate) && activity != null && activity.getId() != null
+							&& items.size() < maxResults) {
 						GooglePlusItem googlePlusItem = new GooglePlusItem(activity);
 						googlePlusItem.setList(label);
 						
-						if(streamUser != null)
+						if(streamUser != null) {
 							googlePlusItem.setStreamUser(streamUser);
+						}
 						
 						items.add(googlePlusItem);
 					}
-					
-					if(items.size()>maxResults){
+					else {
 						isFinished = true;
 						break;
 					}
 					
 				}
-				 numberOfRequests++;
-				 if(numberOfRequests>maxRequests || (activityFeed.getNextPageToken() == null))
-					 break;
+				numberOfRequests++;
+				if(isFinished || numberOfRequests>maxRequests || (activityFeed.getNextPageToken() == null))
+					break;
 				 
-				 userActivities.setPageToken(activityFeed.getNextPageToken());
-				 activityFeed = userActivities.execute();
-				 pageOfActivities = activityFeed.getItems();
-				
+				userActivities.setPageToken(activityFeed.getNextPageToken());
+				activityFeed = userActivities.execute();
+				pageOfActivities = activityFeed.getItems();
 				
 			} catch (IOException e) {
 				logger.error("#GooglePlus Exception : "+e);
@@ -408,4 +408,19 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 		return null;
 	}
 	
+	
+	public static void main(String...args) {
+		String uid = "102155862500050097100";
+		
+		Source source = new Source(null, 0);
+		source.setId(uid);
+		SourceFeed feed = new SourceFeed(source, new Date(System.currentTimeMillis()-24*3600000), "1");
+		
+		GooglePlusRetriever retriever = new GooglePlusRetriever("AIzaSyB-knYzMRW6tUzobP-V1hTWYAXEps1Wngk", 1, 1000, 60l);
+		
+		List<Item> items = retriever.retrieveUserFeeds(feed);
+		for(Item item : items) {
+			System.out.println(item.toJSONString());
+		}
+	}
 }
