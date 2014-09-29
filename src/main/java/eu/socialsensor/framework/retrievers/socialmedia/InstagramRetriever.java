@@ -69,14 +69,15 @@ public class InstagramRetriever implements SocialMediaRetriever {
 		this.instagramOembed = new InstagramOembed();
 	}
 	
-	public InstagramRetriever(String secret, String token) {
-		Token instagramToken = new Token(token, secret); 
-		this.instagram = new Instagram(instagramToken);
+	public InstagramRetriever(String key, String secret, String token) {
+		Token accessToken = new Token(token, secret); 
+		this.instagram = new Instagram(key);
+		//this.instagram.setAccessToken(accessToken);
 		this.instagramOembed = new InstagramOembed();
 	}
 	
-	public InstagramRetriever(String secret, String token, int maxResults,int maxRequests,long maxRunningTime) {
-		this(secret, token);
+	public InstagramRetriever(String key, String secret, String token, int maxResults,int maxRequests,long maxRunningTime) {
+		this(key, secret, token);
 		
 		this.maxResults = maxResults;
 		this.maxRequests = maxRequests;
@@ -102,34 +103,43 @@ public class InstagramRetriever implements SocialMediaRetriever {
 			return items;
 		}
 			
-		if(loggingEnabled)
-			logger.info("#Instagram : Retrieving User Feed : "+uName);
+		if(loggingEnabled) {
+			logger.info("#Instagram : Retrieving User Feed : " + uName);
+		}
 		
 		List<UserFeedData>revUsers = null; 
-		try{
-			UserFeed userf= instagram.searchUser(uName);
+		try {
+			UserFeed userf = instagram.searchUser(uName);
 			revUsers = userf.getUserList();
 		}
-		catch(InstagramException e){
+		catch(InstagramException e) {
 			logger.error("#Instagram Exception : " + e.getMessage());
 			return items;
 		}
 		
-		for(UserFeedData revUser : revUsers){
+		for(UserFeedData revUser : revUsers) {
 
-			try{
-				mediaFeed = instagram.getRecentMediaFeed(revUser.getId(),-1,null,null,null,null);
-				if(mediaFeed != null){
+			try {
+				try {
+					mediaFeed = instagram.getRecentMediaFeed(revUser.getId(), 0, null, null, null, null);
+				}
+				catch(InstagramException e) {
+					logger.error("#Instagram Exception:" + e.getMessage());
+					return items;
+				} 
+				
+				if(mediaFeed != null) {
 					
-					for(MediaFeedData mfeed : mediaFeed.getData()){
+					for(MediaFeedData mfeed : mediaFeed.getData()) {
 						int createdTime = Integer.parseInt(mfeed.getCreatedTime());
 						Date publicationDate = new Date((long) createdTime * 1000);
 						
 						if(lastItemDate.after(publicationDate) || items.size()>maxResults 
-								|| numberOfRequests>maxRequests){
+								|| numberOfRequests>maxRequests) {
 							break;
     					}
-						if(mfeed != null && mfeed.getId() != null){
+						
+						if(mfeed != null && mfeed.getId() != null) {
 							InstagramItem instagramItem = new InstagramItem(mfeed);
 							instagramItem.setList(label);
 								
@@ -139,14 +149,12 @@ public class InstagramRetriever implements SocialMediaRetriever {
 				}
 				
 			}
-			catch(InstagramException e){
-				logger.error("#Instagram Exception:" + e.getMessage());
-				return items;
-			} catch (MalformedURLException e) {
+			catch (MalformedURLException e) {
 				logger.error("#Instagram Exception: " + e.getMessage());
 				return items;
 			}
-		}	
+		}
+		
 		// The next request will retrieve only items of the last day
 		Date dateToRetrieve = new Date(System.currentTimeMillis() - (24*3600*1000));
 		feed.setDateToRetrieve(dateToRetrieve);
@@ -160,7 +168,7 @@ public class InstagramRetriever implements SocialMediaRetriever {
 	}
 	
 	@Override
-	public List<Item> retrieveKeywordsFeeds(KeywordsFeed feed){
+	public List<Item> retrieveKeywordsFeeds(KeywordsFeed feed) {
 		List<Item> items = new ArrayList<Item>();
 		
 		Date lastItemDate = feed.getDateToRetrieve();
