@@ -231,15 +231,17 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 		String tags = "";
 		
 		if(keyword!=null) {
-			for(String key : keyword.getName().split(" "))
+			for(String key : keyword.getName().split(" ")) {
 				tags+=key.toLowerCase()+" ";
+			}
 		}
-		else if(keywords != null){
-			for(Keyword key : keywords){
+		else if(keywords != null) {
+			for(Keyword key : keywords) {
 				String [] words = key.getName().split(" ");
-				for(String word : words)
-					if(!tags.contains(word) && word.length()>1)
+				for(String word : words) {
+					if(!tags.contains(word) && word.length() > 1)
 						tags += word.toLowerCase()+" ";
+				}
 			}
 		}
 		
@@ -262,7 +264,7 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 		
 		Map<String, StreamUser> users = new HashMap<String, StreamUser>();
 		
-		while(pageOfActivities != null && !pageOfActivities.isEmpty()){
+		while(pageOfActivities != null && !pageOfActivities.isEmpty()) {
 			
 			for (Activity activity : pageOfActivities) {
 				
@@ -277,7 +279,7 @@ public class GooglePlusRetriever implements SocialMediaRetriever{
 						publicationDate = (Date) formatter.parse(newPublicationTimeStr);
 						
 					} catch (ParseException e) {
-						logger.error("#GooglePlus - ParseException: "+e);
+						logger.error("#GooglePlus - ParseException: " + e.getMessage());
 						return items;
 					}
 					

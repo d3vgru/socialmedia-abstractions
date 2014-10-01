@@ -177,23 +177,25 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 		Keyword keyword = feed.getKeyword();
 		List<Keyword> keywords = feed.getKeywords();
 		
-		if(keywords == null && keyword != null){
+		if(keywords == null && keyword != null) {
 			logger.error("#YouTube : No keywords feed");
 			return items;
 		}
 	
 		String tags = "";
 		
-		if(keyword != null){
-			for(String key : keyword.getName().split(" ")) 
-				if(key.length()>1)
+		if(keyword != null) {
+			for(String key : keyword.getName().split(" ")) {
+				if(key.length() > 1) {
 					tags += key.toLowerCase()+" ";
+				}
+			}
 		}
 		else if(keywords != null) {
 			for(Keyword key : keywords) {
 				String [] words = key.getName().split(" ");
 				for(String word : words) {
-					if(!tags.contains(word) && word.length()>1)
+					if(!tags.contains(word) && word.length() > 1)
 						tags += word.toLowerCase()+" ";
 				}
 			}
@@ -248,7 +250,7 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 						items.add(ytItem);
 					}
 					
-					if(items.size()>results_threshold || numberOfRequests >= request_threshold || (System.currentTimeMillis() - currRunningTime) > maxRunningTime){
+					if(items.size()>results_threshold || numberOfRequests >= request_threshold || (System.currentTimeMillis() - currRunningTime) > maxRunningTime) {
 						isFinished = true;
 						break;
 					}
@@ -256,7 +258,9 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 			
 			}
 			catch(Exception e) {
-				logger.error("YouTube Retriever exception: " + e.getMessage());
+				e.printStackTrace();
+				logger.error("YouTube Retriever error during retrieval of " + tags);
+				logger.error("Exception: " + e.getMessage());
 				return items;
 			}
 			
@@ -462,4 +466,22 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 		
 		return null;
 	}
+	
+	public static void main(String...args) {
+		
+		String clientId = "192390986970.apps.googleusercontent.com";
+		String key = "AIzaSyBqHg5dvUQn4Wamteztgf7c_w9B0qqJdsc";
+		YoutubeRetriever retriever = new YoutubeRetriever(clientId, key, 1, 1000, 30000l);
+		
+		Keyword keyword = new Keyword("ebola virus", 10);
+		Date since = new Date(System.currentTimeMillis()-3600000);
+		KeywordsFeed feed = new KeywordsFeed(keyword, since, "1");
+		
+		List<Item> items = retriever.retrieveKeywordsFeeds(feed);
+		System.out.println(items.size());
+		for(Item item : items) {
+			System.out.println(item.toJSONString());
+		}
+	}
+	
 }
