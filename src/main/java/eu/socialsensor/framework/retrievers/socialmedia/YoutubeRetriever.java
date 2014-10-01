@@ -65,7 +65,7 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 		this.service = new YouTubeService(clientId, developerKey);
 	}
 	
-	public YoutubeRetriever(String clientId, String developerKey,Integer maxResults,Integer maxRequests, Long maxRunningTime) {	
+	public YoutubeRetriever(String clientId, String developerKey, Integer maxResults, Integer maxRequests, Long maxRunningTime) {	
 		this(clientId, developerKey);
 		this.results_threshold = maxResults;
 		this.request_threshold = maxRequests;
@@ -465,23 +465,6 @@ public class YoutubeRetriever implements SocialMediaRetriever {
 		}
 		
 		return null;
-	}
-	
-	public static void main(String...args) {
-		
-		String clientId = "192390986970.apps.googleusercontent.com";
-		String key = "AIzaSyBqHg5dvUQn4Wamteztgf7c_w9B0qqJdsc";
-		YoutubeRetriever retriever = new YoutubeRetriever(clientId, key, 1, 1000, 30000l);
-		
-		Keyword keyword = new Keyword("ebola virus", 10);
-		Date since = new Date(System.currentTimeMillis()-3600000);
-		KeywordsFeed feed = new KeywordsFeed(keyword, since, "1");
-		
-		List<Item> items = retriever.retrieveKeywordsFeeds(feed);
-		System.out.println(items.size());
-		for(Item item : items) {
-			System.out.println(item.toJSONString());
-		}
 	}
 	
 }
