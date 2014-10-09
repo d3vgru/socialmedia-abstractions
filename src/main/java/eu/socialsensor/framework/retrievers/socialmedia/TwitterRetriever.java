@@ -17,6 +17,7 @@ import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.User;
 import twitter4j.conf.Configuration;
+import twitter4j.conf.ConfigurationBuilder;
 import eu.socialsensor.framework.abstractions.socialmedia.twitter.TwitterItem;
 import eu.socialsensor.framework.abstractions.socialmedia.twitter.TwitterStreamUser;
 import eu.socialsensor.framework.common.domain.Feed;
@@ -392,7 +393,7 @@ public class TwitterRetriever implements SocialMediaRetriever {
 		String slug = feed.getListSlug();
 				
 		int page = 1;
-		Paging paging = new Paging(page, 100);
+		Paging paging = new Paging(page, 200);
 		while(true) {
 			try {
 				numberOfRequests++;
@@ -450,9 +451,10 @@ public class TwitterRetriever implements SocialMediaRetriever {
 	}
 	
 	@Override
-	public void stop(){
-		if(twitter != null)
+	public void stop() {
+		if(twitter != null) {
 			twitter.shutdown();
+		}
 		
 		twitter = null;
 	}
