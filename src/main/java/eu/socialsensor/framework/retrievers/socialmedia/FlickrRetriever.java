@@ -130,8 +130,9 @@ public class FlickrRetriever implements SocialMediaRetriever {
 			
 			PhotoList<Photo> photos;
 			try {
+				numberOfRequests++;
 				photos = photosInteface.search(params , PER_PAGE, page++);
-			} catch (FlickrException e) {
+			} catch (Exception e) {
 				break;
 			}
 			
@@ -178,6 +179,7 @@ public class FlickrRetriever implements SocialMediaRetriever {
 		String label = feed.getLabel();
 		
 		int page=1, pages=1;
+		
 		int numberOfRequests = 0;
 		int numberOfResults = 0;
 		
@@ -234,10 +236,11 @@ public class FlickrRetriever implements SocialMediaRetriever {
 			
 			PhotoList<Photo> photos;
 			try {
+				numberOfRequests++;
 				photos = photosInteface.search(params , PER_PAGE, page++);
-			} catch (FlickrException e) {
+			} catch (Exception e) {
 				logger.error("Exception: " + e.getMessage());
-				break;
+				continue;
 			}
 			
 			pages = photos.getPages();
@@ -404,6 +407,20 @@ public class FlickrRetriever implements SocialMediaRetriever {
 			return null;
 		}
 		
+	}
+	
+	public static void main(String...args) {
+		
+		String flickrKey = "029eab4d06c40e08670d78055bf61205";
+		String flickrSecret = "bc4105126a4dfb8c";
+		
+		FlickrRetriever retriever = new FlickrRetriever(flickrKey, flickrSecret, 1, 1000, 60000);
+		
+		Keyword keyword = new Keyword("\"uk\" amazing", 0d); 
+		Feed feed = new KeywordsFeed(keyword, new Date(System.currentTimeMillis()-14400000), "1");
+		
+		List<Item> items = retriever.retrieve(feed );
+		System.out.println(items.size());
 	}
 	
 }
