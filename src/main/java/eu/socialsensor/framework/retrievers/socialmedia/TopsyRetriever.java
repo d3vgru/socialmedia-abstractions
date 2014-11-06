@@ -1,19 +1,17 @@
 package eu.socialsensor.framework.retrievers.socialmedia;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import com.maruti.otterapi.Otter4JavaException;
-import com.maruti.otterapi.TopsyConfig;
-import com.maruti.otterapi.search.Post;
-import com.maruti.otterapi.search.Search;
-import com.maruti.otterapi.search.SearchCriteria;
-import com.maruti.otterapi.search.SearchResponse;
+//import com.maruti.otterapi.Otter4JavaException;
+//import com.maruti.otterapi.TopsyConfig;
+//import com.maruti.otterapi.search.Post;
+//import com.maruti.otterapi.search.Search;
+//import com.maruti.otterapi.search.SearchCriteria;
+//import com.maruti.otterapi.search.SearchResponse;
 
-import eu.socialsensor.framework.abstractions.socialmedia.topsy.TopsyItem;
 import eu.socialsensor.framework.common.domain.Feed;
 import eu.socialsensor.framework.common.domain.Item;
 import eu.socialsensor.framework.common.domain.MediaItem;
@@ -33,14 +31,14 @@ import eu.socialsensor.framework.common.domain.feeds.SourceFeed;
 public class TopsyRetriever implements SocialMediaRetriever{
 	private Logger logger = Logger.getLogger(TopsyRetriever.class);
 	
-	private TopsyConfig topsyConfig;
+	//private TopsyConfig topsyConfig;
 	
 	public TopsyRetriever(String apiKey) {
 		
 		
-		topsyConfig = new TopsyConfig();
-		topsyConfig.setApiKey(apiKey);
-		topsyConfig.setSetProxy(false);
+		//topsyConfig = new TopsyConfig();
+		//topsyConfig.setApiKey(apiKey);
+		//topsyConfig.setSetProxy(false);
 	}
 	
 	@Override
@@ -53,6 +51,7 @@ public class TopsyRetriever implements SocialMediaRetriever{
 		
 		List<Item> items = new ArrayList<Item>();
 		
+		/*
 		Date dateToRetrieve = feed.getDateToRetrieve();
 		
 		//SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z");
@@ -81,7 +80,8 @@ public class TopsyRetriever implements SocialMediaRetriever{
 		} catch (Otter4JavaException e) {
 			e.printStackTrace();
 		}
-
+		*/
+		
 		return items;
 	}
 	

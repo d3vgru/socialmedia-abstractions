@@ -1,12 +1,8 @@
 package eu.socialsensor.framework.abstractions.socialmedia.topsy;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import com.maruti.otterapi.search.Post;
+//import com.maruti.otterapi.search.Post;
 
 import eu.socialsensor.framework.common.domain.Item;
-import eu.socialsensor.framework.common.domain.MediaItem;
 import eu.socialsensor.framework.common.domain.SocialNetworkSource;
 
 /**
@@ -26,9 +22,10 @@ public class TopsyItem extends Item {
 		setId(SocialNetworkSource.Topsy + "#" + id);
 	}
 	
-	public TopsyItem(Post post){
+	public TopsyItem() {
 		super(SocialNetworkSource.Topsy.toString(), Operation.NEW);
 		
+		/*
 		if(post == null)
 			return;
 		
@@ -83,6 +80,6 @@ public class TopsyItem extends Item {
 		mediaIds.add(mediaId);
 		mediaItems.add(mediaItem);
 		
-		
+		*/
 	}
 }
