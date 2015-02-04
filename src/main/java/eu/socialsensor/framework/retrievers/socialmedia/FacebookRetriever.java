@@ -6,12 +6,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.restfb.Connection;
 import com.restfb.DefaultFacebookClient;
 import com.restfb.FacebookClient;
 import com.restfb.Parameter;
+import com.restfb.Version;
 import com.restfb.exception.FacebookNetworkException;
 import com.restfb.exception.FacebookResponseStatusException;
 import com.restfb.types.CategorizedFacebookType;
@@ -49,17 +51,17 @@ public class FacebookRetriever implements SocialMediaRetriever {
 			
 	private FacebookClient facebookClient;
 	
-	private int maxResults;
-	private int maxRequests;
+	private int maxResults = 1000;
+	private int maxRequests = 1;
 	
-	private long maxRunningTime;
+	private long maxRunningTime = 5 * 60 * 1000L;
 	private long currRunningTime = 0L;
 	
 	private Logger  logger = Logger.getLogger(FacebookRetriever.class);
-	private boolean loggingEnabled = false;
+	private boolean loggingEnabled = true;
 	
 	public FacebookRetriever(String  facebookAccessToken) {
-		this.facebookClient = new DefaultFacebookClient(facebookAccessToken);
+		this.facebookClient = new DefaultFacebookClient(facebookAccessToken, Version.VERSION_1_0);
 	}
 	
 	public FacebookRetriever(FacebookClient facebookClient, int maxRequests, long minInterval, Integer maxResults, long maxRunningTime) {
@@ -185,13 +187,13 @@ public class FacebookRetriever implements SocialMediaRetriever {
 			return items;
 		}
 
-		String tags = "";
+		List<String> queryParts = new ArrayList<String>();
 		if(keyword != null) {
 			String name = keyword.getName();
 			String [] words = name.split("\\s+");
 			for(String word : words) {
-				if(!tags.contains(word) && word.length() > 2) {
-					tags += word.toLowerCase()+" ";
+				if(!queryParts.contains(word) && word.length() > 2) {
+					queryParts.add(word.toLowerCase());
 				}
 			}
 			//tags += keyword.getName().toLowerCase();
@@ -200,20 +202,23 @@ public class FacebookRetriever implements SocialMediaRetriever {
 			for(Keyword key : keywords) {
 				String [] words = key.getName().split(" ");
 				for(String word : words) {
-					if(!tags.contains(word) && word.length() > 1) {
-						tags += word.toLowerCase()+" ";
+					if(!queryParts.contains(word) && word.length() > 1) {
+						queryParts.add(word.toLowerCase());
 					}
 				}
 			}
 		}
 		
-		if(tags.equals(""))
+		String query = StringUtils.join(queryParts, " ");
+		if(query.equals(""))
 			return items;
 		
 		Connection<Post> connection = null;
 		try {
-			connection = facebookClient.fetchConnection("search", Post.class, Parameter.with("q", tags), Parameter.with("type", "post"));
-		}catch(FacebookResponseStatusException e) {
+			logger.info("#Facebook : search for [" + query + "]");
+			connection = facebookClient.fetchConnection("search", Post.class, Parameter.with("q", query), Parameter.with("type", "post"));
+		}
+		catch(FacebookResponseStatusException e) {
 			logger.error(e.getMessage());
 			return items;
 		}
@@ -225,7 +230,9 @@ public class FacebookRetriever implements SocialMediaRetriever {
 		try {
 			for(List<Post> connectionPage : connection) {
 				for(Post post : connectionPage) {	
+					//System.out.println(post);
 					
+				
 					Date publicationDate = post.getCreatedTime();
 					try {
 						if(publicationDate.after(lastItemDate) && post!=null && post.getId()!=null) {
@@ -254,14 +261,28 @@ public class FacebookRetriever implements SocialMediaRetriever {
 						break;
 					}
 					
-					if(publicationDate.before(lastItemDate) || items.size()>maxResults || (System.currentTimeMillis() - currRunningTime) > maxRunningTime){
+					if(publicationDate.before(lastItemDate)) {
+						//System.out.println(publicationDate + " before " + lastItemDate);
 						isFinished = true;
+					}
+					if(items.size()>maxResults) {
+						//System.out.println(items.size() + " more than " + maxResults);
+						isFinished = true;
+					}
+					if((System.currentTimeMillis() - currRunningTime) > maxRunningTime) {
+						//System.out.println("Running time: " + " before " + (System.currentTimeMillis() - currRunningTime));
+						isFinished = true;
+					}
+					
+					if(isFinished) {
 						break;
 					}
 					
 				}
-				if(isFinished)
+				
+				if(isFinished) {
 					break;
+				}
 				
 			}
 		}
@@ -271,7 +292,7 @@ public class FacebookRetriever implements SocialMediaRetriever {
 		}
 		
 		if(loggingEnabled) {
-			logger.info("#Facebook : Handler fetched " + items.size() + " posts from " + tags + 
+			logger.info("#Facebook : Handler fetched " + items.size() + " posts from " + query + 
 					" [ " + lastItemDate + " - " + new Date(System.currentTimeMillis()) + " ]");
 		}
 		
@@ -437,4 +458,22 @@ public class FacebookRetriever implements SocialMediaRetriever {
 		}
 	}
 
+	public static void main(String...args) {
+		FacebookRetriever retriever = new FacebookRetriever("260504214011769|jATWKceE7aVH4jxsB4DBuNjKBRc");
+		
+		Date since = new Date(System.currentTimeMillis()-24*3600*1000);
+		
+		Keyword keyword = new Keyword();
+		keyword.setName("Abdullah us");
+		KeywordsFeed feed = new KeywordsFeed(keyword, since, "1");
+		
+		List<Item> items = retriever.retrieveKeywordsFeeds(feed);
+		System.out.println(items.size() + " items found");
+		for(Item item : items) {
+			List<MediaItem> mediaItems = item.getMediaItems();
+			for(MediaItem mi : mediaItems) {
+				System.out.println(mi.getTitle());
+			}
+		}
+	}
 }
